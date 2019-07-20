@@ -36,6 +36,20 @@ client.on('message', msg => {
         }
         msg.channel.send(message)
     }
+
+    if (msg.content === '!help')
+    {
+        msg.channel.send(
+            `Hi, I'm CivBot. Use me to draft civ games, it's all I'm good for.
+            
+            !draft [OPTIONS]
+            Drafts 3 civs for each player in the voice channel. Additional options:
+                - numcivs [NUMBER] : Change the number of civs for each player
+                - ai [NUMBER] : Add a specified number of AI players
+                - novoice : Don't include players from voice
+            eg. !draft numcivs 5 ai 2
+            Drafts a game with everyone in voice plus 2 AI, and everyone picks from 5 civs.`)
+    }
 })
 
 client.login(auth.token);
