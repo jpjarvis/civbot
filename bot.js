@@ -6,7 +6,8 @@ var shuffle = require('shuffle-array')
 
 var civs = JSON.parse(fs.readFileSync("civs.json")).civs
 
-function getDraft(numberOfPlayers, civsPerPlayer) {
+function getDraft(numberOfPlayers, civsPerPlayer) 
+{
     shuffle(civs)
     draft = []
     for (i=0; i<numberOfPlayers; i++)
@@ -16,7 +17,8 @@ function getDraft(numberOfPlayers, civsPerPlayer) {
     return draft
 }
 
-function getPlayerDraftString(playerName, playerDraft) {
+function getPlayerDraftString(playerName, playerDraft) 
+{
     response = `${playerName} `.padEnd(20, " ")
     for (j=0; j<playerDraft.length-1; j++)
     {
@@ -26,7 +28,8 @@ function getPlayerDraftString(playerName, playerDraft) {
     return response
 }
 
-function extractArgValue(args, argName) {
+function extractArgValue(args, argName) 
+{
     index = args.findIndex((a) => a === argName)
 
     if (index >= 0) {
@@ -41,15 +44,18 @@ function extractArgValue(args, argName) {
     }
 }
 
-function sendBadlyFormedError(channel) {
+function sendBadlyFormedError(channel) 
+{
     channel.send("Command is badly formed - see `civbot help` for guidance")
 }
 
-function sendDraftFailedError(channel) {
-    channel.send("Draft failed - no members in voice and no additional players specified")
+function sendDraftFailedError(channel) 
+{
+    channel.send("Draft failed - no players found. Either join voice or set some AI.")
 }
 
-function sendHelpMessage(channel) {
+function sendHelpMessage(channel) 
+{
     channel.send(
         `\`\`\`civbot draft [OPTIONS]
         Drafts 3 civs for each player in the voice channel. Additional options:
@@ -65,39 +71,47 @@ function sendInfoMessage(channel)
     channel.send("Hi, I'm CivBot. Use me to draft civ games with `civbot draft`, it's all I'm good for. \nTo find out more about drafting games, try `civbot help`.")
 }
 
-client.on('ready', () => {
+client.on('ready', () => 
+{
     console.log(`Logged in as ${client.user.tag}!`)
 })
 
-client.on('message', msg => {
+client.on('message', msg => 
+{
     if (msg.content.startsWith('civbot'))
     {
         args = msg.content.split(" ")
 
         // civbot
-        if (args.length == 1) {
+        if (args.length == 1) 
+        {
             sendInfoMessage(msg.channel)
         }
 
         // civbot draft
-        if (args[1] === 'draft') {
+        if (args[1] === 'draft') 
+        {
             ai = 0
             numCivs = 3
             useVoice = true
 
             
             
-            if (args.includes("ai")) {
+            if (args.includes("ai")) 
+            {
                 ai = extractArgValue(args, "ai")
-                if (ai === undefined) {
+                if (ai === undefined) 
+                {
                     sendBadlyFormedError(msg.channel)
                     return
                 }
             }
 
-            if (args.includes("civs")) {
+            if (args.includes("civs")) 
+            {
                 numCivs = extractArgValue(args, "civs")
-                if (numCivs === undefined) {
+                if (numCivs === undefined) 
+                {
                     sendBadlyFormedError(msg.channel)
                     return
                 }
@@ -105,21 +119,30 @@ client.on('message', msg => {
 
             useVoice = !args.includes("novoice")
 
-            voiceChannel = client.channels.get("493399082757259288")
+            voiceChannel = client.channels.get(msg.member.voiceChannelID)
+            if (voiceChannel === undefined)
+            {
+                msg.channel.send("You're not in voice, so I'll set `novoice` on for this draft.")
+                useVoice = false
+            }
+
             voicePlayers = useVoice ? voiceChannel.members.size : 0
 
             draft = getDraft(voicePlayers + ai, numCivs)
             currentEntry = 0;
             response = ""
 
-            if (useVoice) {
-                voiceChannel.members.forEach(function(member){
+            if (useVoice) 
+            {
+                voiceChannel.members.forEach(function(member)
+                {
                     response += getPlayerDraftString(member.user.username, draft[currentEntry])
                     currentEntry++
                 })
             }
 
-            for (i=0; i<ai; i++) {
+            for (i=0; i<ai; i++) 
+            {
                 response += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
                 currentEntry++
             }
