@@ -61,8 +61,8 @@ client.on('message', msg => {
             }
         }
 
-        if (args.includes("numcivs")) {
-            numCivs = extractArgValue(args, "numcivs")
+        if (args.includes("civs")) {
+            numCivs = extractArgValue(args, "civs")
             if (numCivs === undefined) {
                 msg.channel.send("Command is badly formed - see !help for guidance")
                 return
@@ -107,7 +107,7 @@ client.on('message', msg => {
             
             !draft [OPTIONS]
             Drafts 3 civs for each player in the voice channel. Additional options:
-                - numcivs [NUMBER] : Change the number of civs for each player
+                - civs [NUMBER] : Change the number of civs for each player
                 - ai [NUMBER] : Add a specified number of AI players
                 - novoice : Don't include players from voice
             eg. !draft numcivs 5 ai 2
