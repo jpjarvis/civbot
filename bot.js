@@ -42,11 +42,27 @@ function extractArgValue(args, argName) {
 }
 
 function sendBadlyFormedError(channel) {
-    channel.send("Command is badly formed - see !help for guidance")
+    channel.send("Command is badly formed - see `civbot help` for guidance")
 }
 
 function sendDraftFailedError(channel) {
     channel.send("Draft failed - no members in voice and no additional players specified")
+}
+
+function sendHelpMessage(channel) {
+    channel.send(
+        `\`\`\`civbot draft [OPTIONS]
+        Drafts 3 civs for each player in the voice channel. Additional options:
+            - civs [NUMBER] : Change the number of civs for each player
+            - ai [NUMBER] : Add a specified number of AI players
+            - novoice : Don't include players from voice
+        eg. civbot draft numcivs 5 ai 2
+        Drafts a game with everyone in voice plus 2 AI, and everyone picks from 5 civs.\`\`\``)
+}
+
+function sendInfoMessage(channel)
+{
+    channel.send("Hi, I'm CivBot. Use me to draft civ games with `civbot draft`, it's all I'm good for. \nTo find out more about drafting games, try `civbot help`.")
 }
 
 client.on('ready', () => {
@@ -54,71 +70,75 @@ client.on('ready', () => {
 })
 
 client.on('message', msg => {
-    if (msg.content.startsWith('!draft')) {
-        ai = 0
-        numCivs = 3
-        useVoice = true
-
-        args = msg.content.split(" ")
-        
-        if (args.includes("ai")) {
-            ai = extractArgValue(args, "ai")
-            if (ai === undefined) {
-                sendBadlyFormedError(msg.channel)
-                return
-            }
-        }
-
-        if (args.includes("civs")) {
-            numCivs = extractArgValue(args, "civs")
-            if (numCivs === undefined) {
-                sendBadlyFormedError(msg.channel)
-                return
-            }
-        }
-
-        useVoice = !args.includes("novoice")
-
-        voiceChannel = client.channels.get("493399082757259288")
-        voicePlayers = useVoice ? voiceChannel.members.size : 0
-
-        draft = getDraft(voicePlayers + ai, numCivs)
-        currentEntry = 0;
-        response = ""
-
-        if (useVoice) {
-            voiceChannel.members.forEach(function(member){
-                response += getPlayerDraftString(member.user.username, draft[currentEntry])
-                currentEntry++
-            })
-        }
-
-        for (i=0; i<ai; i++) {
-            response += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
-            currentEntry++
-        }
-
-        if (response === "")
-        {
-            sendDraftFailedError(msg.channel)
-        }
-        else
-        {
-            msg.channel.send( "\`\`\`" + response + "\`\`\`")
-        }
-    }
-
-    if (msg.content === '!help')
+    if (msg.content.startsWith('civbot'))
     {
-        msg.channel.send(
-            `Hi, I'm CivBot. Use me to draft civ games, it's all I'm good for.
-            \`\`\`!draft [OPTIONS]
-            Drafts 3 civs for each player in the voice channel. Additional options:
-                - civs [NUMBER] : Change the number of civs for each player
-                - ai [NUMBER] : Add a specified number of AI players
-                - novoice : Don't include players from voice
-            eg. !draft numcivs 5 ai 2
-            Drafts a game with everyone in voice plus 2 AI, and everyone picks from 5 civs.\`\`\``)
+        args = msg.content.split(" ")
+
+        // civbot
+        if (args.length == 1) {
+            sendInfoMessage(msg.channel)
+        }
+
+        // civbot draft
+        if (args[1] === 'draft') {
+            ai = 0
+            numCivs = 3
+            useVoice = true
+
+            
+            
+            if (args.includes("ai")) {
+                ai = extractArgValue(args, "ai")
+                if (ai === undefined) {
+                    sendBadlyFormedError(msg.channel)
+                    return
+                }
+            }
+
+            if (args.includes("civs")) {
+                numCivs = extractArgValue(args, "civs")
+                if (numCivs === undefined) {
+                    sendBadlyFormedError(msg.channel)
+                    return
+                }
+            }
+
+            useVoice = !args.includes("novoice")
+
+            voiceChannel = client.channels.get("493399082757259288")
+            voicePlayers = useVoice ? voiceChannel.members.size : 0
+
+            draft = getDraft(voicePlayers + ai, numCivs)
+            currentEntry = 0;
+            response = ""
+
+            if (useVoice) {
+                voiceChannel.members.forEach(function(member){
+                    response += getPlayerDraftString(member.user.username, draft[currentEntry])
+                    currentEntry++
+                })
+            }
+
+            for (i=0; i<ai; i++) {
+                response += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
+                currentEntry++
+            }
+
+            if (response === "")
+            {
+                sendDraftFailedError(msg.channel)
+            }
+            else
+            {
+                msg.channel.send( "\`\`\`" + response + "\`\`\`")
+            }
+        }
+
+        // civbot help
+        if (args[1] === 'help')
+        {
+            sendHelpMessage(msg.channel)
+        }
     }
 })
 
