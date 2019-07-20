@@ -17,13 +17,13 @@ function getDraft(numberOfPlayers, civsPerPlayer) {
 }
 
 function getPlayerDraftString(playerName, playerDraft) {
-    message = `${playerName} - `
+    response = `${playerName} `.padEnd(20, " ")
     for (j=0; j<playerDraft.length-1; j++)
     {
-        message += `${playerDraft[j]} / `
+        response += `${playerDraft[j]} / `
     }
-    message += `${playerDraft[playerDraft.length-1]}\n`
-    return message
+    response += `${playerDraft[playerDraft.length-1]}\n`
+    return response
 }
 
 function extractArgValue(args, argName) {
@@ -41,6 +41,14 @@ function extractArgValue(args, argName) {
     }
 }
 
+function sendBadlyFormedError(channel) {
+    channel.send("Command is badly formed - see !help for guidance")
+}
+
+function sendDraftFailedError(channel) {
+    channel.send("Draft failed - no members in voice and no additional players specified")
+}
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
 })
@@ -56,7 +64,7 @@ client.on('message', msg => {
         if (args.includes("ai")) {
             ai = extractArgValue(args, "ai")
             if (ai === undefined) {
-                msg.channel.send("Command is badly formed - see !help for guidance")
+                sendBadlyFormedError(msg.channel)
                 return
             }
         }
@@ -64,7 +72,7 @@ client.on('message', msg => {
         if (args.includes("civs")) {
             numCivs = extractArgValue(args, "civs")
             if (numCivs === undefined) {
-                msg.channel.send("Command is badly formed - see !help for guidance")
+                sendBadlyFormedError(msg.channel)
                 return
             }
         }
@@ -76,27 +84,27 @@ client.on('message', msg => {
 
         draft = getDraft(voicePlayers + ai, numCivs)
         currentEntry = 0;
-        message = ""
+        response = ""
 
         if (useVoice) {
             voiceChannel.members.forEach(function(member){
-                message += getPlayerDraftString(member.user.username, draft[currentEntry])
+                response += getPlayerDraftString(member.user.username, draft[currentEntry])
                 currentEntry++
             })
         }
 
         for (i=0; i<ai; i++) {
-            message += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
+            response += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
             currentEntry++
         }
 
-        if (message === "")
+        if (response === "")
         {
-            msg.channel.send("Draft failed - no members in voice and no additional players specified")
+            sendDraftFailedError(msg.channel)
         }
         else
         {
-            msg.channel.send(message)
+            msg.channel.send( "\`\`\`" + response + "\`\`\`")
         }
     }
 
@@ -104,14 +112,13 @@ client.on('message', msg => {
     {
         msg.channel.send(
             `Hi, I'm CivBot. Use me to draft civ games, it's all I'm good for.
-            
-            !draft [OPTIONS]
+            \`\`\`!draft [OPTIONS]
             Drafts 3 civs for each player in the voice channel. Additional options:
                 - civs [NUMBER] : Change the number of civs for each player
                 - ai [NUMBER] : Add a specified number of AI players
                 - novoice : Don't include players from voice
             eg. !draft numcivs 5 ai 2
-            Drafts a game with everyone in voice plus 2 AI, and everyone picks from 5 civs.`)
+            Drafts a game with everyone in voice plus 2 AI, and everyone picks from 5 civs.\`\`\``)
     }
 })
 
