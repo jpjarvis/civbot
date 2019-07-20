@@ -16,29 +16,54 @@ function getDraft(numberOfPlayers, civsPerPlayer) {
     return draft
 }
 
+function getPlayerDraftString(playerName, playerDraft) {
+    message = `${playerName} - `
+    for (j=0; j<playerDraft.length-1; j++)
+    {
+        message += `${playerDraft[j]} / `
+    }
+    message += `${playerDraft[playerDraft.length-1]}\n`
+    return message
+}
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
 })
 
 client.on('message', msg => {
-    if (msg.content === '!draft') {
-        // Temporary - use the message author's voice channel eventually
+    if (msg.content.startsWith('!draft')) {
+        numCivs = 3
+        ai = 0
+
+        args = msg.content.split(" ")
+        
+        x = args.findIndex((a) => a === "ai")
+
+        if (x >= 0) {
+            ai = parseInt(args[x+1])
+            if (isNaN(ai))
+            {
+                msg.channel.send("Command is badly formed - see !help for guidance")
+                return
+            }
+        }
+
+
         voiceChannel = client.channels.get("493399082757259288")
 
-        draft = getDraft(voiceChannel.members.size,3)
+        draft = getDraft(voiceChannel.members.size + ai,3)
         currentEntry = 0;
         message = ""
 
-        // Voice members
         voiceChannel.members.forEach(function(member){
-            message += `${member.user.username} - `
-            for (j=0; j<draft[currentEntry].length-1; j++)
-            {
-                message += `${draft[currentEntry][j]} / `
-            }
-            message += `${draft[currentEntry][draft[currentEntry].length-1]}\n`
+            message += getPlayerDraftString(member.user.username, draft[currentEntry])
             currentEntry++
         })
+
+        for (i=0; i<ai; i++) {
+            message += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
+            currentEntry++
+        }
 
         if (message === "")
         {
