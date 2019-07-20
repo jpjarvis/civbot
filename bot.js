@@ -22,8 +22,10 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     if (msg.content === '!draft') {
-        draft = getDraft(5,3)
-        console.log(draft)
+        voiceChannel = client.channels.get("493399082757259288")
+
+        draft = getDraft(voiceChannel.members.size,3)
+        
         message = ""
         for (i=0; i<draft.length; i++)
         {
@@ -34,7 +36,15 @@ client.on('message', msg => {
             }
             message += `${draft[i][draft[i].length-1]}\n`
         }
-        msg.channel.send(message)
+
+        if (message === "")
+        {
+            msg.channel.send("Draft failed - no members in voice and no additional players specified")
+        }
+        else
+        {
+            msg.channel.send(message)
+        }
     }
 
     if (msg.content === '!help')
