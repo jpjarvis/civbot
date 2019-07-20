@@ -22,20 +22,23 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     if (msg.content === '!draft') {
+        // Temporary - use the message author's voice channel eventually
         voiceChannel = client.channels.get("493399082757259288")
 
         draft = getDraft(voiceChannel.members.size,3)
-        
+        currentEntry = 0;
         message = ""
-        for (i=0; i<draft.length; i++)
-        {
-            message += `Player ${i} - `
-            for (j=0; j<draft[i].length-1; j++)
+
+        // Voice members
+        voiceChannel.members.forEach(function(member){
+            message += `${member.user.username} - `
+            for (j=0; j<draft[currentEntry].length-1; j++)
             {
-                message += `${draft[i][j]} / `
+                message += `${draft[currentEntry][j]} / `
             }
-            message += `${draft[i][draft[i].length-1]}\n`
-        }
+            message += `${draft[currentEntry][draft[currentEntry].length-1]}\n`
+            currentEntry++
+        })
 
         if (message === "")
         {
