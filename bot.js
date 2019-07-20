@@ -26,39 +26,64 @@ function getPlayerDraftString(playerName, playerDraft) {
     return message
 }
 
+function extractArgValue(args, argName) {
+    index = args.findIndex((a) => a === argName)
+
+    if (index >= 0) {
+        result = parseInt(args[index+1])
+        if (isNaN(result))
+        {
+            // Badly formed, so we give an error
+            return undefined
+        }
+
+        return result
+    }
+}
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
 })
 
 client.on('message', msg => {
     if (msg.content.startsWith('!draft')) {
-        numCivs = 3
         ai = 0
+        numCivs = 3
+        useVoice = true
 
         args = msg.content.split(" ")
         
-        x = args.findIndex((a) => a === "ai")
-
-        if (x >= 0) {
-            ai = parseInt(args[x+1])
-            if (isNaN(ai))
-            {
+        if (args.includes("ai")) {
+            ai = extractArgValue(args, "ai")
+            if (ai === undefined) {
                 msg.channel.send("Command is badly formed - see !help for guidance")
                 return
             }
         }
 
+        if (args.includes("numcivs")) {
+            numCivs = extractArgValue(args, "numcivs")
+            if (numCivs === undefined) {
+                msg.channel.send("Command is badly formed - see !help for guidance")
+                return
+            }
+        }
+
+        useVoice = !args.includes("novoice")
 
         voiceChannel = client.channels.get("493399082757259288")
+        voicePlayers = useVoice ? voiceChannel.members.size : 0
 
-        draft = getDraft(voiceChannel.members.size + ai,3)
+        draft = getDraft(voicePlayers + ai, numCivs)
         currentEntry = 0;
         message = ""
 
-        voiceChannel.members.forEach(function(member){
-            message += getPlayerDraftString(member.user.username, draft[currentEntry])
-            currentEntry++
-        })
+        if (useVoice) {
+            voiceChannel.members.forEach(function(member){
+                message += getPlayerDraftString(member.user.username, draft[currentEntry])
+                currentEntry++
+            })
+        }
 
         for (i=0; i<ai; i++) {
             message += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
