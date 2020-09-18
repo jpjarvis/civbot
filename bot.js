@@ -82,6 +82,8 @@ client.on('message', msg =>
     {
         args = msg.content.split(" ")
 
+        msg.channel.send("Wowser!")
+
         // civbot
         if (args.length == 1) 
         {
