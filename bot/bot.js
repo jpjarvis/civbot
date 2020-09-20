@@ -7,15 +7,9 @@ const bent = require('bent')
 
 const getCivApi = bent('http://localhost:8080/civapi', 'GET', 'json')
 
-async function getDraft(numberOfPlayers, civsPerPlayer) 
+async function getDraft(numberOfPlayers, civsPerPlayer, useLekmod) 
 {
-    query = {
-        numberOfPlayers: numberOfPlayers,
-        civsPerPlayer: civsPerPlayer
-    }
-
-    let draft = await getCivApi("/draft" + `?numberOfPlayers=${numberOfPlayers}&civsPerPlayer=${civsPerPlayer}`)
-    return draft
+    return await getCivApi("/draft" + `?numberOfPlayers=${numberOfPlayers}&civsPerPlayer=${civsPerPlayer}&useLekmod=${useLekmod}`)
 }
 
 function getPlayerDraftString(playerName, playerDraft) 
@@ -63,6 +57,7 @@ function sendHelpMessage(channel)
             - civs [NUMBER] : Change the number of civs for each player
             - ai [NUMBER] : Add a specified number of AI players
             - novoice : Don't include players from voice
+            - lekmod : Include lekmod civs
         eg. civbot draft numcivs 5 ai 2
         Drafts a game with everyone in voice plus 2 AI, and everyone picks from 5 civs.\`\`\``)
 }
@@ -97,8 +92,7 @@ client.on('message', msg =>
             ai = 0
             numCivs = 3
             useVoice = true
-
-            
+            useLekmod = false
             
             if (args.includes("ai")) 
             {
@@ -121,6 +115,7 @@ client.on('message', msg =>
             }
 
             useVoice = !args.includes("novoice")
+            useLekmod = args.includes("lekmod")
 
             voiceChannel = client.channels.get(msg.member.voiceChannelID)
             if (voiceChannel === undefined)
@@ -131,7 +126,7 @@ client.on('message', msg =>
 
             voicePlayers = useVoice ? voiceChannel.members.size : 0
 
-            draft = getDraft(voicePlayers + ai, numCivs).then(draft => {
+            draft = getDraft(voicePlayers + ai, numCivs, useLekmod).then(draft => {
                 currentEntry = 0;
                 response = ""
 
