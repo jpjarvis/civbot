@@ -5,12 +5,25 @@ var shuffle = require('shuffle-array')
 
 BASEURL = "/civapi"
 
+function getTakmodCivs()
+{
+    return JSON.parse(fs.readFileSync("civs.json")).civs.vanilla
+}
+
+function getLekmodCivs()
+{
+    civJson = JSON.parse(fs.readFileSync("civs.json")).civs
+    return civJson.vanilla.concat(civJson.lekmod)
+}
+
 app.get(BASEURL + "/draft", function(req, res) {
 
     numberOfPlayers = req.query.numberOfPlayers
     civsPerPlayer = req.query.civsPerPlayer
+    useLekmod = req.query.useLekmod
 
-    civs = JSON.parse(fs.readFileSync("civs.json")).civs
+    civs = useLekmod === 'true' ? getLekmodCivs() : getTakmodCivs()
+
     shuffle(civs)
     draft = []
     for (i=0; i<numberOfPlayers; i++)
@@ -22,6 +35,8 @@ app.get(BASEURL + "/draft", function(req, res) {
     res.send(draft)
 
 })
+
+
 
 var port = (process.env.PORT || 8080)
 
