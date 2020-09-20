@@ -3,17 +3,18 @@ var client = new Discord.Client()
 var auth = require('./auth.json')
 var fs = require('fs')
 var shuffle = require('shuffle-array')
+const bent = require('bent')
 
-var civs = JSON.parse(fs.readFileSync("civs.json")).civs
+const getCivApi = bent('http://localhost:8080/civapi', 'GET', 'json')
 
-function getDraft(numberOfPlayers, civsPerPlayer) 
+async function getDraft(numberOfPlayers, civsPerPlayer) 
 {
-    shuffle(civs)
-    draft = []
-    for (i=0; i<numberOfPlayers; i++)
-    {
-        draft.push(civs.slice(i*civsPerPlayer, (i+1)*civsPerPlayer));
+    query = {
+        numberOfPlayers: numberOfPlayers,
+        civsPerPlayer: civsPerPlayer
     }
+
+    let draft = await getCivApi("/draft" + `?numberOfPlayers=${numberOfPlayers}&civsPerPlayer=${civsPerPlayer}`)
     return draft
 }
 
@@ -130,33 +131,34 @@ client.on('message', msg =>
 
             voicePlayers = useVoice ? voiceChannel.members.size : 0
 
-            draft = getDraft(voicePlayers + ai, numCivs)
-            currentEntry = 0;
-            response = ""
+            draft = getDraft(voicePlayers + ai, numCivs).then(draft => {
+                currentEntry = 0;
+                response = ""
 
-            if (useVoice) 
-            {
-                voiceChannel.members.forEach(function(member)
+                if (useVoice) 
                 {
-                    response += getPlayerDraftString(member.user.username, draft[currentEntry])
+                    voiceChannel.members.forEach(function(member)
+                    {
+                        response += getPlayerDraftString(member.user.username, draft[currentEntry])
+                        currentEntry++
+                    })
+                }
+    
+                for (i=0; i<ai; i++) 
+                {
+                    response += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
                     currentEntry++
-                })
-            }
-
-            for (i=0; i<ai; i++) 
-            {
-                response += getPlayerDraftString(`AI ${i+1}`, draft[currentEntry])
-                currentEntry++
-            }
-
-            if (response === "")
-            {
-                sendDraftFailedError(msg.channel)
-            }
-            else
-            {
-                msg.channel.send( "\`\`\`" + response + "\`\`\`")
-            }
+                }
+    
+                if (response === "")
+                {
+                    sendDraftFailedError(msg.channel)
+                }
+                else
+                {
+                    msg.channel.send( "\`\`\`" + response + "\`\`\`")
+                }
+            })
         }
 
         // civbot help
