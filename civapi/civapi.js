@@ -16,13 +16,19 @@ function getLekmodCivs()
     return civJson.vanilla.concat(civJson.lekmod)
 }
 
+function getLekmodOnlyCivs()
+{
+    return JSON.parse(fs.readFileSync("civs.json")).civs.lekmod
+}
+
 app.get(BASEURL + "/draft", function(req, res) {
 
     numberOfPlayers = req.query.numberOfPlayers
     civsPerPlayer = req.query.civsPerPlayer
     useLekmod = req.query.useLekmod
+    disableVanilla = req.query.disableVanilla
 
-    civs = useLekmod === 'true' ? getLekmodCivs() : getTakmodCivs()
+    civs = useLekmod === 'true' ? (disableVanilla === 'true' ? getLekmodOnlyCivs() : getLekmodCivs()) : getTakmodCivs()
 
     shuffle(civs)
     draft = []
