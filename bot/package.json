@@ -5,9 +5,19 @@
     "main": "bot.js",
     "author": "Wesley Presley",
     "dependencies": {
+        "@typeit/discord": "^4.0.9",
         "discord.io": "^2.5.3",
         "discord.js": "^11.5.1",
         "shuffle-array": "^1.0.1",
+        "tslib": "^2.2.0",
         "winston": "^3.1.0"
+    },
+    "devDependencies": {
+        "@tsconfig/node14": "^1.0.0",
+        "@types/node": "^15.0.3",
+        "typescript": "^4.2.4"
+    },
+    "scripts": {
+        "start": "tsc; node bot.js"
     }
 }
