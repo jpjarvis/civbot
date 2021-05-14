@@ -1,9 +1,9 @@
 {
     "name": "civ-bot",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "",
     "main": "bot.js",
-    "author": "Lord Erros",
+    "author": "Wesley Presley",
     "dependencies": {
         "discord.io": "^2.5.3",
         "discord.js": "^11.5.1",
