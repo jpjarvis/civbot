@@ -54,6 +54,12 @@ export abstract class CivBot {
             msg.channel.send(Messages.Info)
         }
 
+        // civbot help
+        if (args[1] === 'help')
+        {
+            msg.channel.send(Messages.Help)
+        }
+
         // civbot draft
         if (args[1] === 'draft') 
         {
@@ -64,22 +70,24 @@ export abstract class CivBot {
             
             if (args.includes("ai")) 
             {
-                let ai = extractArgValue(args, "ai")
-                if (ai === undefined) 
+                let aiArgValue = extractArgValue(args, "ai")
+                if (aiArgValue === undefined) 
                 {
                     msg.channel.send(Messages.BadlyFormed)
                     return
                 }
+                ai = aiArgValue
             }
 
             if (args.includes("civs")) 
             {
-                let numCivs = extractArgValue(args, "civs")
-                if (numCivs === undefined) 
+                let numCivsArgValue = extractArgValue(args, "civs")
+                if (numCivsArgValue === undefined) 
                 {
                     msg.channel.send(Messages.BadlyFormed)
                     return
                 }
+                numCivs = numCivsArgValue
             }
 
             useVoice = !args.includes("novoice")
@@ -121,12 +129,6 @@ export abstract class CivBot {
             {
                 msg.channel.send( "\`\`\`" + response + "\`\`\`")
             }
-        }
-
-        // civbot help
-        if (args[1] === 'help')
-        {
-            msg.channel.send(Messages.Help)
         }
     }
 }
