@@ -1,7 +1,7 @@
 import { VoiceChannel } from "discord.js"
 import { ArgsOf, Client, Discord, On } from "@typeit/discord"
-import { draft, PlayerDraft } from "./draft.js"
-import Messages from "./messages.js"
+import { draft, PlayerDraft } from "./Draft.js"
+import Messages from "./Messages.js"
 
 function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft) : string
 {

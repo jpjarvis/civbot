@@ -1,5 +1,5 @@
 import { Client } from "@typeit/discord";
-import { CivBot } from "./bot";
+import { CivBot } from "./CivBot";
 var auth = require('../auth/auth.json')
 
 async function start() {
