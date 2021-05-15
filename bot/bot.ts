@@ -1,14 +1,11 @@
-import { DMChannel, GroupDMChannel, Message, TextChannel, VoiceChannel } from "discord.js"
+import { DMChannel, Message, NewsChannel, TextChannel, VoiceChannel } from "discord.js"
 import { Client, Discord, On } from "@typeit/discord"
+import {draft, Draft, PlayerDraft} from "./draft.js"
 
 var client = new Client()
 var auth = require('./auth.json')
-const draft = require('./draft.js')
 
-type Draft = Array<PlayerDraft>
-type PlayerDraft = Array<string>
-
-type DiscordTextChannel = TextChannel | DMChannel | GroupDMChannel
+type DiscordTextChannel = TextChannel | DMChannel | NewsChannel
 
 function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft) : string
 {
@@ -68,7 +65,7 @@ function sendInfoMessage(channel: DiscordTextChannel)
 
 client.on('ready', () => 
 {
-    console.log(`Logged in as ${client.user.tag}!`)
+    console.log(`Logged in as ${client.user!.tag}!`)
 })
 
 client.on('message', (msg: Message) => 
@@ -117,7 +114,7 @@ client.on('message', (msg: Message) =>
             let disableVanilla = args.includes("lekmod-only")
             useLekmod = args.includes("lekmod") || disableVanilla
 
-            let voiceChannel = client.channels.get(msg.member.voiceChannelID) as VoiceChannel | undefined
+            let voiceChannel = client.channels.cache.get(msg.member!.voice.channelID!) as VoiceChannel | undefined
             if (voiceChannel === undefined)
             {
                 msg.channel.send("You're not in voice, so I'll set `novoice` on for this draft.")
