@@ -1,5 +1,5 @@
 import { VoiceChannel } from "discord.js"
-import { ArgsOf, Client, Discord, On } from "@typeit/discord"
+import { Client, Command, CommandMessage, Discord, On } from "@typeit/discord"
 import { draft, PlayerDraft } from "./Draft.js"
 import Messages from "./Messages.js"
 
@@ -37,94 +37,91 @@ export abstract class CivBot {
         console.log("CivBot is alive!")
     }
 
-    @On("message")
-    onMessage([msg]: ArgsOf<"message">, client: Client ): void {
-        if (msg.content.startsWith('civbot'))
+    @Command("civbot")
+    onCommand(msg: CommandMessage, client: Client ): void {
+        let args = msg.commandContent.split(" ")
+
+        msg.channel.send(Messages.Wowser)
+
+        // civbot
+        if (args.length == 1) 
         {
-            let args = msg.content.split(" ")
+            msg.channel.send(Messages.Info)
+        }
 
-            msg.channel.send(Messages.Wowser)
-
-            // civbot
-            if (args.length == 1) 
+        // civbot draft
+        if (args[1] === 'draft') 
+        {
+            let ai = 0
+            let numCivs = 3
+            let useVoice = true
+            let useLekmod = false
+            
+            if (args.includes("ai")) 
             {
-                msg.channel.send(Messages.Info)
+                let ai = extractArgValue(args, "ai")
+                if (ai === undefined) 
+                {
+                    msg.channel.send(Messages.BadlyFormed)
+                    return
+                }
             }
 
-            // civbot draft
-            if (args[1] === 'draft') 
+            if (args.includes("civs")) 
             {
-                let ai = 0
-                let numCivs = 3
-                let useVoice = true
-                let useLekmod = false
-                
-                if (args.includes("ai")) 
+                let numCivs = extractArgValue(args, "civs")
+                if (numCivs === undefined) 
                 {
-                    let ai = extractArgValue(args, "ai")
-                    if (ai === undefined) 
-                    {
-                        msg.channel.send(Messages.BadlyFormed)
-                        return
-                    }
+                    msg.channel.send(Messages.BadlyFormed)
+                    return
                 }
+            }
 
-                if (args.includes("civs")) 
+            useVoice = !args.includes("novoice")
+            let disableVanilla = args.includes("lekmod-only")
+            useLekmod = args.includes("lekmod") || disableVanilla
+
+            let voiceChannel = client.channels.cache.get(msg.member!.voice.channelID!) as VoiceChannel | undefined
+            if (voiceChannel === undefined)
+            {
+                msg.channel.send(Messages.NotInVoice)
+                useVoice = false
+            }
+
+            let voicePlayers = useVoice ? voiceChannel!.members.size : 0
+
+            let draftResult = draft(voicePlayers + ai, numCivs, useLekmod, disableVanilla)
+            let currentEntry = 0;
+            let response = ""
+            if (useVoice) 
+            {
+                voiceChannel!.members.forEach(function(member)
                 {
-                    let numCivs = extractArgValue(args, "civs")
-                    if (numCivs === undefined) 
-                    {
-                        msg.channel.send(Messages.BadlyFormed)
-                        return
-                    }
-                }
-
-                useVoice = !args.includes("novoice")
-                let disableVanilla = args.includes("lekmod-only")
-                useLekmod = args.includes("lekmod") || disableVanilla
-
-                let voiceChannel = client.channels.cache.get(msg.member!.voice.channelID!) as VoiceChannel | undefined
-                if (voiceChannel === undefined)
-                {
-                    msg.channel.send(Messages.NotInVoice)
-                    useVoice = false
-                }
-
-                let voicePlayers = useVoice ? voiceChannel!.members.size : 0
-
-                let draftResult = draft(voicePlayers + ai, numCivs, useLekmod, disableVanilla)
-                let currentEntry = 0;
-                let response = ""
-                if (useVoice) 
-                {
-                    voiceChannel!.members.forEach(function(member)
-                    {
-                        response += getPlayerDraftString(member.user.username, draftResult[currentEntry])
-                        currentEntry++
-                    })
-                }
-
-                for (let i=0; i<ai; i++) 
-                {
-                    response += getPlayerDraftString(`AI ${i+1}`, draftResult[currentEntry])
+                    response += getPlayerDraftString(member.user.username, draftResult[currentEntry])
                     currentEntry++
-                }
-
-                if (response === "")
-                {
-                    msg.channel.send(Messages.DraftFailed)
-                }
-                else
-                {
-                    msg.channel.send( "\`\`\`" + response + "\`\`\`")
-                }
+                })
             }
 
-            // civbot help
-            if (args[1] === 'help')
+            for (let i=0; i<ai; i++) 
             {
-                msg.channel.send(Messages.Help)
+                response += getPlayerDraftString(`AI ${i+1}`, draftResult[currentEntry])
+                currentEntry++
+            }
+
+            if (response === "")
+            {
+                msg.channel.send(Messages.DraftFailed)
+            }
+            else
+            {
+                msg.channel.send( "\`\`\`" + response + "\`\`\`")
             }
         }
-    }    
+
+        // civbot help
+        if (args[1] === 'help')
+        {
+            msg.channel.send(Messages.Help)
+        }
+    }
 }
