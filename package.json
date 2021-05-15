@@ -2,7 +2,7 @@
     "name": "civ-bot",
     "version": "0.1.0",
     "description": "",
-    "main": "bot.js",
+    "main": "Start.js",
     "author": "Wesley Presley",
     "dependencies": {
         "@typeit/discord": "^4.0.9",
