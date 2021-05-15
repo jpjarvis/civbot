@@ -1,4 +1,4 @@
-import { VoiceChannel } from "discord.js"
+import { Guild, VoiceChannel } from "discord.js"
 import { Client, Command, CommandMessage, Discord, On } from "@typeit/discord"
 import { draft, PlayerDraft } from "./Draft.js"
 import Messages from "./Messages.js"
@@ -41,7 +41,12 @@ export abstract class CivBot {
     onCommand(msg: CommandMessage, client: Client ): void {
         let args = msg.commandContent.split(" ")
 
-        msg.channel.send(Messages.Wowser)
+        client.guilds.fetch(msg.guild!.id).then((guild: Guild) => {
+            let bot = guild.member(client.user!)
+            if (bot?.displayName === "Wesley") {
+                msg.channel.send(Messages.Wowser)
+            }
+        })
 
         // civbot
         if (args.length == 1) 
