@@ -18,6 +18,6 @@
         "typescript": "^4.2.4"
     },
     "scripts": {
-        "start": "tsc; node bot.js"
+        "start": "tsc; node build/start.js"
     }
 }

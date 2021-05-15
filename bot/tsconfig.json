@@ -1,7 +1,22 @@
 {
-    "extends": "@tsconfig/node14/tsconfig.json",
-
-    "include": ["*"],
-    "exclude": ["node_modules"],
-    "experimentalDecorators": true
+    "compilerOptions": {
+      "module": "commonjs",
+      "target": "es2017",
+      "noImplicitAny": false,
+      "sourceMap": true,
+      "outDir": "build",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "importHelpers": true,
+      "forceConsistentCasingInFileNames": true,
+      "lib": [
+        "es2017",
+        "esnext.asynciterable"
+      ],
+      "moduleResolution": "node",
+      "strict": true
+    },
+    "exclude": [
+      "node_modules"
+    ]
 }

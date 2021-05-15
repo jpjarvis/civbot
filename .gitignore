@@ -33,5 +33,5 @@ package-lock.json
 # Vim undo files
 *~
 
-# Compiled .js files
-*.js
+auth
+build
