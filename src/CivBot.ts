@@ -66,7 +66,6 @@ export abstract class CivBot {
             let ai = 0
             let numCivs = 3
             let useVoice = true
-            let useLekmod = false
             
             if (args.includes("ai")) 
             {
@@ -91,8 +90,18 @@ export abstract class CivBot {
             }
 
             useVoice = !args.includes("novoice")
-            let disableVanilla = args.includes("lekmod-only")
-            useLekmod = args.includes("lekmod") || disableVanilla
+
+            let civGroups = new Set<string>()
+            if (args.includes("lekmod-only")) {
+                civGroups.add("lekmod")
+            }
+            else if (args.includes("lekmod")) {
+                civGroups.add("vanilla")
+                civGroups.add("lekmod")
+            }
+            else {
+                civGroups.add("vanilla")
+            }
 
             let voiceChannel = client.channels.cache.get(msg.member!.voice.channelID!) as VoiceChannel | undefined
             if (voiceChannel === undefined)
@@ -103,7 +112,7 @@ export abstract class CivBot {
 
             let voicePlayers = useVoice ? voiceChannel!.members.size : 0
 
-            let draftResult = draft(voicePlayers + ai, numCivs, useLekmod, disableVanilla)
+            let draftResult = draft(voicePlayers + ai, numCivs, civGroups)
             let currentEntry = 0;
             let response = ""
             if (useVoice) 
