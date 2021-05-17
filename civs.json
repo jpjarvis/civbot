@@ -1,7 +1,7 @@
 {
     "civs": 
     {
-        "vanilla": [
+        "civ5-vanilla": [
             "America",
             "Arabia",
             "Assyria",
@@ -100,6 +100,77 @@
             "Tonga",
             "The Maori",
             "New Zealand"
+        ],
+
+        "civ6-vanilla": [
+            "America",
+            "Arabia",
+            "The Aztecs",
+            "Brazil",
+            "China",
+            "Egypt",
+            "England (Victoria)",
+            "France (Catherine de Medici)",
+            "Germany",
+            "Greece (Gorgo)",
+            "Greece (Pericles)",
+            "India (Gandhi)",
+            "Japan",
+            "Kongo",
+            "Norway",
+            "Rome",
+            "Russia",
+            "Scythia",
+            "Spain",
+            "Sumeria"
+        ],
+
+        "civ6-rnf": [
+            "The Cree",
+            "The Dutch",
+            "Georgia",
+            "Korea",
+            "India (Chandragupta)",
+            "The Mapuche",
+            "Mongolia (Genghis Khan)",
+            "Scotland",
+            "The Zulu"
+        ],
+
+        "civ6-gs": [
+            "Canada",
+            "England (Eleanor of Aquitaine)",
+            "France (Eleanor of Aquitaine)",
+            "Hungary",
+            "The Inca",
+            "Mali",
+            "The Maori",
+            "The Ottomans",
+            "Phoenicia",
+            "Sweden"
+        ],
+
+        "civ6-frontier": [
+            "Babylon",
+            "Byzantium",
+            "China (Kublai Khan)",
+            "Ethiopia",
+            "The Gauls",
+            "Gran Colombia",
+            "The Maya",
+            "Mongolia (Kublai Khan)",
+            "Portugal",
+            "Vietnam"
+        ],
+        
+        "civ6-extra": [
+            "Australia",
+            "Indonesia",
+            "Khmer",
+            "Macedon",
+            "Nubia",
+            "Persia",
+            "Poland"
         ]
     }
 }

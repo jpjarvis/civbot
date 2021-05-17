@@ -92,15 +92,31 @@ export abstract class CivBot {
             useVoice = !args.includes("novoice")
 
             let civGroups = new Set<string>()
-            if (args.includes("lekmod-only")) {
+            if (args.includes("civ6")) {
+                civGroups.add("civ6-vanilla")
+                let all = args.includes("all")
+                if (all || args.includes("r&f")) {
+                    civGroups.add("civ6-rnf")
+                }
+                if (all || args.includes("gs")) {
+                    civGroups.add("civ6-gs")
+                }
+                if (all || args.includes("frontier")) {
+                    civGroups.add("civ6-frontier")
+                }
+                if (all || args.includes("extra")) {
+                    civGroups.add("civ6-extra")
+                }
+            }
+            else if (args.includes("lekmod-only")) {
                 civGroups.add("lekmod")
             }
             else if (args.includes("lekmod")) {
-                civGroups.add("vanilla")
+                civGroups.add("civ5-vanilla")
                 civGroups.add("lekmod")
             }
             else {
-                civGroups.add("vanilla")
+                civGroups.add("civ5-vanilla")
             }
 
             let voiceChannel = client.channels.cache.get(msg.member!.voice.channelID!) as VoiceChannel | undefined
