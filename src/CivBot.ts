@@ -57,7 +57,7 @@ export abstract class CivBot {
         }
 
         // civbot draft
-        if (args[1] === 'draft') {
+        else if (args[1] === 'draft') {
             let ai = 0
             let numCivs = 3
             let useVoice = true
@@ -151,7 +151,7 @@ export abstract class CivBot {
             })
         }
 
-        if (args[1] === 'civs') {
+        else if (args[1] === 'civs') {
             if (args[2] === 'add') {
                 let civsToAdd = args.slice(3)
                 if (civsToAdd.length === 0) {
@@ -171,8 +171,7 @@ export abstract class CivBot {
                         console.log(err)
                     })
             }
-
-            if (args[2] === 'clear') {
+            else if (args[2] === 'clear') {
                 UserData.load(serverId)
                     .then((userData: UserData) => {
                         userData.customCivs = []
@@ -186,8 +185,7 @@ export abstract class CivBot {
                         console.log(err)
                     })
             }
-
-            if (args[2] === 'show') {
+            else if (args[2] === 'show') {
                 UserData.load(serverId)
                     .then((userData: UserData) => {
                         if (userData.customCivs.length === 0) {
