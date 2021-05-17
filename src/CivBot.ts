@@ -195,7 +195,7 @@ export abstract class CivBot {
                             msg.channel.send(Messages.NoCustomCivs)
                             return
                         }
-                        msg.channel.send(`\`\`\`${userData.customCivs.join("\n")}\`\`\``)
+                        msg.channel.send(`\`\`\`\n${userData.customCivs.join("\n")}\`\`\``)
                     })
                     .catch((err) => {
                         msg.channel.send(Messages.GenericError)
