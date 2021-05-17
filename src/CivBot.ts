@@ -196,6 +196,10 @@ export abstract class CivBot {
                         }
                         msg.channel.send(`\`\`\`${userData.customCivs.join("\n")}\`\`\``)
                     })
+                    .catch((err) => {
+                        msg.channel.send(Messages.GenericError)
+                        console.log(err)
+                    })
             }
 
         }
