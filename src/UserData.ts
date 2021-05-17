@@ -1,7 +1,4 @@
-import { rejects } from 'assert/strict'
 import * as fs from 'fs'
-import { resolve } from 'path/posix'
-import { promisify } from 'util'
 import * as path from 'path'
 
 function getUserDataPath(serverId: string) {
