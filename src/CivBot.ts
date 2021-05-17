@@ -37,8 +37,9 @@ export abstract class CivBot {
     @Command("civbot")
     onCommand(msg: CommandMessage, client: Client): void {
         let args = msg.commandContent.split(" ")
+        let serverId = msg.guild!.id
 
-        client.guilds.fetch(msg.guild!.id).then((guild: Guild) => {
+        client.guilds.fetch(serverId).then((guild: Guild) => {
             let bot = guild.member(client.user!)
             if (bot?.displayName === "Wesley") {
                 msg.channel.send(Messages.Wowser)
@@ -121,7 +122,7 @@ export abstract class CivBot {
                 if (skip) {
                     return []
                 }
-                const userData = await UserData.load(msg.guild!.id)
+                const userData = await UserData.load(serverId)
                 return userData.customCivs
             })(!args.includes("custom"))
 
@@ -157,10 +158,10 @@ export abstract class CivBot {
                     msg.channel.send(Messages.BadlyFormed)
                     return
                 }
-                UserData.load(msg.guild!.id)
+                UserData.load(serverId)
                     .then((userData: UserData) => {
                         userData.customCivs = userData.customCivs.concat(civsToAdd)
-                        UserData.save(msg.guild!.id, userData)
+                        UserData.save(serverId, userData)
                     })
                     .then(() => {
                         msg.channel.send(Messages.AddedCustomCivs)
@@ -168,6 +169,32 @@ export abstract class CivBot {
                     .catch((err) => {
                         msg.channel.send(Messages.GenericError)
                         console.log(err)
+                    })
+            }
+
+            if (args[2] === 'clear') {
+                UserData.load(serverId)
+                    .then((userData: UserData) => {
+                        userData.customCivs = []
+                        UserData.save(serverId, userData)
+                    })
+                    .then(() => {
+                        msg.channel.send(Messages.ClearedCustomCivs)
+                    })
+                    .catch((err) => {
+                        msg.channel.send(Messages.GenericError)
+                        console.log(err)
+                    })
+            }
+
+            if (args[2] === 'show') {
+                UserData.load(serverId)
+                    .then((userData: UserData) => {
+                        if (userData.customCivs.length === 0) {
+                            msg.channel.send(Messages.NoCustomCivs)
+                            return
+                        }
+                        msg.channel.send(`\`\`\`${userData.customCivs.join("\n")}\`\`\``)
                     })
             }
 
