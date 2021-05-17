@@ -127,6 +127,9 @@ export abstract class CivBot {
             })(!args.includes("custom"))
 
             loadCustomCivs.then((customCivs: Array<string>) => {
+                if (customCivs.length === 0 && args.includes("custom")) {
+                    msg.channel.send(Messages.NoCustomCivs)
+                }
                 let draftResult = draft(voicePlayers + ai, numCivs, civGroups, customCivs)
                 let currentEntry = 0;
                 let response = ""
