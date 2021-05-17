@@ -1,5 +1,5 @@
-const fs = require('fs')
-const shuffle = require('shuffle-array')
+import * as fs from 'fs'
+import * as shuffle from 'shuffle-array'
 
 export type Draft = Array<PlayerDraft>
 export type PlayerDraft = Array<string>
@@ -12,7 +12,7 @@ class CivData {
 }
 
 function getCivsJson(): CivData {
-    return JSON.parse(fs.readFileSync("civs.json"))
+    return JSON.parse(fs.readFileSync("civs.json", "utf-8"))
 }
 
 function getCivs(group: string): Array<string> {
