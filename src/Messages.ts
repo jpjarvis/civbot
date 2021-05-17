@@ -14,5 +14,8 @@ export default class Messages {
     public static get DraftFailed(): string { return "Draft failed - no players found. Either join voice or set some AI." }
     public static get BadlyFormed(): string { return "Command is badly formed - see `civbot help` for guidance" }
     public static get NotInVoice(): string { return "You're not in voice, so I'll set `novoice` on for this draft." }
+    public static get AddedCustomCivs(): string { return "Custom civs added. Add the `custom` flag to your draft to use them." }
+    public static get ClearedCustomCivs(): string { return "All custom civs deleted." }
+    public static get GenericError(): string { return "Uh oh, something's got wrong. It's probably Jack's fault." }
     public static get Wowser(): string { return "Wowser!" }
 }

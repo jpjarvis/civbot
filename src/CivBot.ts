@@ -2,6 +2,7 @@ import { Guild, VoiceChannel } from "discord.js"
 import { Client, Command, CommandMessage, Discord, On } from "@typeit/discord"
 import { draft, PlayerDraft } from "./Draft.js"
 import Messages from "./Messages.js"
+import UserData from "./UserData.js"
 
 function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft): string {
     let response = `${playerName} `.padEnd(20, " ")
@@ -116,27 +117,60 @@ export abstract class CivBot {
 
             let voicePlayers = useVoice ? voiceChannel!.members.size : 0
 
-            let draftResult = draft(voicePlayers + ai, numCivs, civGroups)
-            let currentEntry = 0;
-            let response = ""
-            if (useVoice) {
-                voiceChannel!.members.forEach(function (member) {
-                    response += getPlayerDraftString(member.user.username, draftResult[currentEntry])
+            let loadCustomCivs: Promise<Array<string>> = (async (skip: boolean) => {
+                if (skip) {
+                    return []
+                }
+                const userData = await UserData.load(msg.guild!.id)
+                return userData.customCivs
+            })(!args.includes("custom"))
+
+            loadCustomCivs.then((customCivs: Array<string>) => {
+                let draftResult = draft(voicePlayers + ai, numCivs, civGroups, customCivs)
+                let currentEntry = 0;
+                let response = ""
+                if (useVoice) {
+                    voiceChannel!.members.forEach(function (member) {
+                        response += getPlayerDraftString(member.user.username, draftResult[currentEntry])
+                        currentEntry++
+                    })
+                }
+
+                for (let i = 0; i < ai; i++) {
+                    response += getPlayerDraftString(`AI ${i + 1}`, draftResult[currentEntry])
                     currentEntry++
-                })
+                }
+
+                if (response === "") {
+                    msg.channel.send(Messages.DraftFailed)
+                }
+                else {
+                    msg.channel.send("\`\`\`" + response + "\`\`\`")
+                }
+            })
+        }
+
+        if (args[1] === 'civs') {
+            if (args[2] === 'add') {
+                let civsToAdd = args.slice(3)
+                if (civsToAdd.length === 0) {
+                    msg.channel.send(Messages.BadlyFormed)
+                    return
+                }
+                UserData.load(msg.guild!.id)
+                    .then((userData: UserData) => {
+                        userData.customCivs = userData.customCivs.concat(civsToAdd)
+                        UserData.save(msg.guild!.id, userData)
+                    })
+                    .then(() => {
+                        msg.channel.send(Messages.AddedCustomCivs)
+                    })
+                    .catch((err) => {
+                        msg.channel.send(Messages.GenericError)
+                        console.log(err)
+                    })
             }
 
-            for (let i = 0; i < ai; i++) {
-                response += getPlayerDraftString(`AI ${i + 1}`, draftResult[currentEntry])
-                currentEntry++
-            }
-
-            if (response === "") {
-                msg.channel.send(Messages.DraftFailed)
-            }
-            else {
-                msg.channel.send("\`\`\`" + response + "\`\`\`")
-            }
         }
     }
 }

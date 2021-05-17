@@ -19,10 +19,11 @@ function getCivs(group: string): Array<string> {
     return getCivsJson().civs[group]
 }
 
-export function draft(numberOfPlayers: number, civsPerPlayer: number, civGroups: Set<string>): Draft {
+export function draft(numberOfPlayers: number, civsPerPlayer: number, civGroups: Set<string>, customCivs: Array<string>): Draft {
     let civs = Array.from(civGroups)
         .map((group: string) => getCivs(group))
         .reduce((previous, current) => previous.concat(current))
+        .concat(customCivs)
 
     shuffle(civs)
     let draft: Draft = []
