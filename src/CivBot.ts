@@ -1,4 +1,4 @@
-import { Client, Command, CommandMessage, Discord, On } from "@typeit/discord"
+import { ArgsOf, Client, Discord, On } from "@typeit/discord"
 import Messages from "./Messages.js"
 import UserData from "./UserData.js"
 import { CivGroup } from "./CivGroups.js"
@@ -84,13 +84,17 @@ export abstract class CivBot {
         console.log("CivBot is alive!")
     }
 
-    @Command("civbot")
-    async onCommand(msg: CommandMessage, client: Client): Promise<void> {
-        let args = msg.commandContent.split(" ")
+    @On("messageCreate")
+    async onMessageCreate([msg]: ArgsOf<"messageCreate">, client: Client): Promise<void> {
+        if (!msg.content.startsWith("civbot")) {
+            return
+        }
+
+        let args = msg.content.split(" ")
         let serverId = msg.guild!.id
 
         const guild = await client.guilds.fetch(serverId)
-        let bot = guild.member(client.user!)
+        let bot = await guild.members.fetch(client.user!)
         if (bot?.displayName === "Wesley") {
             msg.channel.send(Messages.Wowser)
         }
