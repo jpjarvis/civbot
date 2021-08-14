@@ -1,16 +1,18 @@
-import { Guild, VoiceChannel } from "discord.js"
+import { Guild, Message, VoiceChannel } from "discord.js"
 import { Client, Command, CommandMessage, Discord, On } from "@typeit/discord"
 import { draft, PlayerDraft } from "./Draft.js"
 import Messages from "./Messages.js"
 import UserData from "./UserData.js"
 
-function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft): string {
-    let response = `${playerName} `.padEnd(20, " ")
-    for (let j = 0; j < playerDraft.length - 1; j++) {
-        response += `${playerDraft[j]} / `
-    }
-    response += `${playerDraft[playerDraft.length - 1]}\n`
-    return response
+type Civ5CivGroup = "civ5-vanilla" | "lekmod"
+type Civ6CivGroup = "civ6-vanilla" | "civ6-rnf" | "civ6-gs" | "civ6-frontier" | "civ6-extra"
+type CivGroup = Civ5CivGroup | Civ6CivGroup | "custom"
+
+interface DraftArguments {
+    numberOfAi: number,
+    numberOfCivs: number,
+    noVoice: boolean,
+    civGroups: Set<CivGroup>
 }
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
@@ -25,6 +27,73 @@ function extractArgValue(args: Array<string>, argName: string): number | undefin
 
         return result
     }
+}
+
+function parseDraftArgs(args: string[]): {success: true, args: DraftArguments} | {success: false} {
+    let ai = 0
+    let numCivs = 3
+    let noVoice = false
+    let civGroups = new Set<CivGroup>()
+    if (args.includes("ai")) {
+        let aiArgValue = extractArgValue(args, "ai")
+        if (aiArgValue === undefined) {
+            return {success: false}
+        }
+        ai = aiArgValue
+    }
+
+    if (args.includes("civs")) {
+        let numCivsArgValue = extractArgValue(args, "civs")
+        if (numCivsArgValue === undefined) {
+            return {success: false}
+        }
+        numCivs = numCivsArgValue
+    }
+
+    noVoice = args.includes("novoice")
+
+    if (args.includes("civ6")) {
+        civGroups.add("civ6-vanilla")
+        let all = args.includes("all")
+        if (all || args.includes("r&f")) {
+            civGroups.add("civ6-rnf")
+        }
+        if (all || args.includes("gs")) {
+            civGroups.add("civ6-gs")
+        }
+        if (all || args.includes("frontier")) {
+            civGroups.add("civ6-frontier")
+        }
+        if (all || args.includes("extra")) {
+            civGroups.add("civ6-extra")
+        }
+    }
+    else if (args.includes("lekmod-only")) {
+        civGroups.add("lekmod")
+    }
+    else if (args.includes("lekmod")) {
+        civGroups.add("civ5-vanilla")
+        civGroups.add("lekmod")
+    }
+    else {
+        civGroups.add("civ5-vanilla")
+    }
+
+    return {success: true, args: {
+        numberOfAi: ai,
+        numberOfCivs: numCivs,
+        noVoice: noVoice,
+        civGroups: civGroups
+    }}
+}
+
+function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft): string {
+    let response = `${playerName} `.padEnd(20, " ")
+    for (let j = 0; j < playerDraft.length - 1; j++) {
+        response += `${playerDraft[j]} / `
+    }
+    response += `${playerDraft[playerDraft.length - 1]}\n`
+    return response
 }
 
 @Discord()
@@ -57,63 +126,18 @@ export abstract class CivBot {
 
         // civbot draft
         else if (args[1] === 'draft') {
-            let ai = 0
-            let numCivs = 3
-            let useVoice = true
-
-            if (args.includes("ai")) {
-                let aiArgValue = extractArgValue(args, "ai")
-                if (aiArgValue === undefined) {
-                    msg.channel.send(Messages.BadlyFormed)
-                    return
-                }
-                ai = aiArgValue
+            const parsedArgs = parseDraftArgs(args)
+            if (!parsedArgs.success) {
+                msg.channel.send(Messages.BadlyFormed)
+                return
             }
-
-            if (args.includes("civs")) {
-                let numCivsArgValue = extractArgValue(args, "civs")
-                if (numCivsArgValue === undefined) {
-                    msg.channel.send(Messages.BadlyFormed)
-                    return
-                }
-                numCivs = numCivsArgValue
-            }
-
-            useVoice = !args.includes("novoice")
-
-            let civGroups = new Set<string>()
-            if (args.includes("civ6")) {
-                civGroups.add("civ6-vanilla")
-                let all = args.includes("all")
-                if (all || args.includes("r&f")) {
-                    civGroups.add("civ6-rnf")
-                }
-                if (all || args.includes("gs")) {
-                    civGroups.add("civ6-gs")
-                }
-                if (all || args.includes("frontier")) {
-                    civGroups.add("civ6-frontier")
-                }
-                if (all || args.includes("extra")) {
-                    civGroups.add("civ6-extra")
-                }
-            }
-            else if (args.includes("lekmod-only")) {
-                civGroups.add("lekmod")
-            }
-            else if (args.includes("lekmod")) {
-                civGroups.add("civ5-vanilla")
-                civGroups.add("lekmod")
-            }
-            else {
-                civGroups.add("civ5-vanilla")
-            }
+            const { numberOfAi, numberOfCivs, noVoice, civGroups} = parsedArgs.args
 
             let voiceChannel = client.channels.cache.get(msg.member!.voice.channelID!) as VoiceChannel | undefined
-            if (voiceChannel === undefined) {
+            if (voiceChannel) {
                 msg.channel.send(Messages.NotInVoice)
-                useVoice = false
             }
+            const useVoice = voiceChannel && !noVoice
 
             let voicePlayers = useVoice ? voiceChannel!.members.size : 0
 
@@ -129,7 +153,7 @@ export abstract class CivBot {
                 if (customCivs.length === 0 && args.includes("custom")) {
                     msg.channel.send(Messages.NoCustomCivs)
                 }
-                let draftResult = draft(voicePlayers + ai, numCivs, civGroups, customCivs)
+                let draftResult = draft(voicePlayers + numberOfAi, numberOfCivs, civGroups, customCivs)
                 let currentEntry = 0;
                 let response = ""
                 if (useVoice) {
@@ -139,7 +163,7 @@ export abstract class CivBot {
                     })
                 }
 
-                for (let i = 0; i < ai; i++) {
+                for (let i = 0; i < numberOfAi; i++) {
                     response += getPlayerDraftString(`AI ${i + 1}`, draftResult[currentEntry])
                     currentEntry++
                 }
