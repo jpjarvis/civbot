@@ -35,16 +35,15 @@ export abstract class CivBot {
     }
 
     @Command("civbot")
-    onCommand(msg: CommandMessage, client: Client): void {
+    async onCommand(msg: CommandMessage, client: Client): Promise<void> {
         let args = msg.commandContent.split(" ")
         let serverId = msg.guild!.id
 
-        client.guilds.fetch(serverId).then((guild: Guild) => {
-            let bot = guild.member(client.user!)
-            if (bot?.displayName === "Wesley") {
-                msg.channel.send(Messages.Wowser)
-            }
-        })
+        const guild = await client.guilds.fetch(serverId)
+        let bot = guild.member(client.user!)
+        if (bot?.displayName === "Wesley") {
+            msg.channel.send(Messages.Wowser)
+        }
 
         // civbot
         if (args.length == 1) {
