@@ -1,12 +1,9 @@
-import { Guild, Message, VoiceChannel } from "discord.js"
+import { VoiceChannel } from "discord.js"
 import { Client, Command, CommandMessage, Discord, On } from "@typeit/discord"
 import { draft, PlayerDraft } from "./Draft.js"
 import Messages from "./Messages.js"
 import UserData from "./UserData.js"
-
-type Civ5CivGroup = "civ5-vanilla" | "lekmod"
-type Civ6CivGroup = "civ6-vanilla" | "civ6-rnf" | "civ6-gs" | "civ6-frontier" | "civ6-extra"
-type CivGroup = Civ5CivGroup | Civ6CivGroup | "custom"
+import { CivGroup } from "./CivGroups.js"
 
 interface DraftArguments {
     numberOfAi: number,
@@ -141,40 +138,27 @@ export abstract class CivBot {
 
             let voicePlayers = useVoice ? voiceChannel!.members.size : 0
 
-            let loadCustomCivs: Promise<Array<string>> = (async (skip: boolean) => {
-                if (skip) {
-                    return []
-                }
-                const userData = await UserData.load(serverId)
-                return userData.customCivs
-            })(!args.includes("custom"))
-
-            loadCustomCivs.then((customCivs: Array<string>) => {
-                if (customCivs.length === 0 && args.includes("custom")) {
-                    msg.channel.send(Messages.NoCustomCivs)
-                }
-                let draftResult = draft(voicePlayers + numberOfAi, numberOfCivs, civGroups, customCivs)
-                let currentEntry = 0;
-                let response = ""
-                if (useVoice) {
-                    voiceChannel!.members.forEach(function (member) {
-                        response += getPlayerDraftString(member.user.username, draftResult[currentEntry])
-                        currentEntry++
-                    })
-                }
-
-                for (let i = 0; i < numberOfAi; i++) {
-                    response += getPlayerDraftString(`AI ${i + 1}`, draftResult[currentEntry])
+            let draftResult = await draft(voicePlayers + numberOfAi, numberOfCivs, civGroups, serverId)
+            let currentEntry = 0;
+            let response = ""
+            if (useVoice) {
+                voiceChannel!.members.forEach(function (member) {
+                    response += getPlayerDraftString(member.user.username, draftResult[currentEntry])
                     currentEntry++
-                }
+                })
+            }
 
-                if (response === "") {
-                    msg.channel.send(Messages.DraftFailed)
-                }
-                else {
-                    msg.channel.send("\`\`\`" + response + "\`\`\`")
-                }
-            })
+            for (let i = 0; i < numberOfAi; i++) {
+                response += getPlayerDraftString(`AI ${i + 1}`, draftResult[currentEntry])
+                currentEntry++
+            }
+
+            if (response === "") {
+                msg.channel.send(Messages.DraftFailed)
+            }
+            else {
+                msg.channel.send("\`\`\`" + response + "\`\`\`")
+            }
         }
 
         else if (args[1] === 'civs') {

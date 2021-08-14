@@ -1,13 +1,14 @@
 import * as fs from 'fs'
 import * as shuffle from 'shuffle-array'
+import { Civ5CivGroup, Civ6CivGroup, CivGroup } from './CivGroups'
+import UserData from './UserData'
 
 export type Draft = Array<PlayerDraft>
 export type PlayerDraft = Array<string>
 
-class CivData {
-    civs!: {
-        vanilla: Array<string>
-        lekmod: Array<string>
+interface CivData {
+    civs: {
+        [group in Civ5CivGroup | Civ6CivGroup]: string[]
     }
 }
 
@@ -15,15 +16,23 @@ function getCivsJson(): CivData {
     return JSON.parse(fs.readFileSync("civs.json", "utf-8"))
 }
 
-function getCivs(group: string): Array<string> {
-    return getCivsJson().civs[group]
+async function getCivs(groups: Set<CivGroup>, serverId: string): Promise<string[]> {
+    const civsJson = getCivsJson()
+
+    const civs: string[] = Array.from(groups)
+        .map((civGroup) => civsJson.civs[civGroup])
+        .reduce((prev: string[], current: string[]) => current.concat(prev))
+
+    if (groups.has("custom")) {
+        const userData = await UserData.load(serverId)
+        civs.concat(userData.customCivs)
+    }
+
+    return civs
 }
 
-export function draft(numberOfPlayers: number, civsPerPlayer: number, civGroups: Set<string>, customCivs: Array<string>): Draft {
-    let civs = Array.from(civGroups)
-        .map((group: string) => getCivs(group))
-        .reduce((previous, current) => previous.concat(current))
-        .concat(customCivs)
+export async function draft(numberOfPlayers: number, civsPerPlayer: number, civGroups: Set<CivGroup>, serverId: string): Promise<Draft> {
+    const civs = await getCivs(civGroups, serverId)
 
     shuffle(civs)
     let draft: Draft = []
