@@ -1,16 +1,9 @@
-import { VoiceChannel } from "discord.js"
 import { Client, Command, CommandMessage, Discord, On } from "@typeit/discord"
-import { draft, PlayerDraft } from "./Draft.js"
 import Messages from "./Messages.js"
 import UserData from "./UserData.js"
 import { CivGroup } from "./CivGroups.js"
-
-interface DraftArguments {
-    numberOfAi: number,
-    numberOfCivs: number,
-    noVoice: boolean,
-    civGroups: Set<CivGroup>
-}
+import { getVoiceChannel } from "./DiscordUtils.js"
+import { DraftArguments, draftCommand } from "./DraftCommand.js"
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName)
@@ -84,15 +77,6 @@ function parseDraftArgs(args: string[]): {success: true, args: DraftArguments} |
     }}
 }
 
-function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft): string {
-    let response = `${playerName} `.padEnd(20, " ")
-    for (let j = 0; j < playerDraft.length - 1; j++) {
-        response += `${playerDraft[j]} / `
-    }
-    response += `${playerDraft[playerDraft.length - 1]}\n`
-    return response
-}
-
 @Discord()
 export abstract class CivBot {
     @On("ready")
@@ -128,37 +112,7 @@ export abstract class CivBot {
                 msg.channel.send(Messages.BadlyFormed)
                 return
             }
-            const { numberOfAi, numberOfCivs, noVoice, civGroups} = parsedArgs.args
-
-            let voiceChannel = client.channels.cache.get(msg.member!.voice.channelID!) as VoiceChannel | undefined
-            if (voiceChannel) {
-                msg.channel.send(Messages.NotInVoice)
-            }
-            const useVoice = voiceChannel && !noVoice
-
-            let voicePlayers = useVoice ? voiceChannel!.members.size : 0
-
-            let draftResult = await draft(voicePlayers + numberOfAi, numberOfCivs, civGroups, serverId)
-            let currentEntry = 0;
-            let response = ""
-            if (useVoice) {
-                voiceChannel!.members.forEach(function (member) {
-                    response += getPlayerDraftString(member.user.username, draftResult[currentEntry])
-                    currentEntry++
-                })
-            }
-
-            for (let i = 0; i < numberOfAi; i++) {
-                response += getPlayerDraftString(`AI ${i + 1}`, draftResult[currentEntry])
-                currentEntry++
-            }
-
-            if (response === "") {
-                msg.channel.send(Messages.DraftFailed)
-            }
-            else {
-                msg.channel.send("\`\`\`" + response + "\`\`\`")
-            }
+            await draftCommand(parsedArgs.args, await getVoiceChannel(client, msg.member!), serverId, (message) => msg.channel.send(message))
         }
 
         else if (args[1] === 'civs') {
