@@ -1,6 +1,6 @@
 import { Client, Intents } from "discord.js"
 import { handleMessage } from "./HandleMessage"
-import "reflect-metadata"
+import { handleSlashCommand } from "./HandleSlashCommand"
 var auth = require('../auth/auth.json')
 
 async function start() {
@@ -13,6 +13,12 @@ async function start() {
 
   client.once("ready", async () => {
     console.log("CivBot is alive!")
+  })
+
+  client.on("interactionCreate", async (interaction) => {
+    if (!interaction.isCommand()) return;
+
+    await handleSlashCommand(interaction, client)
   })
 
   client.on("messageCreate", async (message) => {
