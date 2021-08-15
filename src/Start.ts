@@ -1,6 +1,7 @@
 import { Client, Intents } from "discord.js"
 import { handleMessage } from "./HandleMessage"
 import { handleSlashCommand } from "./HandleSlashCommand"
+import { updateSlashCommands } from "./SlashCommands"
 var auth = require('../auth/auth.json')
 
 async function start() {
@@ -12,6 +13,9 @@ async function start() {
   })
 
   client.once("ready", async () => {
+    console.log("Updating slash commands...")
+    await updateSlashCommands(auth.token)
+    console.log("Done")
     console.log("CivBot is alive!")
   })
 

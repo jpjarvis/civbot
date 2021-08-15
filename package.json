@@ -5,8 +5,10 @@
     "main": "Start.js",
     "author": "Wesley Presley",
     "dependencies": {
+        "@types/node-fetch": "^2.5.12",
         "discord.io": "^2.5.3",
         "discord.js": "^13.1.0",
+        "fetch": "^1.1.0",
         "reflect-metadata": "^0.1.13",
         "shuffle-array": "^1.0.1",
         "tslib": "^2.2.0",
