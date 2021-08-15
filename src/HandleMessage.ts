@@ -3,7 +3,8 @@ import UserData from "./UserData.js"
 import { CivGroup } from "./CivGroups.js"
 import { getVoiceChannel } from "./DiscordUtils.js"
 import { DraftArguments, draftCommand } from "./DraftCommand.js"
-import { Client, CommandInteraction, Message } from "discord.js"
+import { Client, Message } from "discord.js"
+import { draft } from "./Draft.js"
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName)
@@ -19,17 +20,15 @@ function extractArgValue(args: Array<string>, argName: string): number | undefin
     }
 }
 
-function parseDraftArgs(args: string[]): {success: true, args: DraftArguments} | {success: false} {
-    let ai = 0
-    let numCivs = 3
-    let noVoice = false
-    let civGroups: CivGroup[] = []
+function parseDraftArgs(args: string[]): {success: true, args: Partial<DraftArguments>} | {success: false} {
+    let draftArgs: Partial<DraftArguments> = {}
+
     if (args.includes("ai")) {
         let aiArgValue = extractArgValue(args, "ai")
         if (aiArgValue === undefined) {
             return {success: false}
         }
-        ai = aiArgValue
+        draftArgs.numberOfAi = aiArgValue
     }
 
     if (args.includes("civs")) {
@@ -37,50 +36,44 @@ function parseDraftArgs(args: string[]): {success: true, args: DraftArguments} |
         if (numCivsArgValue === undefined) {
             return {success: false}
         }
-        numCivs = numCivsArgValue
+        draftArgs.numberOfCivs = numCivsArgValue
     }
 
-    noVoice = args.includes("novoice")
+    draftArgs.noVoice = args.includes("novoice")
 
+    const civGroupsSpecified: CivGroup[] = []
     if (args.includes("civ6")) {
-        civGroups.push("civ6-vanilla")
+        civGroupsSpecified.push("civ6-vanilla")
         let all = args.includes("all")
         if (all || args.includes("r&f")) {
-            civGroups.push("civ6-rnf")
+            civGroupsSpecified.push("civ6-rnf")
         }
         if (all || args.includes("gs")) {
-            civGroups.push("civ6-gs")
+            civGroupsSpecified.push("civ6-gs")
         }
         if (all || args.includes("frontier")) {
-            civGroups.push("civ6-frontier")
+            civGroupsSpecified.push("civ6-frontier")
         }
         if (all || args.includes("extra")) {
-            civGroups.push("civ6-extra")
+            civGroupsSpecified.push("civ6-extra")
         }
     }
     else if (args.includes("lekmod-only")) {
-        civGroups.push("lekmod")
+        civGroupsSpecified.push("lekmod")
     }
     else if (args.includes("lekmod")) {
-        civGroups.push("civ5-vanilla")
-        civGroups.push("lekmod")
+        civGroupsSpecified.push("civ5-vanilla")
+        civGroupsSpecified.push("lekmod")
     }
     else {
-        civGroups.push("civ5-vanilla")
+        civGroupsSpecified.push("civ5-vanilla")
     }
 
-    return {success: true, args: {
-        numberOfAi: ai,
-        numberOfCivs: numCivs,
-        noVoice: noVoice,
-        civGroups: civGroups
-    }}
-}
-
-class CivBot {
-    ready(): void {
-        console.log("CivBot is alive!")
+    if (civGroupsSpecified.length > 0) {
+        draftArgs.civGroups = civGroupsSpecified
     }
+
+    return {success: true, args: draftArgs}
 }
 
 export async function handleMessage(msg: Message, client: Client): Promise<void> {

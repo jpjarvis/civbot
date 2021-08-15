@@ -2,6 +2,7 @@ import { VoiceChannel } from "discord.js"
 import { CivGroup } from "./CivGroups"
 import { draft, PlayerDraft } from "./Draft"
 import Messages from "./Messages"
+import UserData from "./UserData"
 
 export interface DraftArguments {
     numberOfAi: number,
@@ -19,8 +20,13 @@ function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft): str
     return response
 }
 
-export async function draftCommand(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string, sendMessage: (message: string) => void): Promise<void> {
-    const { numberOfAi, numberOfCivs, noVoice, civGroups } = args
+export async function draftCommand(args: Partial<DraftArguments>, voiceChannel: VoiceChannel | undefined, serverId: string, sendMessage: (message: string) => void): Promise<void> {
+    const defaultArgs = (await UserData.load(serverId)).defaultDraftSettings
+
+    const numberOfAi = args.numberOfAi ?? 0
+    const numberOfCivs = args.numberOfCivs ?? 3
+    const noVoice = args.noVoice ?? false
+    const civGroups = args.civGroups ?? defaultArgs.civGroups ?? ["civ5-vanilla"]
 
     if (!voiceChannel) {
         sendMessage(Messages.NotInVoice)
@@ -48,6 +54,7 @@ export async function draftCommand(args: DraftArguments, voiceChannel: VoiceChan
         sendMessage(Messages.DraftFailed)
     }
     else {
+        sendMessage(`Drafting for ${civGroups.map(cg => `\`${cg}\``).join(", ")}`)
         sendMessage("\`\`\`" + response + "\`\`\`")
     }
 }

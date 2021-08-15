@@ -2,7 +2,7 @@ import { CommandInteraction, GuildMember, VoiceChannel } from "discord.js"
 import { CustomPromisify } from "util"
 import { CivGroup, stringToCivGroup } from "./CivGroups"
 import { getVoiceChannel } from "./DiscordUtils"
-import { draftCommand } from "./DraftCommand"
+import { DraftArguments, draftCommand } from "./DraftCommand"
 import Messages from "./Messages"
 import UserData from "./UserData"
 
@@ -35,12 +35,18 @@ function parseCivGroups(civGroupString: string): {success: true, civGroups: CivG
 }
 
 async function handleDraft(interaction: CommandInteraction) {
-    const ai = interaction.options.getInteger("ai") ?? 0
-    const civs = interaction.options.getInteger("civs") ?? 3
-    const noVoice = interaction.options.getBoolean("no-voice") ?? false
-    const civGroupString = interaction.options.getString("civ-groups")
+    const serverId = interaction.guildId
+    if (!serverId) {
+        interaction.reply(Messages.GenericError)
+        return
+    }
 
-    let civGroups: CivGroup[] = []
+    const ai = interaction.options.getInteger("ai") ?? undefined
+    const civs = interaction.options.getInteger("civs") ?? undefined
+    const noVoice = interaction.options.getBoolean("no-voice") ?? undefined
+    const civGroupString = interaction.options.getString("civ-groups") ?? undefined
+
+    let civGroups: CivGroup[] | undefined = undefined
     if (civGroupString) {
         let parseResult = parseCivGroups(civGroupString)
         if (parseResult.success) {
@@ -67,7 +73,7 @@ async function handleDraft(interaction: CommandInteraction) {
             civGroups: civGroups
         },
         voiceChannel,
-        "",
+        serverId,
         (message) => { response += message + "\n" })
 
     interaction.reply(response)
@@ -90,6 +96,31 @@ async function handleShowConfig(interaction: CommandInteraction) {
     interaction.reply(response)
 }
 
+async function handleEnableCivGroup(interaction: CommandInteraction) {
+    const serverId = interaction.guildId
+    if (!serverId) {
+        interaction.reply(Messages.GenericError)
+        return
+    }
+
+    const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!
+
+    const userData = await UserData.load(serverId)
+
+    if (!userData.defaultDraftSettings.civGroups) {
+        userData.defaultDraftSettings.civGroups = []
+    }
+
+    if (userData.defaultDraftSettings.civGroups.includes(civGroup)) {
+        interaction.reply(`\`${civGroup}\` is already being used.`)
+        return
+    }
+    userData.defaultDraftSettings.civGroups.push(civGroup)
+    interaction.reply(`\`${civGroup}\` will now be used in your drafts.`)
+
+    await UserData.save(serverId, userData)
+}
+
 export async function handleSlashCommand(interaction: CommandInteraction) {
     if (interaction.commandName === "draft") {
         await handleDraft(interaction)
@@ -98,6 +129,10 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
     if (interaction.commandName === "config") {
         if (interaction.options.getSubcommand() === "show") {
             handleShowConfig(interaction)
+        }
+
+        if (interaction.options.getSubcommand() === "use") {
+            handleEnableCivGroup(interaction)
         }
     }
 }

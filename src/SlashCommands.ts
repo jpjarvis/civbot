@@ -1,4 +1,5 @@
 import { ApplicationCommandData } from "discord.js"
+import { CivGroups } from "./CivGroups"
 
 const draftCommand: ApplicationCommandData = {
     name: "draft",
@@ -35,6 +36,25 @@ const configCommand: ApplicationCommandData = {
             type: "SUB_COMMAND",
             name: "show",
             description: "Show CivBot's current configuration"
+        },
+        {
+            type: "SUB_COMMAND",
+            name: "use",
+            description: "Add a civ group to your drafts",
+            options: [
+                {
+                    type: "STRING",
+                    name: "civ-group",
+                    description: "The civ group to add",
+                    required: true,
+                    choices: CivGroups.map(cg => {
+                        return {
+                            name: cg,
+                            value: cg
+                        }
+                    })
+                }
+            ]
         }
     ]
 }
