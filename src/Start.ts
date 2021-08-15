@@ -20,9 +20,9 @@ async function start() {
   })
 
   client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
+    if (!interaction.isCommand()) return
 
-    await handleSlashCommand(interaction, client)
+    await handleSlashCommand(interaction)
   })
 
   client.on("messageCreate", async (message) => {
