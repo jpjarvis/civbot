@@ -7,12 +7,15 @@ async function draft(
     novoice: boolean,
     interaction: CommandInteraction
 ) {
+    let response = ""
     await draftCommand({
         numberOfCivs: civs,
         numberOfAi: ai,
         noVoice: novoice,
         civGroups: new Set(["civ5-vanilla"])
-    }, undefined, "", (message) => { interaction.channel?.send(message) })
+    }, undefined, "", (message) => { response += message + "\n" })
+
+    interaction.reply(response)
 }
 
 export async function handleSlashCommand(command: CommandInteraction, client: Client) {
