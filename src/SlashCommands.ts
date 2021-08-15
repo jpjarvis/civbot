@@ -5,12 +5,12 @@ const draftCommand: ApplicationCommandData = {
     description: "Drafts a civ game for the players in your voice channel",
     options: [
         {
-            type: "NUMBER",
+            type: "INTEGER",
             name: "ai",
             description: "Number of extra AI players to add (Default is 0)"
         },
         {
-            type: "NUMBER",
+            type: "INTEGER",
             name: "civs",
             description: "Number of civs to draft for each player (Default is 3)"
         },
