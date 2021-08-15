@@ -1,5 +1,4 @@
 import { ApplicationCommandData } from "discord.js"
-import fetch from "node-fetch"
 
 const draftCommand: ApplicationCommandData = {
     name: "draft",
@@ -28,4 +27,16 @@ const draftCommand: ApplicationCommandData = {
     ]
 }
 
-export const Commands = [draftCommand]
+const configCommand: ApplicationCommandData = {
+    name: "config",
+    description: "Configure CivBot",
+    options: [
+        {
+            type: "SUB_COMMAND",
+            name: "show",
+            description: "Show CivBot's current configuration"
+        }
+    ]
+}
+
+export const Commands = [draftCommand, configCommand]

@@ -1,7 +1,10 @@
 import { CommandInteraction, GuildMember, VoiceChannel } from "discord.js"
+import { CustomPromisify } from "util"
 import { CivGroup, stringToCivGroup } from "./CivGroups"
 import { getVoiceChannel } from "./DiscordUtils"
 import { draftCommand } from "./DraftCommand"
+import Messages from "./Messages"
+import UserData from "./UserData"
 
 function parseCivGroups(civGroupString: string): {success: true, civGroups: CivGroup[]} | {success: false, invalidGroups: string[]} {
     const strings = civGroupString.split(" ")
@@ -61,7 +64,7 @@ async function handleDraft(interaction: CommandInteraction) {
             numberOfCivs: civs,
             numberOfAi: ai,
             noVoice: noVoice,
-            civGroups: new Set(civGroups)
+            civGroups: civGroups
         },
         voiceChannel,
         "",
@@ -70,8 +73,31 @@ async function handleDraft(interaction: CommandInteraction) {
     interaction.reply(response)
 }
 
+async function handleShowConfig(interaction: CommandInteraction) {
+    const serverId = interaction.guildId
+    if (!serverId) {
+        interaction.reply(Messages.GenericError)
+        return
+    }
+
+    const userData = await UserData.load(serverId)
+
+    let response = ""
+    response += `Using civ groups: \`\`\`${userData.defaultDraftSettings?.civGroups?.join("\n")}\`\`\`` + "\n"
+    if (userData.customCivs) {
+        response += `Custom civs:\`\`\`\n${userData.customCivs.join("\n")}\`\`\``
+    }
+    interaction.reply(response)
+}
+
 export async function handleSlashCommand(interaction: CommandInteraction) {
     if (interaction.commandName === "draft") {
         await handleDraft(interaction)
+    }
+
+    if (interaction.commandName === "config") {
+        if (interaction.options.getSubcommand() === "show") {
+            handleShowConfig(interaction)
+        }
     }
 }

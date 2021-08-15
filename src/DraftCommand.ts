@@ -7,7 +7,7 @@ export interface DraftArguments {
     numberOfAi: number,
     numberOfCivs: number,
     noVoice: boolean,
-    civGroups: Set<CivGroup>
+    civGroups: CivGroup[]
 }
 
 function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft): string {
@@ -29,7 +29,7 @@ export async function draftCommand(args: DraftArguments, voiceChannel: VoiceChan
 
     let voicePlayers = useVoice ? voiceChannel!.members.size : 0
 
-    let draftResult = await draft(voicePlayers + numberOfAi, numberOfCivs, civGroups, serverId)
+    let draftResult = await draft(voicePlayers + numberOfAi, numberOfCivs, new Set(civGroups), serverId)
     let currentEntry = 0;
     let response = ""
     if (useVoice) {

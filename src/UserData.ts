@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { DraftArguments } from './DraftCommand'
 
 function getUserDataPath(serverId: string) {
     return `./userdata/${serverId}.json`
@@ -16,6 +17,11 @@ async function ensureExists(filePath: string): Promise<void> {
 }
 
 export default class UserData {
+    defaultDraftSettings: Partial<DraftArguments> = {
+        civGroups: [
+            "civ5-vanilla"
+        ]
+    }
     customCivs: Array<string> = []
 
     static async save(serverId: string, userData: UserData): Promise<void> {

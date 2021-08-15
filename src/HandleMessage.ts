@@ -23,7 +23,7 @@ function parseDraftArgs(args: string[]): {success: true, args: DraftArguments} |
     let ai = 0
     let numCivs = 3
     let noVoice = false
-    let civGroups = new Set<CivGroup>()
+    let civGroups: CivGroup[] = []
     if (args.includes("ai")) {
         let aiArgValue = extractArgValue(args, "ai")
         if (aiArgValue === undefined) {
@@ -43,30 +43,30 @@ function parseDraftArgs(args: string[]): {success: true, args: DraftArguments} |
     noVoice = args.includes("novoice")
 
     if (args.includes("civ6")) {
-        civGroups.add("civ6-vanilla")
+        civGroups.push("civ6-vanilla")
         let all = args.includes("all")
         if (all || args.includes("r&f")) {
-            civGroups.add("civ6-rnf")
+            civGroups.push("civ6-rnf")
         }
         if (all || args.includes("gs")) {
-            civGroups.add("civ6-gs")
+            civGroups.push("civ6-gs")
         }
         if (all || args.includes("frontier")) {
-            civGroups.add("civ6-frontier")
+            civGroups.push("civ6-frontier")
         }
         if (all || args.includes("extra")) {
-            civGroups.add("civ6-extra")
+            civGroups.push("civ6-extra")
         }
     }
     else if (args.includes("lekmod-only")) {
-        civGroups.add("lekmod")
+        civGroups.push("lekmod")
     }
     else if (args.includes("lekmod")) {
-        civGroups.add("civ5-vanilla")
-        civGroups.add("lekmod")
+        civGroups.push("civ5-vanilla")
+        civGroups.push("lekmod")
     }
     else {
-        civGroups.add("civ5-vanilla")
+        civGroups.push("civ5-vanilla")
     }
 
     return {success: true, args: {
