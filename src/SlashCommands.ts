@@ -18,6 +18,11 @@ const draftCommand = {
             type: 5,
             name: "no-voice",
             description: "Don't include the players from the voice channel (Default is false)"
+        },
+        {
+            type: 3,
+            name: "civ-groups",
+            description: "Space-separated list of civ groups to include"
         }
     ]
 }
@@ -28,5 +33,11 @@ export async function updateSlashCommands(token: string) {
     const appId = "601833566078369944"
     const guildId = "493399082757259284"
     const commandUrl = `https://discord.com/api/v9/applications/${appId}/guilds/${guildId}/commands`
-    fetch(commandUrl, {method: "PUT", body: JSON.stringify(Commands), headers: {Authorization: `Bot ${token}`}})
-  }
+
+    for (let command of Commands) {
+        const response = await fetch(commandUrl, {method: "POST", body: JSON.stringify(command), headers: {Authorization: `Bot ${token}`, "Content-Type": "application/json"}})
+        if (!response.ok) {
+            throw new Error(`Updating slash commands failed: ${await response.text()}`)
+        }
+    }
+}
