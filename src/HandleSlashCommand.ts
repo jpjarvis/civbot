@@ -1,8 +1,7 @@
 import { CommandInteraction, GuildMember, VoiceChannel } from "discord.js"
-import { CustomPromisify } from "util"
 import { CivGroup, stringToCivGroup } from "./CivGroups"
 import { getVoiceChannel } from "./DiscordUtils"
-import { DraftArguments, draftCommand } from "./DraftCommand"
+import { draftCommand } from "./DraftCommand"
 import Messages from "./Messages"
 import UserData from "./UserData"
 
@@ -121,18 +120,56 @@ async function handleEnableCivGroup(interaction: CommandInteraction) {
     await UserData.save(serverId, userData)
 }
 
+async function handleDisableCivGroup(interaction: CommandInteraction) {
+    const serverId = interaction.guildId
+    if (!serverId) {
+        interaction.reply(Messages.GenericError)
+        return
+    }
+
+    const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!
+
+    const userData = await UserData.load(serverId)
+
+    if (!userData.defaultDraftSettings.civGroups) {
+        userData.defaultDraftSettings.civGroups = []
+    }
+
+    const toRemoveIndex = userData.defaultDraftSettings.civGroups.indexOf(civGroup)
+    if (!userData.defaultDraftSettings.civGroups.includes(civGroup)) {
+        interaction.reply(`\`${civGroup}\` is not being used.`)
+        return
+    }
+    userData.defaultDraftSettings.civGroups.splice(toRemoveIndex, 1)
+    interaction.reply(`\`${civGroup}\` will no longer be used in your drafts.`)
+
+    await UserData.save(serverId, userData)
+}
+
 export async function handleSlashCommand(interaction: CommandInteraction) {
     if (interaction.commandName === "draft") {
         await handleDraft(interaction)
+        return
     }
 
     if (interaction.commandName === "config") {
         if (interaction.options.getSubcommand() === "show") {
             handleShowConfig(interaction)
+            return
         }
 
-        if (interaction.options.getSubcommand() === "use") {
-            handleEnableCivGroup(interaction)
+        if (interaction.options.getSubcommandGroup() === "civ-groups") {
+            const subcommand = interaction.options.data[0].options![0].name
+
+            if (subcommand === "enable") {
+                handleEnableCivGroup(interaction)
+                return
+            }
+            
+            if (subcommand === "disable") {
+                handleDisableCivGroup(interaction)
+                return
+            }
         }
     }
 }

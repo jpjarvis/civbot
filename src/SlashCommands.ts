@@ -38,24 +38,51 @@ const configCommand: ApplicationCommandData = {
             description: "Show CivBot's current configuration"
         },
         {
-            type: "SUB_COMMAND",
-            name: "use",
-            description: "Add a civ group to your drafts",
+            type: "SUB_COMMAND_GROUP",
+            name: "civ-groups",
+            description: "Manage civ groups",
             options: [
                 {
-                    type: "STRING",
-                    name: "civ-group",
-                    description: "The civ group to add",
-                    required: true,
-                    choices: CivGroups.map(cg => {
-                        return {
-                            name: cg,
-                            value: cg
+                    type: "SUB_COMMAND",
+                    name: "enable",
+                    description: "Add a civ group to your drafts",
+                    options: [
+                        {
+                            type: "STRING",
+                            name: "civ-group",
+                            description: "The civ group to add",
+                            required: true,
+                            choices: CivGroups.map(cg => {
+                                return {
+                                    name: cg,
+                                    value: cg
+                                }
+                            })
                         }
-                    })
+                    ]
+                },
+                {
+                    type: "SUB_COMMAND",
+                    name: "disable",
+                    description: "Remove a civ group to your drafts",
+                    options: [
+                        {
+                            type: "STRING",
+                            name: "civ-group",
+                            description: "The civ group to remove",
+                            required: true,
+                            choices: CivGroups.map(cg => {
+                                return {
+                                    name: cg,
+                                    value: cg
+                                }
+                            })
+                        }
+                    ]
                 }
             ]
         }
+        
     ]
 }
 
