@@ -23,9 +23,8 @@ civbot civs [COMMAND]
         Manages the list of custom civs to be used when the 'custom' flag is passed to 'civbot draft'. 
         This list is global for your Discord server, and the custom civs can be used in both Civ 5 and Civ 6 drafts.
         Subcommands:
-            - add [CIVS...] : Adds civs to the custom civs list. [CIVS...] is a space-separated list of names.
-                eg. civbot civs add Nopon HighEntia
-                (Currently civ names with spaces are not supported)
+            - add [CIVS...] : Adds civs to the custom civs list. [CIVS...] is a comma-separated list of names.
+                eg. civbot civs add Nopon, High Entia
             - clear : Deletes all of the custom civs.
             - show : Shows the custom civs list.
         \`\`\``

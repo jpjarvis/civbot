@@ -116,23 +116,16 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
 
     else if (args[1] === 'civs') {
         if (args[2] === 'add') {
-            let civsToAdd = args.slice(3)
+            const civsToAdd = args.slice(3).join(" ").split(",").map(c => c.trim())
             if (civsToAdd.length === 0) {
                 msg.channel.send(Messages.BadlyFormed)
                 return
             }
-            UserData.load(serverId)
-                .then((userData: UserData) => {
-                    userData.customCivs = userData.customCivs.concat(civsToAdd)
-                    UserData.save(serverId, userData)
-                })
-                .then(() => {
-                    msg.channel.send(Messages.AddedCustomCivs)
-                })
-                .catch((err) => {
-                    msg.channel.send(Messages.GenericError)
-                    console.log(err)
-                })
+
+            const userData = await UserData.load(serverId)
+            userData.customCivs = userData.customCivs.concat(civsToAdd)
+            await UserData.save(serverId, userData)
+            msg.channel.send(Messages.AddedCustomCivs)
         }
         else if (args[2] === 'clear') {
             UserData.load(serverId)
