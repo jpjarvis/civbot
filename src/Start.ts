@@ -1,7 +1,6 @@
-import { ApplicationCommandManager, Client, Intents } from "discord.js"
+import { Client, Intents } from "discord.js"
 import { handleMessage } from "./HandleMessage"
 import { handleSlashCommand } from "./HandleSlashCommand"
-import { Commands } from "./SlashCommands"
 var auth = require('../auth/auth.json')
 
 async function start() {
@@ -12,16 +11,7 @@ async function start() {
     ]
   })
 
-  const applicationCommandManager = new ApplicationCommandManager(client)
-
   client.once("ready", async () => {
-    console.log("Updating slash commands...")
-
-    for(let command of Commands) {
-      await applicationCommandManager.create(command, "493399082757259284")
-    }
-    
-    console.log("Done")
     console.log("CivBot is alive!")
   })
 
