@@ -100,23 +100,31 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
     }
 
     // civbot help
-    if (args[1] === 'help') {
+    if (args[1] === "help") {
         msg.channel.send(Messages.Help)
     }
 
     // civbot draft
-    else if (args[1] === 'draft') {
+    else if (args[1] === "draft") {
         const parsedArgs = parseDraftArgs(args)
         if (!parsedArgs.success) {
             msg.channel.send(Messages.BadlyFormed)
             return
         }
-        await draftCommand(parsedArgs.args, await getVoiceChannel(client, msg.member!), serverId, (message) => msg.channel.send(message))
+        await draftCommand(
+            parsedArgs.args,
+            await getVoiceChannel(client, msg.member!),
+            serverId,
+            (message) => msg.channel.send(message)
+        )
     }
-
-    else if (args[1] === 'civs') {
-        if (args[2] === 'add') {
-            const civsToAdd = args.slice(3).join(" ").split(",").map(c => c.trim())
+    else if (args[1] === "civs") {
+        if (args[2] === "add") {
+            const civsToAdd = args
+                .slice(3)
+                .join(" ")
+                .split(",")
+                .map((c) => c.trim())
             if (civsToAdd.length === 0) {
                 msg.channel.send(Messages.BadlyFormed)
                 return
@@ -127,33 +135,21 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
             await UserData.save(serverId, userData)
             msg.channel.send(Messages.AddedCustomCivs)
         }
-        else if (args[2] === 'clear') {
-            UserData.load(serverId)
-                .then((userData: UserData) => {
+        else if (args[2] === "clear") {
+            const userData = await UserData.load(serverId)
                     userData.customCivs = []
-                    UserData.save(serverId, userData)
-                })
-                .then(() => {
+            await UserData.save(serverId, userData)
                     msg.channel.send(Messages.ClearedCustomCivs)
-                })
-                .catch((err) => {
-                    msg.channel.send(Messages.GenericError)
-                    console.log(err)
-                })
         }
-        else if (args[2] === 'show') {
-            UserData.load(serverId)
-                .then((userData: UserData) => {
+        else if (args[2] === "show") {
+            const userData = await UserData.load(serverId)
                     if (userData.customCivs.length === 0) {
                         msg.channel.send(Messages.NoCustomCivs)
                         return
                     }
-                    msg.channel.send(`\`\`\`\n${userData.customCivs.join("\n")}\`\`\``)
-                })
-                .catch((err) => {
-                    msg.channel.send(Messages.GenericError)
-                    console.log(err)
-                })
+            msg.channel.send(
+                `\`\`\`\n${userData.customCivs.join("\n")}\`\`\``
+            )
         }
     }
 }
