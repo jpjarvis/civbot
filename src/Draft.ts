@@ -19,13 +19,16 @@ function getCivsJson(): CivData {
 async function getCivs(groups: Set<CivGroup>, serverId: string): Promise<string[]> {
     const civsJson = getCivsJson()
 
-    const civs: string[] = Array.from(groups)
+    const groupsArray = Array.from(groups)
+    groupsArray.splice(groupsArray.findIndex(x => x === "custom"))
+
+    let civs: string[] = groupsArray
         .map((civGroup) => civsJson.civs[civGroup])
         .reduce((prev: string[], current: string[]) => current.concat(prev))
 
     if (groups.has("custom")) {
         const userData = await UserData.load(serverId)
-        civs.concat(userData.customCivs)
+        civs = civs.concat(userData.customCivs)
     }
 
     return civs

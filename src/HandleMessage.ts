@@ -69,6 +69,10 @@ function parseDraftArgs(args: string[]): {success: true, args: Partial<DraftArgu
         civGroupsSpecified.push("civ5-vanilla")
     }
 
+    if (args.includes("custom")) {
+        civGroupsSpecified.push("custom")
+    }
+
     if (civGroupsSpecified.length > 0) {
         draftArgs.civGroups = civGroupsSpecified
     }
