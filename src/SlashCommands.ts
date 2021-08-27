@@ -81,6 +81,32 @@ const configCommand: ApplicationCommandData = {
                     ]
                 }
             ]
+        },
+        {
+            type: "SUB_COMMAND_GROUP",
+            name: "civs",
+            description: "Manage custom civs",
+            options: [
+                {
+                    type: "SUB_COMMAND",
+                    name: "add",
+                    description: "Add custom civs",
+                    options: [
+                        {
+                            type: "STRING",
+                            name: "civs",
+                            description: "Comma-separated list of civs to add",
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    type: "SUB_COMMAND",
+                    name: "clear",
+                    description: "Remove all custom civs",
+                    options: []
+                }
+            ]
         }
         
     ]
