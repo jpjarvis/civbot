@@ -36,7 +36,7 @@ function parseCivGroups(civGroupString: string): {success: true, civGroups: CivG
 async function handleDraft(interaction: CommandInteraction) {
     const serverId = interaction.guildId
     if (!serverId) {
-        interaction.reply(Messages.GenericError)
+        await interaction.reply(Messages.GenericError)
         return
     }
 
@@ -52,7 +52,7 @@ async function handleDraft(interaction: CommandInteraction) {
             civGroups = parseResult.civGroups
         }
         else {
-            interaction.reply(`Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.invalidGroups}`)
+            await interaction.reply(`Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.invalidGroups}`)
             return
         }
     }
@@ -75,7 +75,7 @@ async function handleDraft(interaction: CommandInteraction) {
         serverId,
         (message) => { response += message + "\n" })
 
-    interaction.reply(response)
+    await interaction.reply(response)
 }
 
 async function handleShowConfig(interaction: CommandInteraction) {
@@ -92,7 +92,7 @@ async function handleShowConfig(interaction: CommandInteraction) {
     if (userData.customCivs) {
         response += `Custom civs:\`\`\`\n${userData.customCivs.join("\n")}\`\`\``
     }
-    interaction.reply(response)
+    await interaction.reply(response)
 }
 
 async function handleEnableCivGroup(interaction: CommandInteraction) {
@@ -115,7 +115,7 @@ async function handleEnableCivGroup(interaction: CommandInteraction) {
         return
     }
     userData.defaultDraftSettings.civGroups.push(civGroup)
-    interaction.reply(`\`${civGroup}\` will now be used in your drafts.`)
+    await interaction.reply(`\`${civGroup}\` will now be used in your drafts.`)
 
     await UserData.save(serverId, userData)
 }
@@ -137,11 +137,11 @@ async function handleDisableCivGroup(interaction: CommandInteraction) {
 
     const toRemoveIndex = userData.defaultDraftSettings.civGroups.indexOf(civGroup)
     if (!userData.defaultDraftSettings.civGroups.includes(civGroup)) {
-        interaction.reply(`\`${civGroup}\` is not being used.`)
+        await interaction.reply(`\`${civGroup}\` is not being used.`)
         return
     }
     userData.defaultDraftSettings.civGroups.splice(toRemoveIndex, 1)
-    interaction.reply(`\`${civGroup}\` will no longer be used in your drafts.`)
+    await interaction.reply(`\`${civGroup}\` will no longer be used in your drafts.`)
 
     await UserData.save(serverId, userData)
 }
@@ -154,7 +154,7 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
 
     if (interaction.commandName === "config") {
         if (interaction.options.getSubcommand() === "show") {
-            handleShowConfig(interaction)
+            await handleShowConfig(interaction)
             return
         }
 
@@ -162,12 +162,12 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
             const subcommand = interaction.options.data[0].options![0].name
 
             if (subcommand === "enable") {
-                handleEnableCivGroup(interaction)
+                await handleEnableCivGroup(interaction)
                 return
             }
             
             if (subcommand === "disable") {
-                handleDisableCivGroup(interaction)
+                await handleDisableCivGroup(interaction)
                 return
             }
         }
