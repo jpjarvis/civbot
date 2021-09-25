@@ -4,6 +4,9 @@
     "description": "",
     "main": "Start.js",
     "author": "Wesley Presley",
+    "engines": {
+      "node": "^16.x"
+    },
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
         "discord.io": "^2.5.3",
