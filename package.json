@@ -15,13 +15,13 @@
         "reflect-metadata": "^0.1.13",
         "shuffle-array": "^1.0.1",
         "tslib": "^2.3.1",
-        "winston": "^3.1.0"
+        "winston": "^3.1.0",
+        "ts-node": "^10.2.1"
     },
     "devDependencies": {
         "@tsconfig/node14": "^1.0.0",
         "@types/node": "^15.14.9",
         "@types/shuffle-array": "^1.0.0",
-        "ts-node": "^10.2.1",
         "typescript": "^4.4.3"
     },
     "scripts": {
