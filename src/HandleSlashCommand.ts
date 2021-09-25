@@ -1,11 +1,10 @@
-import { CommandInteraction, GuildMember, VoiceChannel } from "discord.js"
-import { CivGroup, stringToCivGroup } from "./CivGroups"
-import { getVoiceChannel } from "./DiscordUtils"
-import { draftCommand } from "./DraftCommand"
-import Messages from "./Messages"
+import {CommandInteraction, GuildMember, VoiceChannel} from "discord.js"
+import {CivGroup, stringToCivGroup} from "./CivGroups"
+import {getVoiceChannel} from "./DiscordUtils"
+import {draftCommand} from "./DraftCommand"
 import UserData from "./UserData"
 
-function parseCivGroups(civGroupString: string): {success: true, civGroups: CivGroup[]} | {success: false, invalidGroups: string[]} {
+function parseCivGroups(civGroupString: string): { success: true, civGroups: CivGroup[] } | { success: false, invalidGroups: string[] } {
     const strings = civGroupString.split(" ")
     const civGroups: CivGroup[] = []
     const invalidGroups: string[] = []
@@ -14,8 +13,7 @@ function parseCivGroups(civGroupString: string): {success: true, civGroups: CivG
         const civGroup = stringToCivGroup(string)
         if (civGroup) {
             civGroups.push(civGroup)
-        }
-        else {
+        } else {
             invalidGroups.push(string)
         }
     });
@@ -26,7 +24,7 @@ function parseCivGroups(civGroupString: string): {success: true, civGroups: CivG
             invalidGroups: invalidGroups
         }
     }
-    
+
     return {
         success: true,
         civGroups: civGroups
@@ -34,11 +32,7 @@ function parseCivGroups(civGroupString: string): {success: true, civGroups: CivG
 }
 
 async function handleDraft(interaction: CommandInteraction) {
-    const serverId = interaction.guildId
-    if (!serverId) {
-        await interaction.reply(Messages.GenericError)
-        return
-    }
+    const serverId = interaction.guildId!
 
     const ai = interaction.options.getInteger("ai") ?? undefined
     const civs = interaction.options.getInteger("civs") ?? undefined
@@ -50,8 +44,7 @@ async function handleDraft(interaction: CommandInteraction) {
         let parseResult = parseCivGroups(civGroupString)
         if (parseResult.success) {
             civGroups = parseResult.civGroups
-        }
-        else {
+        } else {
             await interaction.reply(`Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.invalidGroups}`)
             return
         }
@@ -73,17 +66,15 @@ async function handleDraft(interaction: CommandInteraction) {
         },
         voiceChannel,
         serverId,
-        (message) => { response += message + "\n" })
+        (message) => {
+            response += message + "\n"
+        })
 
     await interaction.reply(response)
 }
 
 async function handleShowConfig(interaction: CommandInteraction) {
-    const serverId = interaction.guildId
-    if (!serverId) {
-        interaction.reply(Messages.GenericError)
-        return
-    }
+    const serverId = interaction.guildId!
 
     const userData = await UserData.load(serverId)
 
@@ -96,11 +87,7 @@ async function handleShowConfig(interaction: CommandInteraction) {
 }
 
 async function handleEnableCivGroup(interaction: CommandInteraction) {
-    const serverId = interaction.guildId
-    if (!serverId) {
-        interaction.reply(Messages.GenericError)
-        return
-    }
+    const serverId = interaction.guildId!
 
     const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!
 
@@ -111,7 +98,7 @@ async function handleEnableCivGroup(interaction: CommandInteraction) {
     }
 
     if (userData.defaultDraftSettings.civGroups.includes(civGroup)) {
-        interaction.reply(`\`${civGroup}\` is already being used.`)
+        await interaction.reply(`\`${civGroup}\` is already being used.`)
         return
     }
     userData.defaultDraftSettings.civGroups.push(civGroup)
@@ -121,11 +108,7 @@ async function handleEnableCivGroup(interaction: CommandInteraction) {
 }
 
 async function handleDisableCivGroup(interaction: CommandInteraction) {
-    const serverId = interaction.guildId
-    if (!serverId) {
-        interaction.reply(Messages.GenericError)
-        return
-    }
+    const serverId = interaction.guildId!
 
     const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!
 
@@ -144,6 +127,26 @@ async function handleDisableCivGroup(interaction: CommandInteraction) {
     await interaction.reply(`\`${civGroup}\` will no longer be used in your drafts.`)
 
     await UserData.save(serverId, userData)
+}
+
+async function handleAddCustomCivs(interaction: CommandInteraction) {
+    const serverId = interaction.guildId!
+
+    const userData = await UserData.load(serverId)
+
+    const civs = interaction.options.getString("civs")!.split(",").map(s => s.trim())
+    userData.customCivs = userData.customCivs.concat(civs)
+    await UserData.save(serverId, userData)
+    await interaction.reply(`Added ${civs.length} custom civs.`)
+}
+
+async function handleClearCustomCivs(interaction: CommandInteraction) {
+    const serverId = interaction.guildId!
+
+    const userData = await UserData.load(serverId)
+    userData.customCivs = []
+    await UserData.save(serverId, userData)
+    await interaction.reply("All custom civs deleted.")
 }
 
 export async function handleSlashCommand(interaction: CommandInteraction) {
@@ -165,11 +168,27 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
                 await handleEnableCivGroup(interaction)
                 return
             }
-            
+
             if (subcommand === "disable") {
                 await handleDisableCivGroup(interaction)
                 return
             }
         }
+
+        if (interaction.options.getSubcommandGroup() === "civs") {
+            const subcommand = interaction.options.data[0].options![0].name
+
+            if (subcommand === "add") {
+                await handleAddCustomCivs(interaction)
+                return
+            }
+
+            if (subcommand === "clear") {
+                await handleClearCustomCivs(interaction)
+                return
+            }
+        }
     }
+
+
 }
