@@ -1,7 +1,6 @@
 import {ApplicationCommandManager, Client, Intents} from "discord.js"
 import {Commands} from "./SlashCommands"
-
-const auth = require('../auth/auth.json');
+import {getToken} from "./Auth";
 
 async function updateSlashCommands() {
     const client = new Client({
@@ -24,7 +23,7 @@ async function updateSlashCommands() {
         client.destroy()
     })
 
-    await client.login(auth.token)
+    await client.login(getToken())
 }
 
 updateSlashCommands()

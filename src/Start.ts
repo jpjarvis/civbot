@@ -2,8 +2,7 @@ import {Client, Intents} from "discord.js"
 import {handleMessage} from "./HandleMessage"
 import {handleSlashCommand} from "./HandleSlashCommand"
 import Messages from "./Messages"
-
-const auth = require('../auth/auth.json');
+import {getToken} from "./Auth"
 
 async function start() {
     const client = new Client({
@@ -37,7 +36,7 @@ async function start() {
         }
     })
 
-    await client.login(auth.token)
+    await client.login(getToken())
 }
 
 start();
