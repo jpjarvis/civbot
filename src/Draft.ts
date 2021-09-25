@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as shuffle from 'shuffle-array'
 import { Civ5CivGroup, Civ6CivGroup, CivGroup } from './CivGroups'
-import UserData from './UserData'
+import {UserDataStoreInstance} from "./UserDataStore";
 
 export type Draft = Array<PlayerDraft>
 export type PlayerDraft = Array<string>
@@ -18,19 +18,16 @@ function getCivsJson(): CivData {
 
 async function getCivs(groups: Set<CivGroup>, serverId: string): Promise<string[]> {
     const civsJson = getCivsJson()
+    const userData = await UserDataStoreInstance.load(serverId)
     
-    let civs : string[] = []
-    
-    const groupsArray = Array.from(groups)
-    if (groups.has("custom")) {
-        groupsArray.splice(groupsArray.findIndex(x => x === "custom"))
-        const userData = await UserData.load(serverId)
-        civs = civs.concat(userData.customCivs)
-    }
-    
-    return civs.concat(groupsArray
-        .map((civGroup) => civsJson.civs[civGroup])
-        .reduce((prev: string[], current: string[]) => current.concat(prev)))
+    return Array.from(groups)
+        .map((civGroup) => {
+            if (civGroup === "custom") {
+                return userData.customCivs
+            }
+            return civsJson.civs[civGroup]
+        })
+        .reduce((prev: string[], current: string[]) => current.concat(prev))
 }
 
 export async function draft(numberOfPlayers: number, civsPerPlayer: number, civGroups: Set<CivGroup>, serverId: string): Promise<Draft> {

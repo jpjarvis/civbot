@@ -2,7 +2,7 @@ import {CommandInteraction, GuildMember, VoiceChannel} from "discord.js"
 import {CivGroup, stringToCivGroup} from "./CivGroups"
 import {getVoiceChannel} from "./DiscordUtils"
 import {draftCommand} from "./DraftCommand"
-import UserData from "./UserData"
+import {UserDataStoreInstance} from "./UserDataStore";
 
 function parseCivGroups(civGroupString: string): { success: true, civGroups: CivGroup[] } | { success: false, invalidGroups: string[] } {
     const strings = civGroupString.split(" ")
@@ -76,10 +76,10 @@ async function handleDraft(interaction: CommandInteraction) {
 async function handleShowConfig(interaction: CommandInteraction) {
     const serverId = interaction.guildId!
 
-    const userData = await UserData.load(serverId)
+    const userData = await UserDataStoreInstance.load(serverId)
 
     let response = ""
-    response += `Using civ groups: \`\`\`${userData.defaultDraftSettings?.civGroups?.join("\n")}\`\`\`` + "\n"
+    response += `Using civ groups: \`\`\`\n${userData.defaultDraftSettings?.civGroups?.join("\n")}\`\`\`` + "\n"
     if (userData.customCivs) {
         response += `Custom civs:\`\`\`\n${userData.customCivs.join("\n")}\`\`\``
     }
@@ -91,7 +91,7 @@ async function handleEnableCivGroup(interaction: CommandInteraction) {
 
     const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!
 
-    const userData = await UserData.load(serverId)
+    const userData = await UserDataStoreInstance.load(serverId)
 
     if (!userData.defaultDraftSettings.civGroups) {
         userData.defaultDraftSettings.civGroups = []
@@ -104,7 +104,7 @@ async function handleEnableCivGroup(interaction: CommandInteraction) {
     userData.defaultDraftSettings.civGroups.push(civGroup)
     await interaction.reply(`\`${civGroup}\` will now be used in your drafts.`)
 
-    await UserData.save(serverId, userData)
+    await UserDataStoreInstance.save(serverId, userData)
 }
 
 async function handleDisableCivGroup(interaction: CommandInteraction) {
@@ -112,7 +112,7 @@ async function handleDisableCivGroup(interaction: CommandInteraction) {
 
     const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!
 
-    const userData = await UserData.load(serverId)
+    const userData = await UserDataStoreInstance.load(serverId)
 
     if (!userData.defaultDraftSettings.civGroups) {
         userData.defaultDraftSettings.civGroups = []
@@ -126,26 +126,26 @@ async function handleDisableCivGroup(interaction: CommandInteraction) {
     userData.defaultDraftSettings.civGroups.splice(toRemoveIndex, 1)
     await interaction.reply(`\`${civGroup}\` will no longer be used in your drafts.`)
 
-    await UserData.save(serverId, userData)
+    await UserDataStoreInstance.save(serverId, userData)
 }
 
 async function handleAddCustomCivs(interaction: CommandInteraction) {
     const serverId = interaction.guildId!
 
-    const userData = await UserData.load(serverId)
+    const userData = await UserDataStoreInstance.load(serverId)
 
     const civs = interaction.options.getString("civs")!.split(",").map(s => s.trim())
     userData.customCivs = userData.customCivs.concat(civs)
-    await UserData.save(serverId, userData)
+    await UserDataStoreInstance.save(serverId, userData)
     await interaction.reply(`Added ${civs.length} custom civs.`)
 }
 
 async function handleClearCustomCivs(interaction: CommandInteraction) {
     const serverId = interaction.guildId!
 
-    const userData = await UserData.load(serverId)
+    const userData = await UserDataStoreInstance.load(serverId)
     userData.customCivs = []
-    await UserData.save(serverId, userData)
+    await UserDataStoreInstance.save(serverId, userData)
     await interaction.reply("All custom civs deleted.")
 }
 

@@ -2,7 +2,7 @@ import { VoiceChannel } from "discord.js"
 import { CivGroup } from "./CivGroups"
 import { draft, PlayerDraft } from "./Draft"
 import Messages from "./Messages"
-import UserData from "./UserData"
+import {UserDataStoreInstance} from "./UserDataStore";
 
 export interface DraftArguments {
     numberOfAi: number,
@@ -21,7 +21,7 @@ function getPlayerDraftString(playerName: string, playerDraft: PlayerDraft): str
 }
 
 export async function draftCommand(args: Partial<DraftArguments>, voiceChannel: VoiceChannel | undefined, serverId: string, sendMessage: (message: string) => void): Promise<void> {
-    const defaultArgs = (await UserData.load(serverId)).defaultDraftSettings
+    const defaultArgs = (await UserDataStoreInstance.load(serverId)).defaultDraftSettings
 
     const numberOfAi = args.numberOfAi ?? 0
     const numberOfCivs = args.numberOfCivs ?? 3

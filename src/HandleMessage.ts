@@ -1,10 +1,10 @@
 import Messages from "./Messages"
-import UserData from "./UserData"
 import { CivGroup } from "./CivGroups"
 import { getVoiceChannel } from "./DiscordUtils"
 import { DraftArguments, draftCommand } from "./DraftCommand"
 import { Client, Message } from "discord.js"
 import { draft } from "./Draft"
+import {UserDataStoreInstance} from "./UserDataStore";
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName)
@@ -130,19 +130,19 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
                 return
             }
 
-            const userData = await UserData.load(serverId)
+            const userData = await UserDataStoreInstance.load(serverId)
             userData.customCivs = userData.customCivs.concat(civsToAdd)
-            await UserData.save(serverId, userData)
+            await UserDataStoreInstance.save(serverId, userData)
             msg.channel.send(Messages.AddedCustomCivs)
         }
         else if (args[2] === "clear") {
-            const userData = await UserData.load(serverId)
+            const userData = await UserDataStoreInstance.load(serverId)
                     userData.customCivs = []
-            await UserData.save(serverId, userData)
+            await UserDataStoreInstance.save(serverId, userData)
                     msg.channel.send(Messages.ClearedCustomCivs)
         }
         else if (args[2] === "show") {
-            const userData = await UserData.load(serverId)
+            const userData = await UserDataStoreInstance.load(serverId)
                     if (userData.customCivs.length === 0) {
                         msg.channel.send(Messages.NoCustomCivs)
                         return
