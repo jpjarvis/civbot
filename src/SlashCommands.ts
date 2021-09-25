@@ -1,5 +1,5 @@
-import { ApplicationCommandData } from "discord.js"
-import { CivGroups } from "./CivGroups"
+import {ApplicationCommandData} from "discord.js";
+import {CivGroups} from "./CivGroups";
 
 const draftCommand: ApplicationCommandData = {
     name: "draft",
@@ -26,7 +26,7 @@ const draftCommand: ApplicationCommandData = {
             description: "Space-separated list of civ groups to include"
         }
     ]
-}
+};
 
 const configCommand: ApplicationCommandData = {
     name: "config",
@@ -56,7 +56,7 @@ const configCommand: ApplicationCommandData = {
                                 return {
                                     name: cg,
                                     value: cg
-                                }
+                                };
                             })
                         }
                     ]
@@ -75,7 +75,7 @@ const configCommand: ApplicationCommandData = {
                                 return {
                                     name: cg,
                                     value: cg
-                                }
+                                };
                             })
                         }
                     ]
@@ -108,8 +108,8 @@ const configCommand: ApplicationCommandData = {
                 }
             ]
         }
-        
-    ]
-}
 
-export const Commands = [draftCommand, configCommand]
+    ]
+};
+
+export const Commands = [draftCommand, configCommand];

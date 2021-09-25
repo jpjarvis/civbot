@@ -1,5 +1,5 @@
-import {ApplicationCommandManager, Client, Intents} from "discord.js"
-import {Commands} from "./SlashCommands"
+import {ApplicationCommandManager, Client, Intents} from "discord.js";
+import {Commands} from "./SlashCommands";
 import {getToken} from "./Auth";
 
 async function updateSlashCommands() {
@@ -8,22 +8,22 @@ async function updateSlashCommands() {
             Intents.FLAGS.GUILDS,
             Intents.FLAGS.GUILD_MESSAGES
         ]
-    })
+    });
 
     client.once("ready", async () => {
-        const applicationCommandManager = new ApplicationCommandManager(client)
+        const applicationCommandManager = new ApplicationCommandManager(client);
 
-        console.log("Updating slash commands...")
+        console.log("Updating slash commands...");
 
         for (let command of Commands) {
-            await applicationCommandManager.create(command)
+            await applicationCommandManager.create(command);
         }
 
-        console.log("Done")
-        client.destroy()
-    })
+        console.log("Done");
+        client.destroy();
+    });
 
-    await client.login(getToken())
+    await client.login(getToken());
 }
 
-updateSlashCommands()
+updateSlashCommands();
