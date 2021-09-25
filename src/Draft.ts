@@ -18,20 +18,19 @@ function getCivsJson(): CivData {
 
 async function getCivs(groups: Set<CivGroup>, serverId: string): Promise<string[]> {
     const civsJson = getCivsJson()
-
+    
+    let civs : string[] = []
+    
     const groupsArray = Array.from(groups)
-    groupsArray.splice(groupsArray.findIndex(x => x === "custom"))
-
-    let civs: string[] = groupsArray
-        .map((civGroup) => civsJson.civs[civGroup])
-        .reduce((prev: string[], current: string[]) => current.concat(prev))
-
     if (groups.has("custom")) {
+        groupsArray.splice(groupsArray.findIndex(x => x === "custom"))
         const userData = await UserData.load(serverId)
         civs = civs.concat(userData.customCivs)
     }
-
-    return civs
+    
+    return civs.concat(groupsArray
+        .map((civGroup) => civsJson.civs[civGroup])
+        .reduce((prev: string[], current: string[]) => current.concat(prev)))
 }
 
 export async function draft(numberOfPlayers: number, civsPerPlayer: number, civGroups: Set<CivGroup>, serverId: string): Promise<Draft> {
