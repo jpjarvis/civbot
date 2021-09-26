@@ -2,7 +2,7 @@ import {UserDataStore} from "./interface";
 import UserData from "../UserData";
 import {Connection} from "postgresql-client";
 
-const connectionString = process.env['DATABASE_URL']!;
+const connectionString = process.env['DATABASE_URL']! + "sslmode=require";
 
 export default class PostgresDataStore implements UserDataStore {
     async load(serverId: string): Promise<UserData> {
