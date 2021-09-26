@@ -25,7 +25,7 @@ export default class PostgresDataStore implements UserDataStore {
             return userData;
         }
         
-        const row = result.rows[0][0];
+        const row = result.rows[0]["data"];
         await client.end();
         return JSON.parse(row);
     }
