@@ -102,6 +102,19 @@ const configCommand: ApplicationCommandData = {
                 },
                 {
                     type: "SUB_COMMAND",
+                    name: "remove",
+                    description: "Remove custom civs",
+                    options: [
+                        {
+                            type: "STRING",
+                            name: "civs",
+                            description: "Comma-separated list of civs to remove",
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    type: "SUB_COMMAND",
                     name: "clear",
                     description: "Remove all custom civs",
                     options: []

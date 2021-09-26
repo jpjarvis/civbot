@@ -140,6 +140,27 @@ async function handleAddCustomCivs(interaction: CommandInteraction) {
     await interaction.reply(`Added ${civs.length} custom civs.`);
 }
 
+async function handleRemoveCustomCivs(interaction: CommandInteraction) {
+    const serverId = interaction.guildId!;
+
+    const userData = await UserDataStoreInstance.load(serverId);
+    const originalNumberOfCivs = userData.customCivs.length;
+
+    const civs = interaction.options.getString("civs")!.split(",").map(s => s.trim());
+    
+    const failedCivs = civs.filter(c => !userData.customCivs.includes(c));
+    userData.customCivs = userData.customCivs.filter(c => !civs.includes(c))
+    
+    await UserDataStoreInstance.save(serverId, userData);
+    
+    let message: string = "";
+    if (failedCivs.length > 0) {
+        message += `Civ(s) \`${failedCivs.join(", ")}\` not found.\n`;
+    }
+    message += `Removed ${originalNumberOfCivs - userData.customCivs.length} custom civ(s).`
+    await interaction.reply(message);
+}
+
 async function handleClearCustomCivs(interaction: CommandInteraction) {
     const serverId = interaction.guildId!;
 
@@ -183,6 +204,11 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
                 return;
             }
 
+            if (subcommand === "remove") {
+                await handleRemoveCustomCivs(interaction);
+                return;
+            }
+            
             if (subcommand === "clear") {
                 await handleClearCustomCivs(interaction);
                 return;
