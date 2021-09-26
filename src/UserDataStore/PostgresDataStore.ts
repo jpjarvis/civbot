@@ -1,56 +1,63 @@
 import {UserDataStore} from "./interface";
 import UserData from "../UserData";
-import {Connection} from "postgresql-client";
+import {Client} from "pg";
 
-const connectionString = process.env['DATABASE_URL']! + "?sslmode=require";
+const connectionString = process.env['DATABASE_URL']!;
 
 export default class PostgresDataStore implements UserDataStore {
     async load(serverId: string): Promise<UserData> {
-        const connection = new Connection(connectionString);
-        await connection.connect();
+        const client = new Client({
+            connectionString: connectionString,
+            ssl: {
+                rejectUnauthorized: false
+            }
+        });
+        await client.connect();
         
-        const result = await connection.query(
-            "select data from userdata where serverid = $1",
-        {params: [serverId]}
-        )
+        const result = await client.query("select data from userdata where serverid = $1", [serverId])
         
         if (!result.rows || result.rows.length == 0) {
             const userData = new UserData();
-            await connection.query(
+            await client.query(
                 "insert into userdata VALUES ($1, $2)",
-                {params: [serverId, JSON.stringify(userData)]}
+                [serverId, JSON.stringify(userData)]
             )
             return userData;
         }
         
         const row = result.rows[0][0];
-        await connection.close();
+        await client.end();
         return JSON.parse(row);
     }
 
     async save(serverId: string, userData: UserData): Promise<void> {
-        const connection = new Connection(connectionString);
-        await connection.connect();
+        const client = new Client({
+            connectionString: connectionString,
+            ssl: {
+                rejectUnauthorized: false
+            }
+        });
+        await client.connect();
 
-        const existingData = await connection.query(
+        const existingData = await client.query(
             "select data from userdata where serverid = $1",
-            {params: [serverId]}
+            [serverId]
         )
 
         if (!existingData.rows || existingData.rows.length == 0) {
-            await connection.query(
+            await client.query(
                 "insert into userdata VALUES ($1, $2)",
-                {params: [serverId, JSON.stringify(userData)]}
+                [serverId, JSON.stringify(userData)]
             )
         }
         else {
-            await connection.query(
+            await client.query(
                 "update userdata set data = $2 where serverId = $1",
-                {params: [serverId, JSON.stringify(userData)]}
+                [serverId, JSON.stringify(userData)]
             )
         }
         
-        await connection.close();
+        await client.end();
     }
 
 }

@@ -9,10 +9,11 @@
     },
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
+        "@types/pg": "^8.6.1",
         "discord.io": "^2.5.3",
         "discord.js": "^13.1.0",
         "fetch": "^1.1.0",
-        "postgresql-client": "^1.21.0",
+        "pg": "^8.7.1",
         "reflect-metadata": "^0.1.13",
         "shuffle-array": "^1.0.1",
         "ts-node": "^10.2.1",
