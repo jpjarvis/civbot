@@ -5,18 +5,19 @@
     "main": "Start.js",
     "author": "Wesley Presley",
     "engines": {
-      "node": "^16.x"
+        "node": "^16.x"
     },
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
         "discord.io": "^2.5.3",
         "discord.js": "^13.1.0",
         "fetch": "^1.1.0",
+        "postgresql-client": "^1.21.0",
         "reflect-metadata": "^0.1.13",
         "shuffle-array": "^1.0.1",
+        "ts-node": "^10.2.1",
         "tslib": "^2.3.1",
-        "winston": "^3.1.0",
-        "ts-node": "^10.2.1"
+        "winston": "^3.1.0"
     },
     "devDependencies": {
         "@tsconfig/node14": "^1.0.0",
