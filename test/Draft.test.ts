@@ -1,10 +1,13 @@
-﻿import {draft} from "../src/Draft";
+﻿import {DraftArguments, executeDraft} from "../src/Draft";
 
-test('draft should draft the correct number of civs for each player', () => {
-    let draftResult = draft(3, 3, ['civ1','civ2','civ3','civ4','civ5','civ6','civ7','civ8','civ9'])
-    expect(draftResult.length).toBe(3)
+test('draft should work', async () => {
+    const draftArgs: DraftArguments = {
+        numberOfAi: 3,
+        numberOfCivs: 3,
+        noVoice: true,
+        civGroups: ["civ5-vanilla"]
+    };
     
-    draftResult.forEach(playerDraft => {
-        expect(playerDraft.length).toBe(3)
-    })
+    const draftResult = await executeDraft(draftArgs, undefined, "")
+    expect(draftResult.success)
 })
