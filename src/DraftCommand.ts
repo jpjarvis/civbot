@@ -3,6 +3,7 @@ import {CivGroup} from "./CivGroups";
 import {draft, PlayerDraft} from "./Draft";
 import Messages from "./Messages";
 import {UserDataStoreInstance} from "./UserDataStore";
+import {CivsRepositoryInstance} from "./CivsRepository";
 
 export interface DraftArguments {
     numberOfAi: number,
@@ -35,7 +36,9 @@ export async function draftCommand(args: Partial<DraftArguments>, voiceChannel: 
 
     let voicePlayers = useVoice ? voiceChannel!.members.size : 0;
 
-    let draftResult = await draft(voicePlayers + numberOfAi, numberOfCivs, new Set(civGroups), serverId);
+    let civs = await CivsRepositoryInstance.getCivs(new Set(civGroups), serverId)
+    let draftResult = draft(voicePlayers + numberOfAi, numberOfCivs, civs)
+    
     let currentEntry = 0;
     let response = "";
     if (useVoice) {
