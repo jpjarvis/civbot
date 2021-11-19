@@ -34,8 +34,12 @@ civbot civs [COMMAND]
         return "Hi, I'm CivBot. Use me to draft civ games with `civbot draft`, it's all I'm good for. \nTo find out more about drafting games, try `civbot help`.";
     }
 
-    public static get DraftFailed(): string {
+    public static get NoPlayers(): string {
         return "Draft failed - no players found. Either join voice or set some AI.";
+    }
+
+    public static get NotEnoughCivs(): string {
+        return "Draft failed - not enough civs to assign to the players. Either add more civ groups to your draft or decrease the number of civs per player.";
     }
 
     public static get BadlyFormed(): string {
