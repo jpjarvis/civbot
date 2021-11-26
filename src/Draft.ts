@@ -1,27 +1,17 @@
-import * as shuffle from 'shuffle-array';
 import {CivGroup} from "./CivGroups";
 import {VoiceChannel} from "discord.js";
 import {CivsRepositoryInstance} from "./CivsRepository";
+import {Draft} from "./DraftTypes";
+import {assignCivs} from "./AssignCivs";
 
 type DraftError = "no-players" | "not-enough-civs"
 type DraftResult = {success: true, draft: Draft} | {success: false, error: DraftError}
-export type Draft = Map<string, string[]>
 
 export interface DraftArguments {
     numberOfAi: number,
     numberOfCivs: number,
     noVoice: boolean,
     civGroups: CivGroup[]
-}
-
-function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): Draft {
-    shuffle(civs);
-    let draft: Draft = new Map<string, string[]>();
-    for (let i = 0; i < players.length; i++) {
-        draft[players[i]] = civs.slice(i * civsPerPlayer, (i + 1) * civsPerPlayer);
-    }
-
-    return draft;
 }
 
 export async function executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string): Promise<DraftResult> {
