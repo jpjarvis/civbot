@@ -5,7 +5,7 @@ function generateArray(count: number): string[] {
 }
 
 describe('assignCivs', () => {
-    test('should draft the right number of civs for all players',() => {
+    it('should draft the right number of civs for all players',() => {
         const players = generateArray(3)
         const draft = assignCivs(players, 3, generateArray(50));
         
