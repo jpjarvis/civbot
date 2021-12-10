@@ -1,7 +1,7 @@
 import {CommandInteraction, GuildMember, VoiceChannel} from "discord.js";
 import {CivGroup, stringToCivGroup} from "./CivGroups";
 import {getVoiceChannel} from "./DiscordUtils";
-import {draftCommand} from "./DraftCommand";
+import {DraftCommand} from "./DraftCommand";
 import {UserDataStoreInstance} from "./UserDataStore";
 import {DraftExecutor} from "./Draft";
 import {CivsRepositoryInstance} from "./CivsRepository";
@@ -58,8 +58,8 @@ async function handleDraft(interaction: CommandInteraction) {
     if (member instanceof GuildMember) {
         voiceChannel = await getVoiceChannel(interaction.client, member);
     }
-
-    await draftCommand(
+    
+    await new DraftCommand(new DraftExecutor(CivsRepositoryInstance), UserDataStoreInstance).draft(
         {
             numberOfCivs: civs,
             numberOfAi: ai,
@@ -68,8 +68,6 @@ async function handleDraft(interaction: CommandInteraction) {
         },
         voiceChannel,
         serverId,
-        new DraftExecutor(CivsRepositoryInstance),
-        UserDataStoreInstance,
         (message) => {
             response += message + "\n";
         });

@@ -1,7 +1,7 @@
 import Messages from "./Messages";
 import {CivGroup} from "./CivGroups";
 import {getVoiceChannel} from "./DiscordUtils";
-import {draftCommand} from "./DraftCommand";
+import {DraftCommand} from "./DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStoreInstance} from "./UserDataStore";
 import {DraftArguments, DraftExecutor} from "./Draft";
@@ -109,12 +109,10 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
             msg.channel.send(Messages.BadlyFormed);
             return;
         }
-        await draftCommand(
+        await new DraftCommand(new DraftExecutor(CivsRepositoryInstance), UserDataStoreInstance).draft(
             parsedArgs.args,
             await getVoiceChannel(client, msg.member!),
             serverId,
-            new DraftExecutor(CivsRepositoryInstance),
-            UserDataStoreInstance,
             (message) => msg.channel.send(message)
         );
     } else if (args[1] === "civs") {

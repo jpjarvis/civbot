@@ -1,4 +1,4 @@
-﻿import {draftCommand} from "../src/DraftCommand";
+﻿import {DraftCommand} from "../src/DraftCommand";
 import {DraftArguments, DraftExecutor} from "../src/Draft";
 import Messages from "../src/Messages";
 import FileUserDataStore from "../src/UserDataStore/FileUserDataStore";
@@ -14,6 +14,8 @@ describe('CivBot', () => {
     beforeEach(() => {
         output = []
     })
+    
+    const draftCommand = new DraftCommand(new DraftExecutor(CivsRepositoryInstance), new FileUserDataStore())
 
     it('should be able to draft a game for the AI', async () => {
         const draftArgs: DraftArguments = {
@@ -23,7 +25,7 @@ describe('CivBot', () => {
             civGroups: ['civ5-vanilla']
         }
 
-        await draftCommand(draftArgs, undefined, "", new DraftExecutor(CivsRepositoryInstance), new FileUserDataStore(), writeOutput)
+        await draftCommand.draft(draftArgs, undefined, "", writeOutput)
 
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe('Drafting for `civ5-vanilla`')
