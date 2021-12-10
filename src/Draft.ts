@@ -15,12 +15,19 @@ export interface DraftArguments {
 }
 
 export interface IDraftExecutor {
-    executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string, civsRepository: CivsRepository): Promise<DraftResult>
+    executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string): Promise<DraftResult>
 }
 
 export class DraftExecutor implements IDraftExecutor {
-    async executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string, civsRepository: CivsRepository): Promise<DraftResult> {
-        const useVoice = voiceChannel && !args.noVoice;
+    private civsRepository: CivsRepository
+    
+    constructor(civsRepository: CivsRepository) {
+        this.civsRepository = civsRepository
+    }
+    
+    async executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string): Promise<DraftResult> {
+        const useVoice = voiceChannel && !args.noVoice
+        
         let players : Array<string> = []
         if (useVoice) {
             players.concat(voiceChannel.members.map(m => m.user.username))
@@ -33,7 +40,7 @@ export class DraftExecutor implements IDraftExecutor {
             return {success: false, error: "no-players"}
         }
 
-        let civs = await civsRepository.getCivs(new Set(args.civGroups), serverId)
+        let civs = await this.civsRepository.getCivs(new Set(args.civGroups), serverId)
 
         if (players.length * args.numberOfCivs > civs.length) {
             return {success: false, error: "not-enough-civs"}

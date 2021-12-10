@@ -10,7 +10,7 @@ function createMockCivsRepository(numberOfCivs: number): CivsRepository {
 
 
 describe('DraftExecutor', () => {
-    const draftExecutor = new DraftExecutor()
+    const draftExecutor = new DraftExecutor(createMockCivsRepository(10))
     
     it('should succeed under normal circumstances', async () => {
         const draftArgs: DraftArguments = {
@@ -20,7 +20,7 @@ describe('DraftExecutor', () => {
             civGroups: ["civ5-vanilla"]
         };
 
-        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
+        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "")
         expect(draftResult.success)
     })
 
@@ -32,7 +32,7 @@ describe('DraftExecutor', () => {
             civGroups: ["civ5-vanilla"]
         };
 
-        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
+        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "")
         expect(draftResult.success)
     })
     
@@ -44,7 +44,7 @@ describe('DraftExecutor', () => {
             civGroups: ["civ5-vanilla"]
         }
 
-        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
+        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "")
         
         expect(draftResult.success).toBe(false)
         if (draftResult.success) {
@@ -61,7 +61,7 @@ describe('DraftExecutor', () => {
             civGroups: ["civ5-vanilla"]
         }
         
-        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
+        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "")
 
         expect(draftResult.success).toBe(false)
         if (draftResult.success) {
