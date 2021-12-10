@@ -3,6 +3,7 @@ import {CivGroup, stringToCivGroup} from "./CivGroups";
 import {getVoiceChannel} from "./DiscordUtils";
 import {draftCommand} from "./DraftCommand";
 import {UserDataStoreInstance} from "./UserDataStore";
+import {DraftExecutor} from "./Draft";
 
 function parseCivGroups(civGroupString: string): { success: true, civGroups: CivGroup[] } | { success: false, invalidGroups: string[] } {
     const strings = civGroupString.split(" ");
@@ -66,6 +67,7 @@ async function handleDraft(interaction: CommandInteraction) {
         },
         voiceChannel,
         serverId,
+        new DraftExecutor(),
         (message) => {
             response += message + "\n";
         });

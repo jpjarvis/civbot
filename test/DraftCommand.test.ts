@@ -1,19 +1,23 @@
 ﻿import {draftCommand} from "../src/DraftCommand";
-import {DraftArguments} from "../src/Draft";
-import {VoiceChannel} from "discord.js";
+import {DraftArguments, DraftError, IDraftExecutor} from "../src/Draft";
 import Messages from "../src/Messages";
 import {Draft} from "../src/DraftTypes";
 
-let draft: Draft = new Map<string, string[]>()
-
-jest.mock("../src/Draft", () => {
+function createMockDraftExecutor(draft: Draft): IDraftExecutor {
     return {
-        executeDraft: (args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string) => {
-
+        executeDraft: async (args, voiceChannel, serverId) => {
             return {success: true, draft: draft}
         }
     }
-})
+}
+
+function createFailingMockDraftExecutor(error: DraftError): IDraftExecutor {
+    return {
+        executeDraft: async (args, voiceChannel, serverId) => {
+            return {success: false, error: error}
+        }
+    }
+}
 
 describe('draftCommand', () => {
     let output: string[] = []
@@ -23,14 +27,14 @@ describe('draftCommand', () => {
 
     beforeEach(() => {
         output = []
-        draft = new Map<string, string[]>()
     })
 
+    const draft = new Map<string, string[]>()
+    draft["player1"] = ["civ1, civ2, civ3"]
+    draft["player2"] = ["civ1, civ2, civ3"]
+    draft["player3"] = ["civ1, civ2, civ3"]
+    
     it('should display the draft correctly', async () => {
-        draft["player1"] = ["civ1, civ2, civ3"]
-        draft["player2"] = ["civ1, civ2, civ3"]
-        draft["player3"] = ["civ1, civ2, civ3"]
-
         const draftArgs: DraftArguments = {
             numberOfAi: 3,
             numberOfCivs: 3,
@@ -38,7 +42,7 @@ describe('draftCommand', () => {
             civGroups: ['civ5-vanilla']
         }
 
-        await draftCommand(draftArgs, undefined, "", writeOutput)
+        await draftCommand(draftArgs, undefined, "", createMockDraftExecutor(draft), writeOutput)
 
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe('Drafting for `civ5-vanilla`')
@@ -56,7 +60,7 @@ describe('draftCommand', () => {
             civGroups: ['civ5-vanilla']
         }
 
-        await draftCommand(draftArgs, undefined, "", writeOutput)
+        await draftCommand(draftArgs, undefined, "", createFailingMockDraftExecutor("no-players"), writeOutput)
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe(Messages.NoPlayers)
     })

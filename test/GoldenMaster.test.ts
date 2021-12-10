@@ -1,5 +1,5 @@
 ﻿import {draftCommand} from "../src/DraftCommand";
-import {DraftArguments} from "../src/Draft";
+import {DraftArguments, DraftExecutor} from "../src/Draft";
 import Messages from "../src/Messages";
 
 
@@ -21,7 +21,7 @@ describe('CivBot', () => {
             civGroups: ['civ5-vanilla']
         }
 
-        await draftCommand(draftArgs, undefined, "", writeOutput)
+        await draftCommand(draftArgs, undefined, "", new DraftExecutor(), writeOutput)
 
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe('Drafting for `civ5-vanilla`')

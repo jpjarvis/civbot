@@ -1,4 +1,4 @@
-﻿import {DraftArguments, executeDraft} from "../src/Draft";
+﻿import {DraftArguments, DraftExecutor} from "../src/Draft";
 import {CivsRepository} from "../src/CivsRepository/interface";
 import {generateArray} from "./TestUtils";
 
@@ -9,7 +9,9 @@ function createMockCivsRepository(numberOfCivs: number): CivsRepository {
 }
 
 
-describe('executeDraft', () => {
+describe('DraftExecutor', () => {
+    const draftExecutor = new DraftExecutor()
+    
     it('should succeed under normal circumstances', async () => {
         const draftArgs: DraftArguments = {
             numberOfAi: 3,
@@ -18,7 +20,7 @@ describe('executeDraft', () => {
             civGroups: ["civ5-vanilla"]
         };
 
-        const draftResult = await executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
+        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
         expect(draftResult.success)
     })
 
@@ -30,7 +32,7 @@ describe('executeDraft', () => {
             civGroups: ["civ5-vanilla"]
         };
 
-        const draftResult = await executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
+        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
         expect(draftResult.success)
     })
     
@@ -42,7 +44,7 @@ describe('executeDraft', () => {
             civGroups: ["civ5-vanilla"]
         }
 
-        const draftResult = await executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
+        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
         
         expect(draftResult.success).toBe(false)
         if (draftResult.success) {
@@ -59,7 +61,7 @@ describe('executeDraft', () => {
             civGroups: ["civ5-vanilla"]
         }
         
-        const draftResult = await executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
+        const draftResult = await draftExecutor.executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
 
         expect(draftResult.success).toBe(false)
         if (draftResult.success) {

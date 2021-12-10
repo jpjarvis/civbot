@@ -4,7 +4,7 @@ import {getVoiceChannel} from "./DiscordUtils";
 import {draftCommand} from "./DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStoreInstance} from "./UserDataStore";
-import {DraftArguments} from "./Draft";
+import {DraftArguments, DraftExecutor} from "./Draft";
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName);
@@ -112,6 +112,7 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
             parsedArgs.args,
             await getVoiceChannel(client, msg.member!),
             serverId,
+            new DraftExecutor(),
             (message) => msg.channel.send(message)
         );
     } else if (args[1] === "civs") {
