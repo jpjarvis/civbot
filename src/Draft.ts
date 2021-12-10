@@ -1,8 +1,7 @@
 import {CivGroup} from "./CivGroups";
-import {VoiceChannel} from "discord.js";
 import {Draft} from "./DraftTypes";
-import {assignCivs} from "./AssignCivs";
 import {CivsRepository} from "./CivsRepository/interface";
+import * as shuffle from "shuffle-array";
 
 export type DraftError = "no-players" | "not-enough-civs"
 type DraftResult = {success: true, draft: Draft} | {success: false, error: DraftError}
@@ -15,7 +14,17 @@ export interface DraftArguments {
 }
 
 export interface IDraftExecutor {
-    executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string): Promise<DraftResult>
+    executeDraft(players: string[], civsPerPlayer: number, civGroups: CivGroup[], serverId: string): Promise<DraftResult>
+}
+
+function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): Draft {
+    shuffle(civs);
+    let draft: Draft = new Map<string, string[]>();
+    for (let i = 0; i < players.length; i++) {
+        draft[players[i]] = civs.slice(i * civsPerPlayer, (i + 1) * civsPerPlayer);
+    }
+
+    return draft;
 }
 
 export class DraftExecutor implements IDraftExecutor {
@@ -25,28 +34,18 @@ export class DraftExecutor implements IDraftExecutor {
         this.civsRepository = civsRepository
     }
     
-    async executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string): Promise<DraftResult> {
-        const useVoice = voiceChannel && !args.noVoice
-        
-        let players : Array<string> = []
-        if (useVoice) {
-            players.concat(voiceChannel.members.map(m => m.user.username))
-        }
-        for (let i=0; i<args.numberOfAi; i++) {
-            players.push(`AI ${i}`)
-        }
-
+    async executeDraft(players: string[], civsPerPlayer: number, civGroups: CivGroup[], serverId: string): Promise<DraftResult> {
         if (players.length == 0) {
             return {success: false, error: "no-players"}
         }
 
-        let civs = await this.civsRepository.getCivs(new Set(args.civGroups), serverId)
+        let civs = await this.civsRepository.getCivs(new Set(civGroups), serverId)
 
-        if (players.length * args.numberOfCivs > civs.length) {
+        if (players.length * civsPerPlayer > civs.length) {
             return {success: false, error: "not-enough-civs"}
         }
 
-        let draft = assignCivs(players, args.numberOfCivs, civs)
+        let draft = assignCivs(players, civsPerPlayer, civs)
 
         return {success: true, draft: draft};
     }

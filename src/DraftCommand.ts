@@ -45,7 +45,17 @@ export class DraftCommand implements IDraftCommand {
             sendMessage(Messages.NotInVoice);
         }
 
-        let draftResult = await this.draftExecutor.executeDraft(draftArgs, voiceChannel, serverId);
+        const useVoice = voiceChannel && !args.noVoice
+
+        let players : Array<string> = []
+        if (useVoice) {
+            players.concat(voiceChannel.members.map(m => m.user.username))
+        }
+        for (let i=0; i<draftArgs.numberOfAi; i++) {
+            players.push(`AI ${i}`)
+        }
+        
+        let draftResult = await this.draftExecutor.executeDraft(players, draftArgs.numberOfCivs, draftArgs.civGroups, serverId);
 
         if (!draftResult.success) {
             if (draftResult.error == "no-players") {
