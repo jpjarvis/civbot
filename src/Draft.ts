@@ -1,8 +1,8 @@
 import {CivGroup} from "./CivGroups";
 import {VoiceChannel} from "discord.js";
-import {CivsRepositoryInstance} from "./CivsRepository";
 import {Draft} from "./DraftTypes";
 import {assignCivs} from "./AssignCivs";
+import {CivsRepository} from "./CivsRepository/interface";
 
 type DraftError = "no-players" | "not-enough-civs"
 type DraftResult = {success: true, draft: Draft} | {success: false, error: DraftError}
@@ -14,7 +14,7 @@ export interface DraftArguments {
     civGroups: CivGroup[]
 }
 
-export async function executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string): Promise<DraftResult> {
+export async function executeDraft(args: DraftArguments, voiceChannel: VoiceChannel | undefined, serverId: string, civsRepository: CivsRepository): Promise<DraftResult> {
     const useVoice = voiceChannel && !args.noVoice;
     let players : Array<string> = []
     if (useVoice) {
@@ -28,7 +28,7 @@ export async function executeDraft(args: DraftArguments, voiceChannel: VoiceChan
         return {success: false, error: "no-players"}
     }
 
-    let civs = await CivsRepositoryInstance.getCivs(new Set(args.civGroups), serverId)
+    let civs = await civsRepository.getCivs(new Set(args.civGroups), serverId)
 
     if (players.length * args.numberOfCivs > civs.length) {
         return {success: false, error: "not-enough-civs"}

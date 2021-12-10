@@ -1,4 +1,13 @@
 ﻿import {DraftArguments, executeDraft} from "../src/Draft";
+import {CivsRepository} from "../src/CivsRepository/interface";
+import {generateArray} from "./TestUtils";
+
+function createMockCivsRepository(numberOfCivs: number): CivsRepository {
+    return {
+        getCivs: async (civGroups, serverId) => generateArray(numberOfCivs)
+    }
+}
+
 
 describe('executeDraft', () => {
     it('should succeed under normal circumstances', async () => {
@@ -9,7 +18,7 @@ describe('executeDraft', () => {
             civGroups: ["civ5-vanilla"]
         };
 
-        const draftResult = await executeDraft(draftArgs, undefined, "")
+        const draftResult = await executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
         expect(draftResult.success)
     })
 
@@ -21,7 +30,7 @@ describe('executeDraft', () => {
             civGroups: ["civ5-vanilla"]
         };
 
-        const draftResult = await executeDraft(draftArgs, undefined, "")
+        const draftResult = await executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
         expect(draftResult.success)
     })
     
@@ -33,7 +42,7 @@ describe('executeDraft', () => {
             civGroups: ["civ5-vanilla"]
         }
 
-        const draftResult = await executeDraft(draftArgs, undefined, "")
+        const draftResult = await executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
         
         expect(draftResult.success).toBe(false)
         if (draftResult.success) {
@@ -50,7 +59,7 @@ describe('executeDraft', () => {
             civGroups: ["civ5-vanilla"]
         }
         
-        const draftResult = await executeDraft(draftArgs, undefined, "")
+        const draftResult = await executeDraft(draftArgs, undefined, "", createMockCivsRepository(10))
 
         expect(draftResult.success).toBe(false)
         if (draftResult.success) {

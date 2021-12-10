@@ -2,6 +2,7 @@ import {VoiceChannel} from "discord.js";
 import {DraftArguments, executeDraft} from "./Draft";
 import Messages from "./Messages";
 import {UserDataStoreInstance} from "./UserDataStore";
+import {CivsRepositoryInstance} from "./CivsRepository";
 
 function getPlayerDraftString(playerName: string, civs: string[]): string {
     let response = `${playerName} `.padEnd(20, " ");
@@ -26,7 +27,7 @@ export async function draftCommand(args: Partial<DraftArguments>, voiceChannel: 
         sendMessage(Messages.NotInVoice);
     }
     
-    let draftResult = await executeDraft(draftArgs, voiceChannel, serverId);
+    let draftResult = await executeDraft(draftArgs, voiceChannel, serverId, CivsRepositoryInstance);
     
     if (!draftResult.success) {
         if (draftResult.error == "no-players") {
