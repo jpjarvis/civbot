@@ -64,4 +64,17 @@ describe('draftCommand', () => {
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe(Messages.NoPlayers)
     })
+
+    it('should display the correct error for not enough civs', async () => {
+        const draftArgs: DraftArguments = {
+            numberOfAi: 0,
+            numberOfCivs: 3,
+            noVoice: true,
+            civGroups: ['civ5-vanilla']
+        }
+
+        await draftCommand(draftArgs, undefined, "", createFailingMockDraftExecutor("not-enough-civs"), writeOutput)
+        expect(output[0]).toBe(Messages.NotInVoice)
+        expect(output[1]).toBe(Messages.NotEnoughCivs)
+    })
 })
