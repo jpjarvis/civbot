@@ -1,8 +1,5 @@
 ﻿import {assignCivs} from "../src/AssignCivs";
-
-function generateArray(count: number): string[] {
-    return Array.from(Array(count)).map((_,i) => `item${i}`)
-}
+import {generateArray} from "./TestUtils";
 
 describe('assignCivs', () => {
     it('should draft the right number of civs for all players',() => {
