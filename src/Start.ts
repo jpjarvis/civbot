@@ -1,5 +1,5 @@
 import {Client, Intents} from "discord.js";
-import {handleMessage} from "./HandleMessage";
+import MessageHandler from "./MessageHandler";
 import SlashCommandHandler from "./SlashCommandHandler";
 import Messages from "./Messages";
 import {getToken} from "./Auth";
@@ -20,6 +20,7 @@ async function start() {
     const draftExecutor = new DraftExecutor(CivsRepositoryInstance)
     const draftCommand = new DraftCommand(draftExecutor, UserDataStoreInstance)
     const slashCommandHandler = new SlashCommandHandler(draftCommand, UserDataStoreInstance)
+    const messageHandler = new MessageHandler(draftCommand, UserDataStoreInstance)
 
     client.once("ready", async () => {
         console.log("CivBot is alive!");
@@ -38,7 +39,7 @@ async function start() {
 
     client.on("messageCreate", async (message) => {
         try {
-            await handleMessage(message, client);
+            await messageHandler.handle(message, client);
         } catch (e) {
             console.log(e);
             message.channel.send(Messages.GenericError);
