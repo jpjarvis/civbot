@@ -2,7 +2,7 @@
 import {DraftArguments, DraftExecutor} from "../src/Draft";
 import Messages from "../src/Messages";
 import FileUserDataStore from "../src/UserDataStore/FileUserDataStore";
-import {CivsRepositoryInstance} from "../src/CivsRepository";
+import FileAndUserDataCivsRepository from "../src/CivsRepository/FileAndUserDataCivsRepository";
 
 
 describe('CivBot', () => {
@@ -15,7 +15,7 @@ describe('CivBot', () => {
         output = []
     })
     
-    const draftCommand = new DraftCommand(new DraftExecutor(CivsRepositoryInstance), new FileUserDataStore())
+    const draftCommand = new DraftCommand(new DraftExecutor(new FileAndUserDataCivsRepository(new FileUserDataStore())), new FileUserDataStore())
 
     it('should be able to draft a game for the AI', async () => {
         const draftArgs: DraftArguments = {

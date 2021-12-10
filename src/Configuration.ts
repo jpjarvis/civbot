@@ -10,8 +10,8 @@ import PostgresDataStore from "./UserDataStore/PostgresDataStore";
 import FileUserDataStore from "./UserDataStore/FileUserDataStore";
 
 export function constructCivBot(): CivBot {
-    const civsRepository : CivsRepository = new FileAndUserDataCivsRepository()
     const userDataStore : UserDataStore = process.env['DATABASE_URL'] ? new PostgresDataStore() : new FileUserDataStore()
+    const civsRepository : CivsRepository = new FileAndUserDataCivsRepository(userDataStore)
     
     const draftExecutor = new DraftExecutor(civsRepository)
     const draftCommand = new DraftCommand(draftExecutor, userDataStore)

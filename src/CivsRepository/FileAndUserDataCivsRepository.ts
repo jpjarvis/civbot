@@ -1,7 +1,7 @@
 ﻿import {Civ5CivGroup, Civ6CivGroup, CivGroup} from "../CivGroups";
 import * as fs from 'fs';
-import {UserDataStoreInstance} from "../UserDataStore";
 import {CivsRepository} from "./interface";
+import {UserDataStore} from "../UserDataStore/interface";
 
 interface CivData {
     civs: {
@@ -14,9 +14,14 @@ function getCivsJson(): CivData {
 }
 
 export default class FileAndUserDataCivsRepository implements CivsRepository {
+    private userDataStore: UserDataStore;
+    constructor(userDataStore: UserDataStore) {
+        this.userDataStore = userDataStore;
+    }
+    
     async getCivs(groups: Set<CivGroup>, serverId: string): Promise<string[]> {
         const civsJson = getCivsJson();
-        const userData = await UserDataStoreInstance.load(serverId);
+        const userData = await this.userDataStore.load(serverId);
 
         return Array.from(groups)
             .map((civGroup) => {
