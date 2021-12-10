@@ -113,6 +113,7 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
             await getVoiceChannel(client, msg.member!),
             serverId,
             new DraftExecutor(),
+            UserDataStoreInstance,
             (message) => msg.channel.send(message)
         );
     } else if (args[1] === "civs") {

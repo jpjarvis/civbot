@@ -68,6 +68,7 @@ async function handleDraft(interaction: CommandInteraction) {
         voiceChannel,
         serverId,
         new DraftExecutor(),
+        UserDataStoreInstance,
         (message) => {
             response += message + "\n";
         });

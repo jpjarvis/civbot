@@ -1,8 +1,8 @@
 import {VoiceChannel} from "discord.js";
 import {DraftArguments, IDraftExecutor} from "./Draft";
 import Messages from "./Messages";
-import {UserDataStoreInstance} from "./UserDataStore";
 import {CivsRepositoryInstance} from "./CivsRepository";
+import {UserDataStore} from "./UserDataStore/interface";
 
 function getPlayerDraftString(playerName: string, civs: string[]): string {
     let response = `${playerName} `.padEnd(20, " ");
@@ -13,8 +13,13 @@ function getPlayerDraftString(playerName: string, civs: string[]): string {
     return response;
 }
 
-export async function draftCommand(args: Partial<DraftArguments>, voiceChannel: VoiceChannel | undefined, serverId: string, draftExecutor: IDraftExecutor, sendMessage: (message: string) => void): Promise<void> {
-    const defaultArgs = (await UserDataStoreInstance.load(serverId)).defaultDraftSettings;
+export async function draftCommand(args: Partial<DraftArguments>, 
+                                   voiceChannel: VoiceChannel | undefined, 
+                                   serverId: string, 
+                                   draftExecutor: IDraftExecutor, 
+                                   userDataStore: UserDataStore,
+                                   sendMessage: (message: string) => void): Promise<void> {
+    const defaultArgs = (await userDataStore.load(serverId)).defaultDraftSettings;
 
     const draftArgs: DraftArguments = {
         numberOfAi: args.numberOfAi ?? 0,
