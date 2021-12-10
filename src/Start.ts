@@ -1,12 +1,7 @@
 import {Client, Intents} from "discord.js";
-import MessageHandler from "./MessageHandler";
-import SlashCommandHandler from "./SlashCommandHandler";
 import Messages from "./Messages";
 import {getToken} from "./Auth";
-import {DraftCommand} from "./DraftCommand";
-import {UserDataStoreInstance} from "./UserDataStore";
-import {DraftExecutor} from "./Draft";
-import {CivsRepositoryInstance} from "./CivsRepository";
+import {constructCivBot} from "./Configuration";
 
 async function start() {
     const client = new Client({
@@ -17,10 +12,7 @@ async function start() {
         ]
     });
     
-    const draftExecutor = new DraftExecutor(CivsRepositoryInstance)
-    const draftCommand = new DraftCommand(draftExecutor, UserDataStoreInstance)
-    const slashCommandHandler = new SlashCommandHandler(draftCommand, UserDataStoreInstance)
-    const messageHandler = new MessageHandler(draftCommand, UserDataStoreInstance)
+    const civBot = constructCivBot()
 
     client.once("ready", async () => {
         console.log("CivBot is alive!");
@@ -30,7 +22,7 @@ async function start() {
         if (!interaction.isCommand()) return;
 
         try {
-            await slashCommandHandler.handle(interaction);
+            await civBot.handleSlashCommand(interaction);
         } catch (e) {
             console.log(e);
             await interaction.reply(Messages.GenericError);
@@ -39,7 +31,7 @@ async function start() {
 
     client.on("messageCreate", async (message) => {
         try {
-            await messageHandler.handle(message, client);
+            await civBot.handleMessage(message, client);
         } catch (e) {
             console.log(e);
             message.channel.send(Messages.GenericError);
