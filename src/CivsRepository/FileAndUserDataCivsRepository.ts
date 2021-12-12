@@ -24,7 +24,7 @@ export default class FileAndUserDataCivsRepository implements CivsRepository {
                 }
                 return civData.civs[civGroup];
             })
-            .reduce((prev: string[], current: string[]) => current.concat(prev));
+            .reduce((prev: string[], current: string[]) => current.concat(prev), []);
     }
 }
 
