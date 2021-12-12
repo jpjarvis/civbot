@@ -3,7 +3,6 @@ import {DraftArguments, DraftError, IDraftExecutor} from "../src/Draft";
 import Messages from "../src/Messages";
 import {Draft} from "../src/DraftTypes";
 import UserData from "../src/UserData";
-import {UserDataStore} from "../src/UserDataStore/interface";
 import {createMockUserDataStore} from "./Mocks";
 
 function createMockDraftExecutor(draft: Draft): IDraftExecutor {
