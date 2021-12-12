@@ -1,12 +1,6 @@
 ﻿import {DraftArguments, DraftExecutor} from "../src/Draft";
-import {CivsRepository} from "../src/CivsRepository/interface";
 import {generateArray} from "./TestUtils";
-
-function createMockCivsRepository(numberOfCivs: number): CivsRepository {
-    return {
-        getCivs: async (civGroups, serverId) => generateArray(numberOfCivs)
-    }
-}
+import {createMockCivsRepository} from "./Mocks";
 
 describe('DraftExecutor', () => {
     const draftExecutor = new DraftExecutor(createMockCivsRepository(10))

@@ -4,6 +4,7 @@ import Messages from "../src/Messages";
 import {Draft} from "../src/DraftTypes";
 import UserData from "../src/UserData";
 import {UserDataStore} from "../src/UserDataStore/interface";
+import {createMockUserDataStore} from "./Mocks";
 
 function createMockDraftExecutor(draft: Draft): IDraftExecutor {
     return {
@@ -18,13 +19,6 @@ function createFailingMockDraftExecutor(error: DraftError): IDraftExecutor {
         executeDraft: async (args, voiceChannel, serverId) => {
             return {success: false, error: error}
         }
-    }
-}
-
-function createMockUserDataStore(userData: UserData): UserDataStore {
-    return {
-        load: async _ => userData,
-        save: async _ => {}
     }
 }
 
@@ -47,7 +41,11 @@ describe('draftCommand', () => {
         defaultDraftSettings: {},
         customCivs: []
     }
-    const mockUserDataStore = createMockUserDataStore(userData)
+    
+    const userDatas = new Map<string, UserData>()
+    userDatas[""] = userData
+    
+    const mockUserDataStore = createMockUserDataStore(userDatas)
     
     it('should display the draft correctly', async () => {
         const draftArgs: DraftArguments = {

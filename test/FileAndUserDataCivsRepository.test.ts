@@ -1,9 +1,8 @@
-import {UserDataStore} from "../src/UserDataStore/interface";
 import UserData from "../src/UserData";
-import CivDataAccessor from "../src/CivsRepository/CivData/CivDataAccessor";
 import CivData from "../src/CivsRepository/CivData/CivData";
 import FileAndUserDataCivsRepository from "../src/CivsRepository/FileAndUserDataCivsRepository";
 import {CivGroup} from "../src/CivGroups";
+import {createMockCivDataAccessor, createMockUserDataStore} from "./Mocks";
 
 const fakeUserData1: UserData = {
     defaultDraftSettings: {},
@@ -31,20 +30,6 @@ const fakeCivData: CivData = {
         "civ6-extra": ["extra"]
     }
 };
-
-function createMockUserDataStore(userDatas: Map<string, UserData>): UserDataStore {
-    return {
-        load: async (serverId): Promise<UserData> => userDatas[serverId],
-        save: async () => {
-        }
-    };
-}
-
-function createMockCivDataAccessor(civData: CivData): CivDataAccessor {
-    return {
-        getCivData: (): CivData => civData
-    };
-}
 
 describe("FileAndUserDataCivsRepository", () => {
     const civsRepository = new FileAndUserDataCivsRepository(createMockUserDataStore(userDatas), createMockCivDataAccessor(fakeCivData));
