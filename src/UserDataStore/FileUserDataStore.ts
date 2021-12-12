@@ -4,8 +4,8 @@ import * as path from 'path';
 import UserData from "../UserData";
 
 export default class FileUserDataStore implements UserDataStore {
-    getUserDataPath(serverId: string) {
-        return `./userdata/${serverId}.json`;
+    getUserDataPath(tenantId: string) {
+        return `./userdata/${tenantId}.json`;
     }
 
     async ensureExists(filePath: string): Promise<void> {
@@ -20,14 +20,14 @@ export default class FileUserDataStore implements UserDataStore {
             });
     }
 
-    async save(serverId: string, userData: UserData): Promise<void> {
-        let filePath = this.getUserDataPath(serverId);
+    async save(tenantId: string, userData: UserData): Promise<void> {
+        let filePath = this.getUserDataPath(tenantId);
         return this.ensureExists(filePath)
             .then(() => fs.promises.writeFile(filePath, JSON.stringify(userData)));
     }
 
-    async load(serverId: string): Promise<UserData> {
-        let filePath = this.getUserDataPath(serverId);
+    async load(tenantId: string): Promise<UserData> {
+        let filePath = this.getUserDataPath(tenantId);
         return this.ensureExists(filePath)
             .then(() => fs.promises.readFile(filePath, 'utf8'))
             .then((value) => JSON.parse(value));

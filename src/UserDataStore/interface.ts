@@ -1,7 +1,7 @@
 import UserData from "../UserData";
 
 export interface UserDataStore {
-    load(serverId: string): Promise<UserData>;
+    load(tenantId: string): Promise<UserData>;
 
-    save(serverId: string, userData: UserData): Promise<void>;
+    save(tenantId: string, userData: UserData): Promise<void>;
 }

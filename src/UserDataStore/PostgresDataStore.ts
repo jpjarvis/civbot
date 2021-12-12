@@ -5,7 +5,7 @@ import {Client} from "pg";
 const connectionString = process.env['DATABASE_URL']!;
 
 export default class PostgresDataStore implements UserDataStore {
-    async load(serverId: string): Promise<UserData> {
+    async load(tenantId: string): Promise<UserData> {
         const client = new Client({
             connectionString: connectionString,
             ssl: {
@@ -14,13 +14,13 @@ export default class PostgresDataStore implements UserDataStore {
         });
         await client.connect();
         
-        const result = await client.query("select data from userdata where serverid = $1", [serverId])
+        const result = await client.query("select data from userdata where serverid = $1", [tenantId])
         
         if (!result.rows || result.rows.length == 0) {
             const userData = new UserData();
             await client.query(
                 "insert into userdata VALUES ($1, $2)",
-                [serverId, JSON.stringify(userData)]
+                [tenantId, JSON.stringify(userData)]
             )
             return userData;
         }
@@ -30,7 +30,7 @@ export default class PostgresDataStore implements UserDataStore {
         return JSON.parse(row);
     }
 
-    async save(serverId: string, userData: UserData): Promise<void> {
+    async save(tenantId: string, userData: UserData): Promise<void> {
         const client = new Client({
             connectionString: connectionString,
             ssl: {
@@ -41,19 +41,19 @@ export default class PostgresDataStore implements UserDataStore {
 
         const existingData = await client.query(
             "select data from userdata where serverid = $1",
-            [serverId]
+            [tenantId]
         )
 
         if (!existingData.rows || existingData.rows.length == 0) {
             await client.query(
                 "insert into userdata VALUES ($1, $2)",
-                [serverId, JSON.stringify(userData)]
+                [tenantId, JSON.stringify(userData)]
             )
         }
         else {
             await client.query(
                 "update userdata set data = $2 where serverId = $1",
-                [serverId, JSON.stringify(userData)]
+                [tenantId, JSON.stringify(userData)]
             )
         }
         

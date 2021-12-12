@@ -13,9 +13,9 @@ export default class FileAndUserDataCivsRepository implements CivsRepository {
         this.civDataAccessor = civDataAccessor;
     }
     
-    async getCivs(groups: Set<CivGroup>, serverId: string): Promise<string[]> {
+    async getCivs(groups: Set<CivGroup>, tenantId: string): Promise<string[]> {
         const civData = this.civDataAccessor.getCivData();
-        const userData = await this.userDataStore.load(serverId);
+        const userData = await this.userDataStore.load(tenantId);
 
         return Array.from(groups)
             .map((civGroup) => {

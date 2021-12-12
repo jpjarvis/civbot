@@ -34,12 +34,12 @@ export class DraftExecutor implements IDraftExecutor {
         this.civsRepository = civsRepository
     }
     
-    async executeDraft(players: string[], civsPerPlayer: number, civGroups: CivGroup[], serverId: string): Promise<DraftResult> {
+    async executeDraft(players: string[], civsPerPlayer: number, civGroups: CivGroup[], tenantId: string): Promise<DraftResult> {
         if (players.length == 0) {
             return {success: false, error: "no-players"}
         }
 
-        let civs = await this.civsRepository.getCivs(new Set(civGroups), serverId)
+        let civs = await this.civsRepository.getCivs(new Set(civGroups), tenantId)
 
         if (players.length * civsPerPlayer > civs.length) {
             return {success: false, error: "not-enough-civs"}
