@@ -8,7 +8,6 @@ function createMockCivsRepository(numberOfCivs: number): CivsRepository {
     }
 }
 
-
 describe('DraftExecutor', () => {
     const draftExecutor = new DraftExecutor(createMockCivsRepository(10))
     
