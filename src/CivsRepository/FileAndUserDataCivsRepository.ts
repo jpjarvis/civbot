@@ -1,26 +1,20 @@
-﻿import {Civ5CivGroup, Civ6CivGroup, CivGroup} from "../CivGroups";
-import * as fs from 'fs';
+﻿import {CivGroup} from "../CivGroups";
 import {CivsRepository} from "./interface";
 import {UserDataStore} from "../UserDataStore/interface";
+import CivDataAccessor from "./CivData/CivDataAccessor";
 
-interface CivData {
-    civs: {
-        [group in Civ5CivGroup | Civ6CivGroup]: string[]
-    };
-}
-
-function getCivsJson(): CivData {
-    return JSON.parse(fs.readFileSync("civs.json", "utf-8"));
-}
 
 export default class FileAndUserDataCivsRepository implements CivsRepository {
     private userDataStore: UserDataStore;
-    constructor(userDataStore: UserDataStore) {
+    private civDataAccessor: CivDataAccessor;
+    
+    constructor(userDataStore: UserDataStore, civDataAccessor: CivDataAccessor) {
         this.userDataStore = userDataStore;
+        this.civDataAccessor = civDataAccessor;
     }
     
     async getCivs(groups: Set<CivGroup>, serverId: string): Promise<string[]> {
-        const civsJson = getCivsJson();
+        const civData = this.civDataAccessor.getCivData();
         const userData = await this.userDataStore.load(serverId);
 
         return Array.from(groups)
@@ -28,7 +22,7 @@ export default class FileAndUserDataCivsRepository implements CivsRepository {
                 if (civGroup === "custom") {
                     return userData.customCivs;
                 }
-                return civsJson.civs[civGroup];
+                return civData.civs[civGroup];
             })
             .reduce((prev: string[], current: string[]) => current.concat(prev));
     }

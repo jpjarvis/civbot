@@ -3,6 +3,7 @@ import {DraftArguments, DraftExecutor} from "../src/Draft";
 import Messages from "../src/Messages";
 import FileUserDataStore from "../src/UserDataStore/FileUserDataStore";
 import FileAndUserDataCivsRepository from "../src/CivsRepository/FileAndUserDataCivsRepository";
+import JsonCivDataAccessor from "../src/CivsRepository/CivData/JsonCivDataAccessor";
 
 
 describe('CivBot', () => {
@@ -15,7 +16,7 @@ describe('CivBot', () => {
         output = []
     })
     
-    const draftCommand = new DraftCommand(new DraftExecutor(new FileAndUserDataCivsRepository(new FileUserDataStore())), new FileUserDataStore())
+    const draftCommand = new DraftCommand(new DraftExecutor(new FileAndUserDataCivsRepository(new FileUserDataStore(), new JsonCivDataAccessor("civs.json"))), new FileUserDataStore())
 
     it('should be able to draft a game for the AI', async () => {
         const draftArgs: DraftArguments = {
