@@ -21,7 +21,6 @@ describe('DraftExecutor', () => {
         }
         
         for (const player of players) {
-            console.log(player)
             expect(draft.draft[player]).toHaveLength(3)
         }
     })
