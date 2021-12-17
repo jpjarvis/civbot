@@ -5,6 +5,7 @@ import {Draft} from "../src/DraftTypes";
 import UserData from "../src/UserData";
 import {createMockCivsRepository, createMockUserDataStore} from "./Mocks";
 import {EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "../src/VoiceChannelAccessor";
+import {CivGroup} from "../src/CivGroups";
 
 function createMockDraftExecutor(draft: Draft): IDraftExecutor {
     return {
@@ -17,6 +18,16 @@ function createFailingMockDraftExecutor(error: DraftError): IDraftExecutor {
         executeDraft: async (args, voiceChannel, serverId) => {
             return {success: false, error: error}
         }
+    }
+}
+
+function expectOutputDraftToHave(output: string[], civGroups: Set<CivGroup>, players: string[]) {
+    expect(output[0]).toContain("Drafting for ")
+    for (let c of civGroups) {
+        expect(output[0]).toContain(c)
+    }
+    for (let p of players) {
+        expect(output[1]).toContain(p)
     }
 }
 
@@ -50,14 +61,14 @@ describe('draftCommand', () => {
             numberOfAi: 3,
             numberOfCivs: 3,
             noVoice: true,
-            civGroups: ['civ5-vanilla']
+            civGroups: ['civ5-vanilla', 'lekmod']
         }
         const draftCommand = new DraftCommand(createMockDraftExecutor(draft), mockUserDataStore)
         
         await draftCommand.draft(draftArgs, new EmptyVoiceChannelAccessor(), "", writeOutput)
 
         expect(output[0]).toBe(Messages.NotInVoice)
-        expect(output[1]).toBe('Drafting for `civ5-vanilla`')
+        expect(output[1]).toBe('Drafting for `civ5-vanilla`, `lekmod`')
         expect(output[2]).toBe('```player1             civ1, civ2, civ3\n'
             + 'player2             civ1, civ2, civ3\n'
             + 'player3             civ1, civ2, civ3\n'
@@ -93,6 +104,7 @@ describe('draftCommand', () => {
     })
     
     it('should include players from voice in the draft', async () => {
+        
         const draftArgs: DraftArguments = {
             numberOfAi: 0,
             numberOfCivs: 3,
@@ -108,8 +120,7 @@ describe('draftCommand', () => {
 
         const draftCommand = new DraftCommand(draftExecutor, mockUserDataStore)
         await draftCommand.draft(draftArgs, voiceChannelAccessor, "", writeOutput)
-        expect(output[0]).toBe("Drafting for `civ5-vanilla`")
-        expect(output[1]).toContain("voice_player")
+        expectOutputDraftToHave(output, new Set(['civ5-vanilla']), ['voice_player'])
     })
 
     it('should include players from voice and AI together', async () => {
@@ -128,10 +139,6 @@ describe('draftCommand', () => {
 
         const draftCommand = new DraftCommand(draftExecutor, mockUserDataStore)
         await draftCommand.draft(draftArgs, voiceChannelAccessor, "", writeOutput)
-        expect(output[0]).toBe("Drafting for `civ5-vanilla`")
-        expect(output[1]).toContain("player1")
-        expect(output[1]).toContain("AI 0")
-        expect(output[1]).toContain("AI 1")
-        expect(output[1]).toContain("AI 2")
+        expectOutputDraftToHave(output, new Set(['civ5-vanilla']), ['player1', 'AI 0', 'AI 1', 'AI 2'])
     })
 })
