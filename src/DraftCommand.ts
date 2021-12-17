@@ -49,7 +49,7 @@ export class DraftCommand implements IDraftCommand {
 
         let players: Array<string> = [];
         if (voiceChannelMembers && !args.noVoice) {
-            players.concat(voiceChannelMembers);
+            players = players.concat(voiceChannelMembers);
         }
         
         for (let i = 0; i < draftArgs.numberOfAi; i++) {
