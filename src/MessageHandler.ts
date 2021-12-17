@@ -5,6 +5,7 @@ import {IDraftCommand} from "./DraftCommand";
 import {Client, Message} from "discord.js";
 import {DraftArguments} from "./Draft";
 import {UserDataStore} from "./UserDataStore/interface";
+import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor} from "./VoiceChannelAccessor";
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName);
@@ -117,9 +118,10 @@ export default class MessageHandler {
                 msg.channel.send(Messages.BadlyFormed);
                 return;
             }
+            const voiceChannel = await getVoiceChannel(client, msg.member!)
             await this.draftCommand.draft(
                 parsedArgs.args,
-                await getVoiceChannel(client, msg.member!),
+                voiceChannel ? new DiscordVoiceChannelAccessor(voiceChannel) : new EmptyVoiceChannelAccessor(),
                 serverId,
                 (message) => msg.channel.send(message)
             );
