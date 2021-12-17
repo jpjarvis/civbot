@@ -3,6 +3,7 @@ import {CivGroup, stringToCivGroup} from "./CivGroups";
 import {getVoiceChannel} from "./DiscordUtils";
 import {IDraftCommand} from "./DraftCommand";
 import {UserDataStore} from "./UserDataStore/interface";
+import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "./VoiceChannelAccessor";
 
 function parseCivGroups(civGroupString: string): { success: true, civGroups: CivGroup[] } | { success: false, invalidGroups: string[] } {
     const strings = civGroupString.split(" ");
@@ -60,11 +61,21 @@ export default class SlashCommandHandler {
         }
 
         let response = "";
-        let voiceChannel: VoiceChannel | undefined = undefined;
-        const member = interaction.member;
-        if (member instanceof GuildMember) {
-            voiceChannel = await getVoiceChannel(interaction.client, member);
+        
+        async function getVoiceChannelAccessor() : Promise<VoiceChannelAccessor> {
+            let voiceChannel: VoiceChannel | undefined = undefined;
+            const member = interaction.member;
+            if (member instanceof GuildMember) {
+                voiceChannel = await getVoiceChannel(interaction.client, member);
+                if (voiceChannel) {
+                    return new DiscordVoiceChannelAccessor(voiceChannel);
+                }
+            }
+            
+            return new EmptyVoiceChannelAccessor();
         }
+        
+        const voiceChannelAccessor = await getVoiceChannelAccessor();
 
         await this.draftCommand.draft(
             {
@@ -73,7 +84,7 @@ export default class SlashCommandHandler {
                 noVoice: noVoice,
                 civGroups: civGroups
             },
-            voiceChannel,
+            voiceChannelAccessor,
             serverId,
             (message) => {
                 response += message + "\n";
