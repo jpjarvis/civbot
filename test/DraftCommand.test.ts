@@ -4,6 +4,7 @@ import Messages from "../src/Messages";
 import {Draft} from "../src/DraftTypes";
 import UserData from "../src/UserData";
 import {createMockUserDataStore} from "./Mocks";
+import {EmptyVoiceChannelAccessor} from "../src/VoiceChannelAccessor";
 
 function createMockDraftExecutor(draft: Draft): IDraftExecutor {
     return {
@@ -55,7 +56,7 @@ describe('draftCommand', () => {
         }
         const draftCommand = new DraftCommand(createMockDraftExecutor(draft), mockUserDataStore)
         
-        await draftCommand.draft(draftArgs, undefined, "", writeOutput)
+        await draftCommand.draft(draftArgs, new EmptyVoiceChannelAccessor(), "", writeOutput)
 
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe('Drafting for `civ5-vanilla`')
@@ -74,7 +75,7 @@ describe('draftCommand', () => {
         }
         const draftCommand = new DraftCommand(createFailingMockDraftExecutor("no-players"), mockUserDataStore)
         
-        await draftCommand.draft(draftArgs, undefined, "", writeOutput)
+        await draftCommand.draft(draftArgs, new EmptyVoiceChannelAccessor(), "", writeOutput)
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe(Messages.NoPlayers)
     })
@@ -88,7 +89,7 @@ describe('draftCommand', () => {
         }
         const draftCommand = new DraftCommand(createFailingMockDraftExecutor("not-enough-civs"), mockUserDataStore)
 
-        await draftCommand.draft(draftArgs, undefined, "", writeOutput)
+        await draftCommand.draft(draftArgs, new EmptyVoiceChannelAccessor(), "", writeOutput)
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe(Messages.NotEnoughCivs)
     })

@@ -1,7 +1,7 @@
-import {VoiceChannel} from "discord.js";
 import {DraftArguments, IDraftExecutor} from "./Draft";
 import Messages from "./Messages";
 import {UserDataStore} from "./UserDataStore/interface";
+import {VoiceChannelAccessor} from "./VoiceChannelAccessor";
 
 function getPlayerDraftString(playerName: string, civs: string[]): string {
     let response = `${playerName} `.padEnd(20, " ");
@@ -13,23 +13,23 @@ function getPlayerDraftString(playerName: string, civs: string[]): string {
 }
 
 export interface IDraftCommand {
-    draft(args: Partial<DraftArguments>, 
-          voiceChannel: VoiceChannel | undefined, 
-          serverId: string, 
-          sendMessage: (message: string) => void) : Promise<void>
+    draft(args: Partial<DraftArguments>,
+          voiceChannelAccessor: VoiceChannelAccessor,
+          serverId: string,
+          sendMessage: (message: string) => void): Promise<void>;
 }
 
 export class DraftCommand implements IDraftCommand {
     private draftExecutor: IDraftExecutor;
     private userDataStore: UserDataStore;
-    
+
     constructor(draftExecutor: IDraftExecutor, userDataStore: UserDataStore) {
         this.draftExecutor = draftExecutor;
         this.userDataStore = userDataStore;
     }
 
     async draft(args: Partial<DraftArguments>,
-                voiceChannel: VoiceChannel | undefined,
+                voiceChannelAccessor: VoiceChannelAccessor,
                 serverId: string,
                 sendMessage: (message: string) => void): Promise<void> {
         const defaultArgs = (await this.userDataStore.load(serverId)).defaultDraftSettings;
@@ -39,31 +39,32 @@ export class DraftCommand implements IDraftCommand {
             numberOfCivs: args.numberOfCivs ?? 3,
             noVoice: args.noVoice ?? false,
             civGroups: args.civGroups ?? defaultArgs.civGroups ?? ["civ5-vanilla"]
-        }
+        };
 
-        if (!voiceChannel) {
+        const voiceChannelMembers = voiceChannelAccessor.getUsersInVoice();
+        
+        if (!voiceChannelMembers) {
             sendMessage(Messages.NotInVoice);
         }
 
-        const useVoice = voiceChannel && !args.noVoice
-
-        let players : Array<string> = []
-        if (useVoice) {
-            players.concat(voiceChannel.members.map(m => m.user.username))
-        }
-        for (let i=0; i<draftArgs.numberOfAi; i++) {
-            players.push(`AI ${i}`)
+        let players: Array<string> = [];
+        if (voiceChannelMembers && !args.noVoice) {
+            players.concat(voiceChannelMembers);
         }
         
+        for (let i = 0; i < draftArgs.numberOfAi; i++) {
+            players.push(`AI ${i}`);
+        }
+
         let draftResult = await this.draftExecutor.executeDraft(players, draftArgs.numberOfCivs, draftArgs.civGroups, serverId);
 
         if (!draftResult.success) {
             if (draftResult.error == "no-players") {
-                sendMessage(Messages.NoPlayers)
+                sendMessage(Messages.NoPlayers);
             } else if (draftResult.error == "not-enough-civs") {
-                sendMessage(Messages.NotEnoughCivs)
+                sendMessage(Messages.NotEnoughCivs);
             }
-            return
+            return;
         }
 
         let response = "";
