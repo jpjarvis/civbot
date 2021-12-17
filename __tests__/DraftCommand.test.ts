@@ -8,9 +8,7 @@ import {EmptyVoiceChannelAccessor} from "../src/VoiceChannelAccessor";
 
 function createMockDraftExecutor(draft: Draft): IDraftExecutor {
     return {
-        executeDraft: async (args, voiceChannel, serverId) => {
-            return {success: true, draft: draft}
-        }
+        executeDraft: async () => {return {success: true, draft: draft}}
     }
 }
 
@@ -88,7 +86,7 @@ describe('draftCommand', () => {
             civGroups: ['civ5-vanilla']
         }
         const draftCommand = new DraftCommand(createFailingMockDraftExecutor("not-enough-civs"), mockUserDataStore)
-
+        
         await draftCommand.draft(draftArgs, new EmptyVoiceChannelAccessor(), "", writeOutput)
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe(Messages.NotEnoughCivs)
