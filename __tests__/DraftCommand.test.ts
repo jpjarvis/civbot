@@ -1,10 +1,10 @@
 ﻿import {DraftCommand} from "../src/DraftCommand";
-import {DraftArguments, DraftError, IDraftExecutor} from "../src/Draft";
+import {DraftArguments, DraftError, DraftExecutor, IDraftExecutor} from "../src/Draft";
 import Messages from "../src/Messages";
 import {Draft} from "../src/DraftTypes";
 import UserData from "../src/UserData";
-import {createMockUserDataStore} from "./Mocks";
-import {EmptyVoiceChannelAccessor} from "../src/VoiceChannelAccessor";
+import {createMockCivsRepository, createMockUserDataStore} from "./Mocks";
+import {EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "../src/VoiceChannelAccessor";
 
 function createMockDraftExecutor(draft: Draft): IDraftExecutor {
     return {
@@ -90,5 +90,48 @@ describe('draftCommand', () => {
         await draftCommand.draft(draftArgs, new EmptyVoiceChannelAccessor(), "", writeOutput)
         expect(output[0]).toBe(Messages.NotInVoice)
         expect(output[1]).toBe(Messages.NotEnoughCivs)
+    })
+    
+    it('should include players from voice in the draft', async () => {
+        const draftArgs: DraftArguments = {
+            numberOfAi: 0,
+            numberOfCivs: 3,
+            noVoice: false,
+            civGroups: ['civ5-vanilla']
+        }
+
+        const voiceChannelAccessor: VoiceChannelAccessor = {
+            getUsersInVoice: () => ['voice_player']
+        }
+
+        const draftExecutor = new DraftExecutor(createMockCivsRepository(100))
+
+        const draftCommand = new DraftCommand(draftExecutor, mockUserDataStore)
+        await draftCommand.draft(draftArgs, voiceChannelAccessor, "", writeOutput)
+        expect(output[0]).toBe("Drafting for `civ5-vanilla`")
+        expect(output[1]).toContain("voice_player")
+    })
+
+    it('should include players from voice and AI together', async () => {
+        const draftArgs: DraftArguments = {
+            numberOfAi: 3,
+            numberOfCivs: 3,
+            noVoice: false,
+            civGroups: ['civ5-vanilla']
+        }
+
+        const voiceChannelAccessor: VoiceChannelAccessor = {
+            getUsersInVoice: () => ['player1']
+        }
+        
+        const draftExecutor = new DraftExecutor(createMockCivsRepository(100))
+
+        const draftCommand = new DraftCommand(draftExecutor, mockUserDataStore)
+        await draftCommand.draft(draftArgs, voiceChannelAccessor, "", writeOutput)
+        expect(output[0]).toBe("Drafting for `civ5-vanilla`")
+        expect(output[1]).toContain("player1")
+        expect(output[1]).toContain("AI 0")
+        expect(output[1]).toContain("AI 1")
+        expect(output[1]).toContain("AI 2")
     })
 })
