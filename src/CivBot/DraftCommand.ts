@@ -1,7 +1,15 @@
-import {DraftArguments, IDraftExecutor} from "./Draft";
+import {IDraftExecutor} from "../Draft/DraftExecutor";
 import Messages from "./Messages";
-import {UserDataStore} from "./UserDataStore/interface";
+import {UserDataStore} from "./UserDataStore/UserDataStore";
 import {VoiceChannelAccessor} from "./VoiceChannelAccessor";
+import {CivGroup} from "../Draft/Types/CivGroups";
+
+export interface DraftArguments {
+    numberOfAi: number,
+    numberOfCivs: number,
+    noVoice: boolean,
+    civGroups: CivGroup[]
+}
 
 function getPlayerDraftString(playerName: string, civs: string[]): string {
     let response = `${playerName} `.padEnd(20, " ");

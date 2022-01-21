@@ -4,6 +4,6 @@ export function getToken(): string {
         return token;
     }
 
-    const auth = require('../auth/auth.json');
+    const auth = require('../../auth/auth.json');
     return auth.token;
 }

@@ -1,11 +1,10 @@
-import Messages from "./Messages";
-import {CivGroup} from "./CivGroups";
-import {getVoiceChannel} from "./DiscordUtils";
-import {IDraftCommand} from "./DraftCommand";
+import Messages from "../Messages";
+import {CivGroup} from "../../Draft/Types/CivGroups";
+import {getVoiceChannel} from "../DiscordUtils";
+import {IDraftCommand, DraftArguments} from "../DraftCommand";
 import {Client, Message} from "discord.js";
-import {DraftArguments} from "./Draft";
-import {UserDataStore} from "./UserDataStore/interface";
-import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor} from "./VoiceChannelAccessor";
+import {UserDataStore} from "../UserDataStore/UserDataStore";
+import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor} from "../VoiceChannelAccessor";
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName);

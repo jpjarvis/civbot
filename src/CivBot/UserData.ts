@@ -1,4 +1,4 @@
-import {DraftArguments} from './Draft';
+import {DraftArguments} from './DraftCommand';
 
 export default class UserData {
     defaultDraftSettings: Partial<DraftArguments> = {

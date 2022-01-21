@@ -1,6 +1,6 @@
-﻿import {DraftArguments, DraftExecutor} from "../src/Draft";
-import {generateArray} from "./TestUtils";
-import {createMockCivsRepository} from "./Mocks";
+﻿import {DraftExecutor} from "../../src/Draft/DraftExecutor";
+import {generateArray} from "../TestUtils";
+import {createMockCivsRepository} from "../Mocks";
 
 describe('DraftExecutor', () => {
     const draftExecutor = new DraftExecutor(createMockCivsRepository(10))

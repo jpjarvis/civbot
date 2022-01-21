@@ -1,9 +1,9 @@
 import {CommandInteraction, GuildMember, VoiceChannel} from "discord.js";
-import {CivGroup, stringToCivGroup} from "./CivGroups";
-import {getVoiceChannel} from "./DiscordUtils";
-import {IDraftCommand} from "./DraftCommand";
-import {UserDataStore} from "./UserDataStore/interface";
-import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "./VoiceChannelAccessor";
+import {CivGroup, stringToCivGroup} from "../../Draft/Types/CivGroups";
+import {getVoiceChannel} from "../DiscordUtils";
+import {IDraftCommand} from "../DraftCommand";
+import {UserDataStore} from "../UserDataStore/UserDataStore";
+import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "../VoiceChannelAccessor";
 
 function parseCivGroups(civGroupString: string): { success: true, civGroups: CivGroup[] } | { success: false, invalidGroups: string[] } {
     const strings = civGroupString.split(" ");

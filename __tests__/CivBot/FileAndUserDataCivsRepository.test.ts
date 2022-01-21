@@ -1,8 +1,8 @@
-import UserData from "../src/UserData";
-import CivData from "../src/CivsRepository/CivData/CivData";
-import FileAndUserDataCivsRepository from "../src/CivsRepository/FileAndUserDataCivsRepository";
-import {CivGroup} from "../src/CivGroups";
-import {createMockCivDataAccessor, createMockUserDataStore} from "./Mocks";
+import {createMockCivDataAccessor, createMockUserDataStore} from "../Mocks";
+import UserData from "../../src/CivBot/UserData";
+import CivData from "../../src/Draft/CivData";
+import FileAndUserDataCivsRepository from "../../src/CivBot/FileAndUserDataCivsRepository";
+import {CivGroup} from "../../src/Draft/Types/CivGroups";
 
 const fakeUserData1: UserData = {
     defaultDraftSettings: {},

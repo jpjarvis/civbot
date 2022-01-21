@@ -1,6 +1,6 @@
 import {ApplicationCommandManager, Client, Intents} from "discord.js";
 import {Commands} from "./SlashCommands";
-import {getToken} from "./Auth";
+import {getToken} from "../Auth";
 
 async function updateSlashCommands() {
     const client = new Client({

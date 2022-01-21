@@ -1,7 +1,7 @@
-import {UserDataStore} from "./interface";
 import * as fs from 'fs';
 import * as path from 'path';
 import UserData from "../UserData";
+import {UserDataStore} from "./UserDataStore";
 
 export default class FileUserDataStore implements UserDataStore {
     getUserDataPath(tenantId: string) {

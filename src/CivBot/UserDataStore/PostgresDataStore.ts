@@ -1,6 +1,6 @@
-import {UserDataStore} from "./interface";
 import UserData from "../UserData";
 import {Client} from "pg";
+import {UserDataStore} from "./UserDataStore";
 
 const connectionString = process.env['DATABASE_URL']!;
 

@@ -1,9 +1,10 @@
-import UserData from "../src/UserData";
-import {UserDataStore} from "../src/UserDataStore/interface";
-import CivData from "../src/CivsRepository/CivData/CivData";
-import CivDataAccessor from "../src/CivsRepository/CivData/CivDataAccessor";
-import {CivsRepository} from "../src/CivsRepository/interface";
+
 import {generateArray} from "./TestUtils";
+import {UserDataStore} from "../src/CivBot/UserDataStore/UserDataStore";
+import CivDataAccessor from "../src/Draft/CivDataAccessor";
+import UserData from "../src/CivBot/UserData";
+import CivData from "../src/Draft/CivData";
+import {CivsRepository} from "../src/Draft/CivsRepository";
 
 export function createMockUserDataStore(userDatas: Map<string, UserData>): UserDataStore {
     return {

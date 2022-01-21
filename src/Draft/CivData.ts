@@ -1,4 +1,4 @@
-import {Civ5CivGroup, Civ6CivGroup} from "../../CivGroups";
+import {Civ5CivGroup, Civ6CivGroup} from "./Types/CivGroups";
 
 export default interface CivData {
     civs: {

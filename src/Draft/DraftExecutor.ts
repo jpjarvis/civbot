@@ -1,17 +1,7 @@
-import {CivGroup} from "./CivGroups";
-import {Draft} from "./DraftTypes";
-import {CivsRepository} from "./CivsRepository/interface";
+import {CivGroup} from "./Types/CivGroups";
+import {Draft, DraftResult} from "./Types/DraftTypes";
+import {CivsRepository} from "./CivsRepository";
 import * as shuffle from "shuffle-array";
-
-export type DraftError = "no-players" | "not-enough-civs"
-type DraftResult = {success: true, draft: Draft} | {success: false, error: DraftError}
-
-export interface DraftArguments {
-    numberOfAi: number,
-    numberOfCivs: number,
-    noVoice: boolean,
-    civGroups: CivGroup[]
-}
 
 export interface IDraftExecutor {
     executeDraft(players: string[], civsPerPlayer: number, civGroups: CivGroup[], serverId: string): Promise<DraftResult>

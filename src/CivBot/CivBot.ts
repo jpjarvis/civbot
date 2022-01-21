@@ -1,5 +1,5 @@
-﻿import MessageHandler from "./MessageHandler";
-import SlashCommandHandler from "./SlashCommandHandler";
+﻿import MessageHandler from "./Messages/MessageHandler";
+import SlashCommandHandler from "./SlashCommands/SlashCommandHandler";
 import {Client, CommandInteraction, Message} from "discord.js";
 
 export default class CivBot {

@@ -1,11 +1,11 @@
-﻿import {DraftCommand} from "../src/DraftCommand";
-import {DraftArguments, DraftError, DraftExecutor, IDraftExecutor} from "../src/Draft";
-import Messages from "../src/Messages";
-import {Draft} from "../src/DraftTypes";
-import UserData from "../src/UserData";
-import {createMockCivsRepository, createMockUserDataStore} from "./Mocks";
-import {EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "../src/VoiceChannelAccessor";
-import {CivGroup} from "../src/CivGroups";
+﻿import {DraftArguments, DraftCommand} from "../../src/CivBot/DraftCommand";
+import {DraftExecutor, IDraftExecutor} from "../../src/Draft/DraftExecutor";
+import {Draft, DraftError} from "../../src/Draft/Types/DraftTypes";
+import {CivGroup} from "../../src/Draft/Types/CivGroups";
+import UserData from "../../src/CivBot/UserData";
+import {createMockCivsRepository, createMockUserDataStore} from "../Mocks";
+import {EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "../../src/CivBot/VoiceChannelAccessor";
+import Messages from "../../src/CivBot/Messages";
 
 function createMockDraftExecutor(draft: Draft): IDraftExecutor {
     return {
