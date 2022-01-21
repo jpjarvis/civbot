@@ -31,13 +31,6 @@ describe('DraftExecutor', () => {
     })
     
     it('should fail if there are no players', async () => {
-        const draftArgs: DraftArguments = {
-            numberOfAi: 0,
-            numberOfCivs: 3,
-            noVoice: true,
-            civGroups: ["civ5-vanilla"]
-        }
-
         const draftResult = await draftExecutor.executeDraft([], 3, [], "")
         
         expect(draftResult.success).toBe(false)
@@ -48,13 +41,6 @@ describe('DraftExecutor', () => {
     })
     
     it('should fail if there are not enough civs for the players', async () => {
-        const draftArgs: DraftArguments = {
-            numberOfAi: 10,
-            numberOfCivs: 100,
-            noVoice: true,
-            civGroups: ["civ5-vanilla"]
-        }
-        
         const draftResult = await draftExecutor.executeDraft(generateArray(10), 100, [], "")
 
         expect(draftResult.success).toBe(false)
