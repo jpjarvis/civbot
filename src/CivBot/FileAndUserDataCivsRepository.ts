@@ -1,29 +1,15 @@
 ﻿import {CivGroup} from "../Draft/Types/CivGroups";
-import {CivsRepository} from "../Draft/CivsRepository";
-import {UserDataStore} from "./UserDataStore/UserDataStore";
-import CivDataAccessor from "../Draft/CivDataAccessor";
+import UserData from "./UserData";
+import CivData from "../Draft/CivData";
 
-export default class FileAndUserDataCivsRepository implements CivsRepository {
-    private userDataStore: UserDataStore;
-    private civDataAccessor: CivDataAccessor;
-    
-    constructor(userDataStore: UserDataStore, civDataAccessor: CivDataAccessor) {
-        this.userDataStore = userDataStore;
-        this.civDataAccessor = civDataAccessor;
-    }
-    
-    async getCivs(groups: Set<CivGroup>, tenantId: string): Promise<string[]> {
-        const civData = this.civDataAccessor.getCivData();
-        const userData = await this.userDataStore.load(tenantId);
-
-        return Array.from(groups)
-            .map((civGroup) => {
-                if (civGroup === "custom") {
-                    return userData.customCivs;
-                }
-                return civData.civs[civGroup];
-            })
-            .reduce((prev: string[], current: string[]) => current.concat(prev), []);
-    }
+export async function getCivs(groups: Set<CivGroup>, userData: UserData, civData: CivData): Promise<string[]> {
+    return Array.from(groups)
+        .map((civGroup) => {
+            if (civGroup === "custom") {
+                return userData.customCivs;
+            }
+            return civData.civs[civGroup];
+        })
+        .reduce((prev: string[], current: string[]) => current.concat(prev), []);
 }
 

@@ -1,8 +1,8 @@
-import {IDraftExecutor} from "../Draft/DraftExecutor";
 import Messages from "./Messages";
 import {UserDataStore} from "./UserDataStore/UserDataStore";
 import {VoiceChannelAccessor} from "./VoiceChannelAccessor";
 import {CivGroup} from "../Draft/Types/CivGroups";
+import {DraftResult} from "../Draft/Types/DraftTypes";
 
 export interface DraftArguments {
     numberOfAi: number,
@@ -28,11 +28,11 @@ export interface IDraftCommand {
 }
 
 export class DraftCommand implements IDraftCommand {
-    private draftExecutor: IDraftExecutor;
+    private readonly generateDraft: (players: string[], civsPerPlayer: number, civs: string[]) => DraftResult;
     private userDataStore: UserDataStore;
 
-    constructor(draftExecutor: IDraftExecutor, userDataStore: UserDataStore) {
-        this.draftExecutor = draftExecutor;
+    constructor(generateDraft: (players, civsPerPlayer, civs) => DraftResult, userDataStore: UserDataStore) {
+        this.generateDraft = generateDraft;
         this.userDataStore = userDataStore;
     }
 
@@ -63,8 +63,10 @@ export class DraftCommand implements IDraftCommand {
         for (let i = 0; i < draftArgs.numberOfAi; i++) {
             players.push(`AI ${i}`);
         }
-
-        let draftResult = await this.draftExecutor.executeDraft(players, draftArgs.numberOfCivs, draftArgs.civGroups, serverId);
+        
+        
+        
+        let draftResult = this.generateDraft(players, draftArgs.numberOfCivs, draftArgs.civGroups);
 
         if (!draftResult.success) {
             if (draftResult.error == "no-players") {
