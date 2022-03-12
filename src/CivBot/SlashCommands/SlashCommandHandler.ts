@@ -1,9 +1,10 @@
 import {CommandInteraction, GuildMember, VoiceChannel} from "discord.js";
 import {CivGroup, stringToCivGroup} from "../../Draft/Types/CivGroups";
-import {getVoiceChannel} from "../DiscordUtils";
-import {IDraftCommand} from "../DraftCommand";
+import {getVoiceChannel, getVoiceChannelMembers} from "../DiscordUtils";
+import {DraftArguments, draftCommand} from "../DraftCommand";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "../VoiceChannelAccessor";
+import {ResultOrError} from "../../Draft/Types/ResultOrError";
 
 function parseCivGroups(civGroupString: string): { success: true, civGroups: CivGroup[] } | { success: false, invalidGroups: string[] } {
     const strings = civGroupString.split(" ");
@@ -33,17 +34,13 @@ function parseCivGroups(civGroupString: string): { success: true, civGroups: Civ
 }
 
 export default class SlashCommandHandler {
-    private draftCommand: IDraftCommand;
-    private userDataStore: UserDataStore;
+    private readonly userDataStore: UserDataStore;
     
-    constructor(draftCommand: IDraftCommand, userDataStore: UserDataStore) {
-        this.draftCommand = draftCommand
+    constructor(userDataStore: UserDataStore) {
         this.userDataStore = userDataStore
     }
 
-    private async handleDraft(interaction: CommandInteraction) {
-        const serverId = interaction.guildId!;
-
+    private static extractDraftArguments(interaction: CommandInteraction): ResultOrError<Partial<DraftArguments>, string> {
         const ai = interaction.options.getInteger("ai") ?? undefined;
         const civs = interaction.options.getInteger("civs") ?? undefined;
         const noVoice = interaction.options.getBoolean("no-voice") ?? undefined;
@@ -55,40 +52,44 @@ export default class SlashCommandHandler {
             if (parseResult.success) {
                 civGroups = parseResult.civGroups;
             } else {
-                await interaction.reply(`Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.invalidGroups}`);
-                return;
+                return {isError: true, error: `Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.invalidGroups}`};
             }
         }
 
-        let response = "";
-        
-        async function getVoiceChannelAccessor() : Promise<VoiceChannelAccessor> {
-            let voiceChannel: VoiceChannel | undefined = undefined;
-            const member = interaction.member;
-            if (member instanceof GuildMember) {
-                voiceChannel = await getVoiceChannel(interaction.client, member);
-                if (voiceChannel) {
-                    return new DiscordVoiceChannelAccessor(voiceChannel);
-                }
-            }
-            
-            return new EmptyVoiceChannelAccessor();
-        }
-        
-        const voiceChannelAccessor = await getVoiceChannelAccessor();
-
-        await this.draftCommand.draft(
-            {
+        return {
+            isError: false,
+            result: {
                 numberOfCivs: civs,
                 numberOfAi: ai,
                 noVoice: noVoice,
                 civGroups: civGroups
-            },
-            voiceChannelAccessor,
-            serverId,
+            }
+        }
+    }
+    
+    private async handleDraft(interaction: CommandInteraction) {
+        
+        const serverId = interaction.guildId!;
+
+        let response = "";
+
+
+        const draftArgumentsOrError = SlashCommandHandler.extractDraftArguments(interaction);
+        
+        if (draftArgumentsOrError.isError) {
+            await interaction.reply(draftArgumentsOrError.error);
+            return;
+        }
+        
+        const voiceChannelMembers = await getVoiceChannelMembers(interaction);
+
+        await draftCommand(
+            draftArgumentsOrError.result,
+            voiceChannelMembers,
             (message) => {
                 response += message + "\n";
-            });
+            },
+            await this.userDataStore.load(serverId));
 
         await interaction.reply(response);
     }

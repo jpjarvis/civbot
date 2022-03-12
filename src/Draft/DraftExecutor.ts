@@ -1,5 +1,6 @@
-import {Draft, DraftResult} from "./Types/DraftTypes";
+import {Draft, DraftError} from "./Types/DraftTypes";
 import * as shuffle from "shuffle-array";
+import {ResultOrError} from "./Types/ResultOrError";
 
 function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): Draft {
     shuffle(civs);
@@ -11,17 +12,17 @@ function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): D
     return draft;
 }
 
-export async function draft(players: string[], civsPerPlayer: number, civs: string[]): Promise<DraftResult> {
+export async function draft(players: string[], civsPerPlayer: number, civs: string[]): Promise<ResultOrError<Draft, DraftError>> {
     if (players.length == 0) {
-        return {success: false, error: "no-players"}
+        return {isError: true, error: "no-players"}
     }
     
     if (players.length * civsPerPlayer > civs.length) {
-        return {success: false, error: "not-enough-civs"}
+        return {isError: true, error: "not-enough-civs"}
     }
     
     let draft = assignCivs(players, civsPerPlayer, civs)
     
-    return {success: true, draft: draft};
+    return {isError: false, result: draft};
 }
 

@@ -1,10 +1,11 @@
 import Messages from "../Messages";
 import {CivGroup} from "../../Draft/Types/CivGroups";
 import {getVoiceChannel} from "../DiscordUtils";
-import {IDraftCommand, DraftArguments} from "../DraftCommand";
+import {DraftArguments, draftCommand} from "../DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor} from "../VoiceChannelAccessor";
+import UserData from "../UserData";
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName);
@@ -78,11 +79,9 @@ function parseDraftArgs(args: string[]): { success: true, args: Partial<DraftArg
 }
 
 export default class MessageHandler {
-    private draftCommand: IDraftCommand;
     private userDataStore: UserDataStore;
     
-    constructor(draftCommand: IDraftCommand, userDataStore: UserDataStore) {
-        this.draftCommand = draftCommand;
+    constructor(userDataStore: UserDataStore) {
         this.userDataStore = userDataStore;
     }
 
@@ -118,11 +117,12 @@ export default class MessageHandler {
                 return;
             }
             const voiceChannel = await getVoiceChannel(client, msg.member!)
-            await this.draftCommand.draft(
+            const voiceChannelMembers = voiceChannel?.members.map(m => m.user.username) ?? []; 
+            await draftCommand(
                 parsedArgs.args,
-                voiceChannel ? new DiscordVoiceChannelAccessor(voiceChannel) : new EmptyVoiceChannelAccessor(),
-                serverId,
-                (message) => msg.channel.send(message)
+                voiceChannelMembers,
+                (message) => msg.channel.send(message),
+                await this.userDataStore.load(serverId)
             );
         } else if (args[1] === "civs") {
             if (args[2] === "add") {
