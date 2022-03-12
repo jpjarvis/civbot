@@ -1,50 +1,50 @@
-﻿import {DraftExecutor} from "../../src/Draft/DraftExecutor";
-import {generateArray} from "../TestUtils";
-import {createMockCivsRepository} from "../Mocks";
+﻿import {generateArray} from "../TestUtils";
+import {draft} from "../../src/Draft/DraftExecutor";
 
-describe('DraftExecutor', () => {
-    const draftExecutor = new DraftExecutor(createMockCivsRepository(10))
+describe('draft', () => {
+    
+    const civs = generateArray(20);
     
     it('should succeed under normal circumstances', async () => {
-        const draftResult = await draftExecutor.executeDraft(generateArray(3), 3, [], "")
-        expect(draftResult.success)
+        const draftResultOrError = await draft(generateArray(3), 3, civs)
+        expect(draftResultOrError.isError).toBe(false);
     })
 
     it('should draft the right number of civs for all players',async () => {
         const players = generateArray(3)
-        const draft = await draftExecutor.executeDraft(players, 3, [], "");
+        const draftResultOrError = await draft(players, 3, civs);
 
-        expect(draft.success)
+        expect(draftResultOrError.isError).toBe(false);
         
-        if (!draft.success) {
+        if (draftResultOrError.isError) {
             return
         }
         
         for (const player of players) {
-            expect(draft.draft[player]).toHaveLength(3)
+            expect(draftResultOrError.result[player]).toHaveLength(3)
         }
     })
     
     it('should succeed if civsPerPlayer is 0', async () => {
-        const draftResult = await draftExecutor.executeDraft(generateArray(3), 0, [], "")
-        expect(draftResult.success)
+        const draftResult = await draft(generateArray(3), 0, civs);
+        expect(draftResult.isError).toBe(false);
     })
     
     it('should fail if there are no players', async () => {
-        const draftResult = await draftExecutor.executeDraft([], 3, [], "")
+        const draftResult = await draft([], 3, civs);
         
-        expect(draftResult.success).toBe(false)
-        if (draftResult.success) {
+        expect(draftResult.isError).toBe(true)
+        if (!draftResult.isError) {
             return
         }
         expect(draftResult.error).toBe('no-players')
     })
     
     it('should fail if there are not enough civs for the players', async () => {
-        const draftResult = await draftExecutor.executeDraft(generateArray(10), 100, [], "")
+        const draftResult = await draft(generateArray(10), 100, civs);
 
-        expect(draftResult.success).toBe(false)
-        if (draftResult.success) {
+        expect(draftResult.isError).toBe(true)
+        if (!draftResult.isError) {
             return
         }
         expect(draftResult.error).toBe('not-enough-civs')
