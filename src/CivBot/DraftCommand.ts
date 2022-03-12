@@ -1,10 +1,9 @@
 import Messages from "./Messages";
-import {UserDataStore} from "./UserDataStore/UserDataStore";
 import {CivGroup} from "../Draft/Types/CivGroups";
 import {draft} from "../Draft/DraftExecutor";
 import {getCivs} from "./FileAndUserDataCivsRepository";
 import UserData from "./UserData";
-import loadCivDataFromFile from "../Draft/JsonCivDataAccessor";
+import CivData from "../Draft/CivData";
 
 export interface DraftArguments {
     numberOfAi: number,
@@ -25,7 +24,8 @@ function getPlayerDraftString(playerName: string, civs: string[]): string {
 export async function draftCommand(args: Partial<DraftArguments>,
                                    voiceChannelMembers: string[],
                                    sendMessage: (message: string) => void,
-                                   userData: UserData): Promise<void> {
+                                   userData: UserData,
+                                   civData: CivData): Promise<void> {
     const defaultArgs = userData.defaultDraftSettings;
 
     const draftArgs: DraftArguments = {
@@ -47,8 +47,7 @@ export async function draftCommand(args: Partial<DraftArguments>,
     for (let i = 0; i < draftArgs.numberOfAi; i++) {
         players.push(`AI ${i}`);
     }
-
-    const civData = loadCivDataFromFile("civs.json");
+    
     const civs = await getCivs(new Set(draftArgs.civGroups), userData, civData);
     
     let draftResult = await draft(players, draftArgs.numberOfCivs, civs);

@@ -4,8 +4,7 @@ import {getVoiceChannel} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor} from "../VoiceChannelAccessor";
-import UserData from "../UserData";
+import loadCivDataFromFile from "../../Draft/JsonCivDataAccessor";
 
 function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName);
@@ -122,7 +121,8 @@ export default class MessageHandler {
                 parsedArgs.args,
                 voiceChannelMembers,
                 (message) => msg.channel.send(message),
-                await this.userDataStore.load(serverId)
+                await this.userDataStore.load(serverId),
+                loadCivDataFromFile("civs.json")
             );
         } else if (args[1] === "civs") {
             if (args[2] === "add") {

@@ -1,10 +1,10 @@
-import {CommandInteraction, GuildMember, VoiceChannel} from "discord.js";
+import {CommandInteraction} from "discord.js";
 import {CivGroup, stringToCivGroup} from "../../Draft/Types/CivGroups";
-import {getVoiceChannel, getVoiceChannelMembers} from "../DiscordUtils";
+import {getVoiceChannelMembers} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../DraftCommand";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {DiscordVoiceChannelAccessor, EmptyVoiceChannelAccessor, VoiceChannelAccessor} from "../VoiceChannelAccessor";
 import {ResultOrError} from "../../Draft/Types/ResultOrError";
+import loadCivDataFromFile from "../../Draft/JsonCivDataAccessor";
 
 function parseCivGroups(civGroupString: string): { success: true, civGroups: CivGroup[] } | { success: false, invalidGroups: string[] } {
     const strings = civGroupString.split(" ");
@@ -72,8 +72,7 @@ export default class SlashCommandHandler {
         const serverId = interaction.guildId!;
 
         let response = "";
-
-
+        
         const draftArgumentsOrError = SlashCommandHandler.extractDraftArguments(interaction);
         
         if (draftArgumentsOrError.isError) {
@@ -89,7 +88,8 @@ export default class SlashCommandHandler {
             (message) => {
                 response += message + "\n";
             },
-            await this.userDataStore.load(serverId));
+            await this.userDataStore.load(serverId),
+            loadCivDataFromFile("civs.json"));
 
         await interaction.reply(response);
     }
