@@ -35,7 +35,7 @@ export async function draftCommand(args: Partial<DraftArguments>,
         civGroups: args.civGroups ?? defaultArgs.civGroups ?? ["civ5-vanilla"]
     };
 
-    if (!voiceChannelMembers) {
+    if (voiceChannelMembers.length == 0) {
         sendMessage(Messages.NotInVoice);
     }
 
