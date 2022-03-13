@@ -1,7 +1,7 @@
 import Messages from "./Messages";
 import {CivGroup} from "../Draft/Types/CivGroups";
 import {draft} from "../Draft/DraftExecutor";
-import {getCivs} from "./FileAndUserDataCivsRepository";
+import {selectCivs} from "./FileAndUserDataCivsRepository";
 import UserData from "./UserData";
 import CivData from "../Draft/CivData";
 
@@ -48,7 +48,7 @@ export async function draftCommand(args: Partial<DraftArguments>,
         players.push(`AI ${i}`);
     }
     
-    const civs = await getCivs(new Set(draftArgs.civGroups), userData, civData);
+    const civs = await selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
     
     let draftResult = await draft(players, draftArgs.numberOfCivs, civs);
 

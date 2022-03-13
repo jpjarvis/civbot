@@ -1,12 +1,11 @@
 ﻿import {CivGroup} from "../Draft/Types/CivGroups";
-import UserData from "./UserData";
 import CivData from "../Draft/CivData";
 
-export async function getCivs(groups: Set<CivGroup>, userData: UserData, civData: CivData): Promise<string[]> {
+export async function selectCivs(groups: Set<CivGroup>, civData: CivData, customCivs: string[]): Promise<string[]> {
     return Array.from(groups)
         .map((civGroup) => {
             if (civGroup === "custom") {
-                return userData.customCivs;
+                return customCivs;
             }
             return civData.civs[civGroup];
         })
