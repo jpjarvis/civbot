@@ -1,10 +1,10 @@
 import {CommandInteraction} from "discord.js";
-import {CivGroup, stringToCivGroup} from "../../Draft/Types/CivGroups";
+import {CivGroup, stringToCivGroup} from "../Types/CivGroups";
 import {getVoiceChannelMembers} from "../DiscordUtils";
-import {DraftArguments, draftCommand} from "../DraftCommand";
+import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {ResultOrErrorWithDetails} from "../../Draft/Types/ResultOrError";
-import {loadCivDataFromFile} from "../../Draft/CivData";
+import {ResultOrErrorWithDetails} from "../Types/ResultOrError";
+import {loadCivDataFromFile} from "../CivData";
 
 function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");

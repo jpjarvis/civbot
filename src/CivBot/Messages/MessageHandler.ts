@@ -1,11 +1,11 @@
 import Messages from "../Messages";
-import {CivGroup} from "../../Draft/Types/CivGroups";
+import {CivGroup} from "../Types/CivGroups";
 import {getVoiceChannel} from "../DiscordUtils";
-import {DraftArguments, draftCommand} from "../DraftCommand";
+import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {loadCivDataFromFile} from "../../Draft/CivData";
-import {ResultOrError} from "../../Draft/Types/ResultOrError";
+import {loadCivDataFromFile} from "../CivData";
+import {ResultOrError} from "../Types/ResultOrError";
 
 function extractArgValue(args: Array<string>, argName: string): ResultOrError<number> {
     let index = args.findIndex((a) => a === argName);

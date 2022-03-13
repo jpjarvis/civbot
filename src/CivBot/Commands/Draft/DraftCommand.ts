@@ -1,9 +1,9 @@
-import Messages from "./Messages";
-import {CivGroup} from "../Draft/Types/CivGroups";
-import {draft} from "../Draft/Draft";
-import {selectCivs} from "./SelectCivs";
-import UserData from "./UserData";
-import {CivData} from "../Draft/CivData";
+import Messages from "../../Messages";
+import {CivGroup} from "../../Types/CivGroups";
+import {draft} from "./Draft";
+import {selectCivs} from "../../SelectCivs";
+import UserData from "../../Types/UserData";
+import {CivData} from "../../CivData";
 
 export interface DraftArguments {
     numberOfAi: number,

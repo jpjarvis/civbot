@@ -1,5 +1,5 @@
-﻿import {generateArray} from "../TestUtils";
-import {draft} from "../../src/Draft/DraftExecutor";
+﻿import {generateArray} from "../../TestUtils";
+import {draft} from "../../../src/CivBot/Commands/Draft/Draft";
 
 describe('draft', () => {
     

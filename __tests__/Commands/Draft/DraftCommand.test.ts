@@ -1,9 +1,9 @@
-﻿import {DraftArguments, draftCommand} from "../../src/CivBot/DraftCommand";
-import {CivGroup} from "../../src/Draft/Types/CivGroups";
-import UserData from "../../src/CivBot/UserData";
-import Messages from "../../src/CivBot/Messages";
-import CivData from "../../src/Draft/CivData";
-import {generateArray} from "../TestUtils";
+﻿import {DraftArguments, draftCommand} from "../../../src/CivBot/Commands/Draft/DraftCommand";
+import {CivGroup} from "../../../src/CivBot/Types/CivGroups";
+import UserData from "../../../src/CivBot/Types/UserData";
+import Messages from "../../../src/CivBot/Messages";
+import {CivData} from "../../../src/CivBot/CivData";
+import {generateArray} from "../../TestUtils";
 
 function expectOutputDraftToHave(output: string[], civGroups: Set<CivGroup>, players: string[]) {
     expect(output[0]).toContain("Drafting for ")

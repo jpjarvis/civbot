@@ -1,5 +1,5 @@
-﻿import {CivGroup} from "../Draft/Types/CivGroups";
-import {CivData} from "../Draft/CivData";
+﻿import {CivGroup} from "./Types/CivGroups";
+import {CivData} from "./CivData";
 
 export async function selectCivs(groups: Set<CivGroup>, civData: CivData, customCivs: string[]): Promise<string[]> {
     return Array.from(groups)
