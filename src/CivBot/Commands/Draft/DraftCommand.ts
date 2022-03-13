@@ -1,7 +1,7 @@
 import Messages from "../../Messages";
 import {CivGroup} from "../../Types/CivGroups";
 import {draft} from "./Draft";
-import {selectCivs} from "../../SelectCivs";
+import {selectCivs} from "./SelectCivs";
 import UserData from "../../Types/UserData";
 import {CivData} from "../../CivData";
 
@@ -50,7 +50,7 @@ export async function draftCommand(args: Partial<DraftArguments>,
     
     const civs = await selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
     
-    let draftResult = await draft(players, draftArgs.numberOfCivs, civs);
+    const draftResult = await draft(players, draftArgs.numberOfCivs, civs);
 
     if (draftResult.isError) {
         if (draftResult.error == "no-players") {
