@@ -5,38 +5,41 @@ import {DraftArguments, draftCommand} from "../DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
 import loadCivDataFromFile from "../../Draft/JsonCivDataAccessor";
+import {ResultOrError} from "../../Draft/Types/ResultOrErrorWithDetails";
 
-function extractArgValue(args: Array<string>, argName: string): number | undefined {
+function extractArgValue(args: Array<string>, argName: string): ResultOrError<number> {
     let index = args.findIndex((a) => a === argName);
 
     if (index >= 0) {
         let result = parseInt(args[index + 1]);
         if (isNaN(result)) {
             // Badly formed, so we give an error
-            return undefined;
+            return {isError: true};
         }
 
-        return result;
+        return {isError: false, result: result};
     }
+    
+    return {isError: true};
 }
 
-function parseDraftArgs(args: string[]): { success: true, args: Partial<DraftArguments> } | { success: false } {
+function parseDraftArgs(args: string[]): ResultOrError<Partial<DraftArguments>> {
     let draftArgs: Partial<DraftArguments> = {};
 
     if (args.includes("ai")) {
         let aiArgValue = extractArgValue(args, "ai");
-        if (aiArgValue === undefined) {
-            return {success: false};
+        if (aiArgValue.isError) {
+            return {isError: true};
         }
-        draftArgs.numberOfAi = aiArgValue;
+        draftArgs.numberOfAi = aiArgValue.result;
     }
 
     if (args.includes("civs")) {
         let numCivsArgValue = extractArgValue(args, "civs");
-        if (numCivsArgValue === undefined) {
-            return {success: false};
+        if (numCivsArgValue.isError) {
+            return {isError: true};
         }
-        draftArgs.numberOfCivs = numCivsArgValue;
+        draftArgs.numberOfCivs = numCivsArgValue.result;
     }
 
     draftArgs.noVoice = args.includes("novoice");
@@ -74,12 +77,12 @@ function parseDraftArgs(args: string[]): { success: true, args: Partial<DraftArg
         draftArgs.civGroups = civGroupsSpecified;
     }
 
-    return {success: true, args: draftArgs};
+    return {isError: false, result: draftArgs};
 }
 
 export default class MessageHandler {
     private userDataStore: UserDataStore;
-    
+
     constructor(userDataStore: UserDataStore) {
         this.userDataStore = userDataStore;
     }
@@ -111,14 +114,14 @@ export default class MessageHandler {
         // civbot draft
         else if (args[1] === "draft") {
             const parsedArgs = parseDraftArgs(args);
-            if (!parsedArgs.success) {
+            if (parsedArgs.isError) {
                 msg.channel.send(Messages.BadlyFormed);
                 return;
             }
             const voiceChannel = await getVoiceChannel(client, msg.member!)
-            const voiceChannelMembers = voiceChannel?.members.map(m => m.user.username) ?? []; 
+            const voiceChannelMembers = voiceChannel?.members.map(m => m.user.username) ?? [];
             await draftCommand(
-                parsedArgs.args,
+                parsedArgs.result,
                 voiceChannelMembers,
                 (message) => msg.channel.send(message),
                 await this.userDataStore.load(serverId),

@@ -3,10 +3,10 @@ import {CivGroup, stringToCivGroup} from "../../Draft/Types/CivGroups";
 import {getVoiceChannelMembers} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../DraftCommand";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {ResultOrError} from "../../Draft/Types/ResultOrError";
+import {ResultOrErrorWithDetails} from "../../Draft/Types/ResultOrErrorWithDetails";
 import loadCivDataFromFile from "../../Draft/JsonCivDataAccessor";
 
-function parseCivGroups(civGroupString: string): { success: true, civGroups: CivGroup[] } | { success: false, invalidGroups: string[] } {
+function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");
     const civGroups: CivGroup[] = [];
     const invalidGroups: string[] = [];
@@ -22,14 +22,16 @@ function parseCivGroups(civGroupString: string): { success: true, civGroups: Civ
 
     if (invalidGroups.length > 0) {
         return {
-            success: false,
-            invalidGroups: invalidGroups
+            isError: true,
+            error: {
+                invalidGroups: invalidGroups
+            }
         };
     }
 
     return {
-        success: true,
-        civGroups: civGroups
+        isError: false,
+        result: civGroups
     };
 }
 
@@ -40,7 +42,7 @@ export default class SlashCommandHandler {
         this.userDataStore = userDataStore
     }
 
-    private static extractDraftArguments(interaction: CommandInteraction): ResultOrError<Partial<DraftArguments>, string> {
+    private static extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWithDetails<Partial<DraftArguments>, string> {
         const ai = interaction.options.getInteger("ai") ?? undefined;
         const civs = interaction.options.getInteger("civs") ?? undefined;
         const noVoice = interaction.options.getBoolean("no-voice") ?? undefined;
@@ -49,10 +51,10 @@ export default class SlashCommandHandler {
         let civGroups: CivGroup[] | undefined = undefined;
         if (civGroupString) {
             let parseResult = parseCivGroups(civGroupString);
-            if (parseResult.success) {
-                civGroups = parseResult.civGroups;
+            if (!parseResult.isError) {
+                civGroups = parseResult.result;
             } else {
-                return {isError: true, error: `Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.invalidGroups}`};
+                return { isError: true, error: `Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.error.invalidGroups}` };
             }
         }
 
