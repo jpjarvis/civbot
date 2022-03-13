@@ -4,8 +4,8 @@ import {getVoiceChannel} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import loadCivDataFromFile from "../../Draft/JsonCivDataAccessor";
-import {ResultOrError} from "../../Draft/Types/ResultOrErrorWithDetails";
+import {loadCivDataFromFile} from "../../Draft/CivData";
+import {ResultOrError} from "../../Draft/Types/ResultOrError";
 
 function extractArgValue(args: Array<string>, argName: string): ResultOrError<number> {
     let index = args.findIndex((a) => a === argName);

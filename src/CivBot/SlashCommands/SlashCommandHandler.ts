@@ -3,8 +3,8 @@ import {CivGroup, stringToCivGroup} from "../../Draft/Types/CivGroups";
 import {getVoiceChannelMembers} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../DraftCommand";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {ResultOrErrorWithDetails} from "../../Draft/Types/ResultOrErrorWithDetails";
-import loadCivDataFromFile from "../../Draft/JsonCivDataAccessor";
+import {ResultOrErrorWithDetails} from "../../Draft/Types/ResultOrError";
+import {loadCivDataFromFile} from "../../Draft/CivData";
 
 function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");
