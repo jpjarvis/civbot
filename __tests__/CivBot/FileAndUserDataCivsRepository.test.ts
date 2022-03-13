@@ -1,23 +1,6 @@
-import {createMockCivDataAccessor, createMockUserDataStore} from "../Mocks";
-import UserData from "../../src/CivBot/UserData";
 import CivData from "../../src/Draft/CivData";
-import FileAndUserDataCivsRepository from "../../src/CivBot/FileAndUserDataCivsRepository";
 import {CivGroup} from "../../src/Draft/Types/CivGroups";
-
-const fakeUserData1: UserData = {
-    defaultDraftSettings: {},
-    customCivs: ["custom1"]
-};
-
-const fakeUserData2: UserData = {
-    defaultDraftSettings: {},
-    customCivs: ["custom2"]
-};
-
-const userDatas = new Map<string, UserData>();
-
-userDatas["1"] = fakeUserData1;
-userDatas["2"] = fakeUserData2;
+import {selectCivs} from "../../src/CivBot/FileAndUserDataCivsRepository";
 
 const fakeCivData: CivData = {
     civs: {
@@ -31,33 +14,34 @@ const fakeCivData: CivData = {
     }
 };
 
-describe("FileAndUserDataCivsRepository", () => {
-    const civsRepository = new FileAndUserDataCivsRepository(createMockUserDataStore(userDatas), createMockCivDataAccessor(fakeCivData));
+const customCivs = ["custom1"];
+
+describe("selectCivs", () => {
 
     it("should return no civs if no civ groups are given", async () => {
-        const civs = await civsRepository.getCivs(new Set<CivGroup>(), "1");
+        const civs = await selectCivs(new Set<CivGroup>(), fakeCivData, customCivs);
         expect(civs).toHaveLength(0);
     });
 
     it("should return the civs of one civ group when specified", async () => {
-        const civs = await civsRepository.getCivs(new Set(["civ5-vanilla"]), "1");
+        const civs = await selectCivs(new Set(["civ5-vanilla"]), fakeCivData, customCivs);
         expect(civs).toStrictEqual(["civ5"]);
     });
 
-    it("should return the custom civs for the appropriate server", async () => {
-        const civs = await civsRepository.getCivs(new Set(["custom"]), "2");
-        expect(civs).toStrictEqual(["custom2"]);
+    it("should include custom civs from user data if specified", async () => {
+        const civs = await selectCivs(new Set(["custom"]), fakeCivData, customCivs);
+        expect(civs).toStrictEqual(["custom1"]);
     });
 
     it("should return the civs of multiple groups when specified", async () => {
-        const civs = await civsRepository.getCivs(new Set(["civ5-vanilla", "lekmod"]), "1");
+        const civs = await selectCivs(new Set(["civ5-vanilla", "lekmod"]), fakeCivData, customCivs);
         expect(civs).toHaveLength(2);
         expect(civs).toContain("civ5");
         expect(civs).toContain("lekmod");
     });
 
     it("should include custom civs with normal groups when specified", async () => {
-        const civs = await civsRepository.getCivs(new Set(["civ5-vanilla", "lekmod", "custom"]), "1");
+        const civs = await selectCivs(new Set(["civ5-vanilla", "lekmod", "custom"]), fakeCivData, customCivs);
         expect(civs).toHaveLength(3);
         expect(civs).toContain("civ5");
         expect(civs).toContain("lekmod");
