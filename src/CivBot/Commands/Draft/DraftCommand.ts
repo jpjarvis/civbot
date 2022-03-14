@@ -21,19 +21,23 @@ function getPlayerDraftString(playerName: string, civs: string[]): string {
     return response;
 }
 
+function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userData: UserData) : DraftArguments {
+    const defaultArgs = userData.defaultDraftSettings;
+    
+    return {
+        numberOfAi: partialArgs.numberOfAi ?? defaultArgs.numberOfAi ?? 0,
+        numberOfCivs: partialArgs.numberOfCivs ?? defaultArgs.numberOfCivs ?? 3,
+        noVoice: partialArgs.noVoice ?? defaultArgs.noVoice ?? false,
+        civGroups: partialArgs.civGroups ?? defaultArgs.civGroups ?? ["civ5-vanilla"]
+    };
+}
+
 export async function draftCommand(args: Partial<DraftArguments>,
                                    voiceChannelMembers: string[],
                                    sendMessage: (message: string) => void,
                                    userData: UserData,
                                    civData: CivData): Promise<void> {
-    const defaultArgs = userData.defaultDraftSettings;
-
-    const draftArgs: DraftArguments = {
-        numberOfAi: args.numberOfAi ?? 0,
-        numberOfCivs: args.numberOfCivs ?? 3,
-        noVoice: args.noVoice ?? false,
-        civGroups: args.civGroups ?? defaultArgs.civGroups ?? ["civ5-vanilla"]
-    };
+    const draftArgs = fillDefaultArguments(args, userData);
 
     if (voiceChannelMembers.length == 0) {
         sendMessage(Messages.NotInVoice);
