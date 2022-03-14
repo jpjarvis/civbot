@@ -4,6 +4,8 @@ import {draft} from "./Draft";
 import {selectCivs} from "./SelectCivs";
 import UserData from "../../Types/UserData";
 import {CivData} from "../../CivData";
+import {ResultOrErrorWithDetails} from "../../Types/ResultOrError";
+import {Draft, DraftError} from "./DraftTypes";
 
 export interface DraftArguments {
     numberOfAi: number,
@@ -32,50 +34,66 @@ function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userData: Us
     };
 }
 
-export async function draftCommand(args: Partial<DraftArguments>,
-                                   voiceChannelMembers: string[],
-                                   sendMessage: (message: string) => void,
-                                   userData: UserData,
-                                   civData: CivData): Promise<void> {
-    const draftArgs = fillDefaultArguments(args, userData);
+function generateOutputMessage(draftResult: ResultOrErrorWithDetails<Draft, DraftError>, draftArgs: DraftArguments, voiceChannelMembers: string[]) {
+    let message = "";
+    const sendMessage = (m: string) => {
+        message += m + "\n";
+    }
 
     if (voiceChannelMembers.length == 0) {
         sendMessage(Messages.NotInVoice);
     }
-
-    let players: Array<string> = [];
-    if (voiceChannelMembers && !args.noVoice) {
-        players = players.concat(voiceChannelMembers);
-    }
-
-    for (let i = 0; i < draftArgs.numberOfAi; i++) {
-        players.push(`AI ${i}`);
-    }
     
-    const civs = await selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
-    
-    const draftResult = draft(players, draftArgs.numberOfCivs, civs);
-
     if (draftResult.isError) {
         if (draftResult.error == "no-players") {
             sendMessage(Messages.NoPlayers);
         } else if (draftResult.error == "not-enough-civs") {
             sendMessage(Messages.NotEnoughCivs);
         }
-        return;
+    }
+    else {
+        let draftString = "";
+        
+        for (let player in draftResult.result) {
+            draftString += getPlayerDraftString(player, draftResult.result[player]);
+        }
+
+        if (draftString === "") {
+            sendMessage(Messages.NoPlayers);
+        } else {
+            sendMessage(`Drafting for ${draftArgs.civGroups.map(cg => `\`${cg}\``).join(", ")}`);
+            sendMessage("\`\`\`" + draftString + "\`\`\`");
+        }
+    }
+    
+    return message;
+}
+
+function generateAiPlayers(numberOfAiPlayers: number) {
+    let players : string[] = [];
+    for (let i = 0; i < numberOfAiPlayers; i++) {
+        players.push(`AI ${i}`);
+    }
+    return players;
+}
+
+export async function draftCommand(args: Partial<DraftArguments>,
+                                   voiceChannelMembers: string[],
+                                   userData: UserData,
+                                   civData: CivData): Promise<string> {
+    const draftArgs = fillDefaultArguments(args, userData);
+
+    let players: Array<string> = [];
+    if (voiceChannelMembers && !args.noVoice) {
+        players = players.concat(voiceChannelMembers);
     }
 
-    let response = "";
+    players.concat(generateAiPlayers(draftArgs.numberOfAi));
+    
+    const civs = await selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
+    
+    const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
-    for (let player in draftResult.result) {
-        response += getPlayerDraftString(player, draftResult.result[player]);
-    }
-
-    if (response === "") {
-        sendMessage(Messages.NoPlayers);
-    } else {
-        sendMessage(`Drafting for ${draftArgs.civGroups.map(cg => `\`${cg}\``).join(", ")}`);
-        sendMessage("\`\`\`" + response + "\`\`\`");
-    }
+    return generateOutputMessage(draftResult, draftArgs, voiceChannelMembers);
 }
 

@@ -122,13 +122,13 @@ export default class MessageHandler {
             }
             const voiceChannel = await getVoiceChannel(client, msg.member!)
             const voiceChannelMembers = voiceChannel?.members.map(m => m.user.username) ?? [];
-            await draftCommand(
+            const response = await draftCommand(
                 parsedArgs.result,
                 voiceChannelMembers,
-                (message) => msg.channel.send(message),
                 await this.userDataStore.load(serverId),
                 this.getCivData()
             );
+            msg.channel.send(response);
         } else if (args[1] === "civs") {
             if (args[2] === "add") {
                 const civsToAdd = args

@@ -74,8 +74,6 @@ export default class SlashCommandHandler {
     private async handleDraft(interaction: CommandInteraction) {
         
         const serverId = interaction.guildId!;
-
-        let response = "";
         
         const draftArgumentsOrError = SlashCommandHandler.extractDraftArguments(interaction);
         
@@ -86,12 +84,9 @@ export default class SlashCommandHandler {
         
         const voiceChannelMembers = await getVoiceChannelMembers(interaction);
 
-        await draftCommand(
+        const response = await draftCommand(
             draftArgumentsOrError.result,
             voiceChannelMembers,
-            (message) => {
-                response += message + "\n";
-            },
             await this.userDataStore.load(serverId),
             this.getCivData());
 
