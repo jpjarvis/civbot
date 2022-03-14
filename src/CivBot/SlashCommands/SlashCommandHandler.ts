@@ -4,7 +4,7 @@ import {getVoiceChannelMembers} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {ResultOrErrorWithDetails} from "../Types/ResultOrError";
-import {loadCivDataFromFile} from "../CivData";
+import {CivData, loadCivDataFromFile} from "../CivData";
 
 function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");
@@ -37,9 +37,11 @@ function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGro
 
 export default class SlashCommandHandler {
     private readonly userDataStore: UserDataStore;
+    private readonly getCivData: () => CivData;
     
-    constructor(userDataStore: UserDataStore) {
+    constructor(userDataStore: UserDataStore, getCivData: () => CivData) {
         this.userDataStore = userDataStore
+        this.getCivData = getCivData
     }
 
     private static extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWithDetails<Partial<DraftArguments>, string> {
@@ -91,7 +93,7 @@ export default class SlashCommandHandler {
                 response += message + "\n";
             },
             await this.userDataStore.load(serverId),
-            loadCivDataFromFile("civs.json"));
+            this.getCivData());
 
         await interaction.reply(response);
     }

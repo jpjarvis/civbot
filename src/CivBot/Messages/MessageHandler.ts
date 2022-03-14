@@ -4,7 +4,7 @@ import {getVoiceChannel} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {loadCivDataFromFile} from "../CivData";
+import {CivData, loadCivDataFromFile} from "../CivData";
 import {ResultOrError} from "../Types/ResultOrError";
 
 function extractArgValue(args: Array<string>, argName: string): ResultOrError<number> {
@@ -82,9 +82,11 @@ function parseDraftArgs(args: string[]): ResultOrError<Partial<DraftArguments>> 
 
 export default class MessageHandler {
     private userDataStore: UserDataStore;
+    private getCivData: () => CivData;
 
-    constructor(userDataStore: UserDataStore) {
+    constructor(userDataStore: UserDataStore, getCivData: () => CivData) {
         this.userDataStore = userDataStore;
+        this.getCivData = getCivData;
     }
 
     async handle(msg: Message, client: Client): Promise<void> {
@@ -125,7 +127,7 @@ export default class MessageHandler {
                 voiceChannelMembers,
                 (message) => msg.channel.send(message),
                 await this.userDataStore.load(serverId),
-                loadCivDataFromFile("civs.json")
+                this.getCivData()
             );
         } else if (args[1] === "civs") {
             if (args[2] === "add") {
