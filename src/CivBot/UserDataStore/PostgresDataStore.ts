@@ -1,4 +1,4 @@
-import UserData from "../UserData";
+import UserData from "../Types/UserData";
 import {Client} from "pg";
 import {UserDataStore} from "./UserDataStore";
 
