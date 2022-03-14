@@ -54,7 +54,7 @@ export async function draftCommand(args: Partial<DraftArguments>,
     
     const civs = await selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
     
-    const draftResult = await draft(players, draftArgs.numberOfCivs, civs);
+    const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
     if (draftResult.isError) {
         if (draftResult.error == "no-players") {

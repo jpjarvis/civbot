@@ -12,7 +12,7 @@ function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): D
     return draft;
 }
 
-export async function draft(players: string[], civsPerPlayer: number, civs: string[]): Promise<ResultOrErrorWithDetails<Draft, DraftError>> {
+export function draft(players: string[], civsPerPlayer: number, civs: string[]): ResultOrErrorWithDetails<Draft, DraftError> {
     if (players.length == 0) {
         return {isError: true, error: "no-players"}
     }
