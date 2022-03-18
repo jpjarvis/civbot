@@ -6,6 +6,7 @@ import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {CivData} from "../CivData";
 import {ResultOrError} from "../Types/ResultOrError";
+import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
 
 function extractArgValue(args: Array<string>, argName: string): ResultOrError<number> {
     let index = args.findIndex((a) => a === argName);
@@ -126,7 +127,7 @@ export default class MessageHandler {
                 await this.userDataStore.load(serverId),
                 this.getCivData()
             );
-            msg.channel.send(response);
+            msg.channel.send(generateDraftCommandOutputMessage(response));
         } else if (args[1] === "civs") {
             if (args[2] === "add") {
                 const civsToAdd = args

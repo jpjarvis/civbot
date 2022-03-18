@@ -4,7 +4,8 @@ import {getVoiceChannelMembers} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {ResultOrErrorWithDetails} from "../Types/ResultOrError";
-import {CivData, loadCivDataFromFile} from "../CivData";
+import {CivData} from "../CivData";
+import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
 
 function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");
@@ -88,7 +89,7 @@ export default class SlashCommandHandler {
             await this.userDataStore.load(serverId),
             this.getCivData());
 
-        await interaction.reply(response);
+        await interaction.reply(generateDraftCommandOutputMessage(response));
     }
 
     private async handleShowConfig(interaction: CommandInteraction) {
