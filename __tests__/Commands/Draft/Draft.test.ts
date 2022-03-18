@@ -1,4 +1,4 @@
-﻿import {generateArray} from "../../TestUtils";
+﻿import {extractErrorAndAssertIsError, extractResultAndAssertIsNotError, generateArray} from "../../TestUtils";
 import {draft} from "../../../src/CivBot/Commands/Draft/Draft";
 
 describe('draft', () => {
@@ -14,14 +14,10 @@ describe('draft', () => {
         const players = generateArray(3)
         const draftResultOrError = draft(players, 3, civs);
 
-        expect(draftResultOrError.isError).toBe(false);
-        
-        if (draftResultOrError.isError) {
-            return
-        }
+        const draftResult = extractResultAndAssertIsNotError(draftResultOrError);
         
         for (const player of players) {
-            expect(draftResultOrError.result[player]).toHaveLength(3)
+            expect(draftResult[player]).toHaveLength(3)
         }
     })
     
@@ -33,20 +29,14 @@ describe('draft', () => {
     it('should fail if there are no players', async () => {
         const draftResult = draft([], 3, civs);
         
-        expect(draftResult.isError).toBe(true)
-        if (!draftResult.isError) {
-            return
-        }
-        expect(draftResult.error).toBe('no-players')
+        const error = extractErrorAndAssertIsError(draftResult);
+        expect(error).toBe('no-players')
     })
     
     it('should fail if there are not enough civs for the players', async () => {
         const draftResult = draft(generateArray(10), 100, civs);
 
-        expect(draftResult.isError).toBe(true)
-        if (!draftResult.isError) {
-            return
-        }
-        expect(draftResult.error).toBe('not-enough-civs')
+        const error = extractErrorAndAssertIsError(draftResult);
+        expect(error).toBe('not-enough-civs')
     })
 })
