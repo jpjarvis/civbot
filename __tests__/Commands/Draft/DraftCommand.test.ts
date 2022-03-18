@@ -1,29 +1,9 @@
 ﻿import {DraftArguments, draftCommand} from "../../../src/CivBot/Commands/Draft/DraftCommand";
-import {CivGroup} from "../../../src/CivBot/Types/CivGroups";
 import UserData from "../../../src/CivBot/Types/UserData";
-import Messages from "../../../src/CivBot/Messages";
 import {CivData} from "../../../src/CivBot/CivData";
-import {generateArray} from "../../TestUtils";
-
-function expectOutputDraftToHave(output: string[], civGroups: Set<CivGroup>, players: string[]) {
-    expect(output[0]).toContain("Drafting for ")
-    for (let c of civGroups) {
-        expect(output[0]).toContain(c)
-    }
-    for (let p of players) {
-        expect(output[1]).toContain(p)
-    }
-}
+import {extractErrorAndAssertIsError, extractResultAndAssertIsNotError, generateArray} from "../../TestUtils";
 
 describe('draftCommand', () => {
-    let output: string[] = []
-    const writeOutput = (message: string) => {
-        output.push(message)
-    }
-
-    beforeEach(() => {
-        output = []
-    })
     
     const userData: UserData = {
         defaultDraftSettings: {},
@@ -41,44 +21,33 @@ describe('draftCommand', () => {
             "civ6-frontier": generateArray(10)
         }
     }
-    
-    it('should display the draft correctly', async () => {
+
+    it('should give a no-players error if there are no players', async () => {
         const draftArgs: DraftArguments = {
             numberOfAi: 0,
             numberOfCivs: 3,
-            noVoice: false,
-            civGroups: ['civ5-vanilla', 'lekmod']
-        }
-        
-        await draftCommand(draftArgs, ["player1", "player2", "player3"], writeOutput, userData, civData)
-
-        expect(output[0]).toBe('Drafting for `civ5-vanilla`, `lekmod`')
-        const regex = new RegExp("\`\`\`(player. *[^\/]* \/ [^\/]* \/ [^\/]*\n)+\`\`\`");
-        expect(output[1]).toMatch(regex);
-    });
-
-    it('should display the correct error for no players', async () => {
-        const draftArgs: DraftArguments = {
-            numberOfAi: 0,
-            numberOfCivs: 3,
-            noVoice: true,
             civGroups: ['civ5-vanilla']
         }
         
-        await draftCommand(draftArgs, [], writeOutput, userData, civData);
-        expect(output[0]).toBe(Messages.NotInVoice)
-        expect(output[1]).toBe(Messages.NoPlayers)
+        const result = await draftCommand(draftArgs, [], userData, civData);
+        expect(result.draftResult.isError).toBe(true)
+        if (!result.draftResult.isError) {
+            return;
+        }
+        
+        expect(result.draftResult.error).toBe("no-players");
     });
 
-    it('should display the correct error for not enough civs', async () => {
+    it('should give a not-enough-civs error if there are not enough civs for the players', async () => {
         const draftArgs: DraftArguments = {
             numberOfAi: 0,
             numberOfCivs: 100,
-            noVoice: false,
             civGroups: ['civ5-vanilla']
         }
 
-        await draftCommand(draftArgs, ["player1", "player2", "player3"], writeOutput, userData, civData);
-        expect(output[0]).toBe(Messages.NotEnoughCivs)
+        const result = await draftCommand(draftArgs, ["player1"], userData, civData);
+        const error = extractErrorAndAssertIsError(result.draftResult);
+
+        expect(error).toBe("not-enough-civs");
     });
 })
