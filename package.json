@@ -5,7 +5,7 @@
     "main": "Start.js",
     "author": "Wesley Presley",
     "engines": {
-        "node": "^16.x"
+        "node": "^17.x"
     },
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
