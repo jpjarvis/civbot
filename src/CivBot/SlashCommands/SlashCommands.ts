@@ -16,11 +16,6 @@ const draftCommand: ApplicationCommandData = {
             description: "Number of civs to draft for each player (Default is 3)"
         },
         {
-            type: "BOOLEAN",
-            name: "no-voice",
-            description: "Don't include the players from the voice channel (Default is false)"
-        },
-        {
             type: "STRING",
             name: "civ-groups",
             description: "Space-separated list of civ groups to include"

@@ -10,7 +10,6 @@ import {Draft, DraftError} from "./DraftTypes";
 export interface DraftArguments {
     numberOfAi: number,
     numberOfCivs: number,
-    noVoice: boolean,
     civGroups: CivGroup[]
 }
 
@@ -29,19 +28,14 @@ function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userData: Us
     return {
         numberOfAi: partialArgs.numberOfAi ?? defaultArgs.numberOfAi ?? 0,
         numberOfCivs: partialArgs.numberOfCivs ?? defaultArgs.numberOfCivs ?? 3,
-        noVoice: partialArgs.noVoice ?? defaultArgs.noVoice ?? false,
         civGroups: partialArgs.civGroups ?? defaultArgs.civGroups ?? ["civ5-vanilla"]
     };
 }
 
-function generateOutputMessage(draftResult: ResultOrErrorWithDetails<Draft, DraftError>, draftArgs: DraftArguments, voiceChannelMembers: string[]) {
+function generateOutputMessage(draftResult: ResultOrErrorWithDetails<Draft, DraftError>, draftArgs: DraftArguments) {
     let message = "";
     const sendMessage = (m: string) => {
         message += m + "\n";
-    }
-
-    if (voiceChannelMembers.length == 0) {
-        sendMessage(Messages.NotInVoice);
     }
     
     if (draftResult.isError) {
@@ -83,17 +77,12 @@ export async function draftCommand(args: Partial<DraftArguments>,
                                    civData: CivData): Promise<string> {
     const draftArgs = fillDefaultArguments(args, userData);
 
-    let players: Array<string> = [];
-    if (voiceChannelMembers && !args.noVoice) {
-        players = players.concat(voiceChannelMembers);
-    }
-
-    players.concat(generateAiPlayers(draftArgs.numberOfAi));
+    const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
     
     const civs = await selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
     
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
-    return generateOutputMessage(draftResult, draftArgs, voiceChannelMembers);
+    return generateOutputMessage(draftResult, draftArgs);
 }
 

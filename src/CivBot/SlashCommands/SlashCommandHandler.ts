@@ -47,7 +47,6 @@ export default class SlashCommandHandler {
     private static extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWithDetails<Partial<DraftArguments>, string> {
         const ai = interaction.options.getInteger("ai") ?? undefined;
         const civs = interaction.options.getInteger("civs") ?? undefined;
-        const noVoice = interaction.options.getBoolean("no-voice") ?? undefined;
         const civGroupString = interaction.options.getString("civ-groups") ?? undefined;
 
         let civGroups: CivGroup[] | undefined = undefined;
@@ -65,7 +64,6 @@ export default class SlashCommandHandler {
             result: {
                 numberOfCivs: civs,
                 numberOfAi: ai,
-                noVoice: noVoice,
                 civGroups: civGroups
             }
         }

@@ -4,7 +4,7 @@ import {getVoiceChannel} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {CivData, loadCivDataFromFile} from "../CivData";
+import {CivData} from "../CivData";
 import {ResultOrError} from "../Types/ResultOrError";
 
 function extractArgValue(args: Array<string>, argName: string): ResultOrError<number> {
@@ -41,8 +41,6 @@ function parseDraftArgs(args: string[]): ResultOrError<Partial<DraftArguments>> 
         }
         draftArgs.numberOfCivs = numCivsArgValue.result;
     }
-
-    draftArgs.noVoice = args.includes("novoice");
 
     const civGroupsSpecified: CivGroup[] = [];
     if (args.includes("civ6")) {
