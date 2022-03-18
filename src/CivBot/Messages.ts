@@ -5,7 +5,6 @@ export default class Messages {
         Additional options:
             - civs [NUMBER] : Change the number of civs for each player
             - ai [NUMBER] : Add a specified number of AI players
-            - novoice : Don't include players from voice
             - lekmod : Include lekmod civs (only with Civ 5)
             - lekmod-only : Only use lekmod civs (no vanilla) (only with Civ 5)
             - civ6 : Draft for Civ 6 instead of Civ 5, and include vanilla civ6 civs
