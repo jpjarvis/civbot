@@ -4,12 +4,10 @@ import {ResultOrErrorWithDetails} from "../../Types/ResultOrError";
 
 function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): Draft {
     shuffle(civs);
-    let draft: Draft = new Map<string, string[]>();
-    for (let i = 0; i < players.length; i++) {
-        draft[players[i]] = civs.slice(i * civsPerPlayer, (i + 1) * civsPerPlayer);
-    }
 
-    return draft;
+    return players.map((player, index) => {
+        return {player: player, civs: civs.slice(index * civsPerPlayer, (index + 1) * civsPerPlayer)}
+    });
 }
 
 export function draft(players: string[], civsPerPlayer: number, civs: string[]): ResultOrErrorWithDetails<Draft, DraftError> {

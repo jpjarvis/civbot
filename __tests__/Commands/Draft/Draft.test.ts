@@ -16,8 +16,8 @@ describe('draft', () => {
 
         const draftResult = extractResultAndAssertIsNotError(draftResultOrError);
         
-        for (const player of players) {
-            expect(draftResult[player]).toHaveLength(3)
+        for (const draftEntry of draftResult) {
+            expect(draftEntry.civs).toHaveLength(3)
         }
     })
     
