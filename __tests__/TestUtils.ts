@@ -1,7 +1,11 @@
 ﻿import {ResultOrErrorWithDetails} from "../src/CivBot/Types/ResultOrError";
 
 export function generateArray(count: number): string[] {
-    return Array.from(Array(count)).map((_,i) => `item${i}`)
+    return generateArrayWithNames(count, "item");
+}
+
+export function generateArrayWithNames(count: number, itemName: string): string[] {
+    return Array.from(Array(count)).map((_,i) => `${itemName}${i}`);
 }
 
 export function extractResultAndAssertIsNotError<TResult, TError>(resultOrError: ResultOrErrorWithDetails<TResult, TError>): TResult {

@@ -35,10 +35,10 @@ export type DraftCommandResult = {
     draftResult: ResultOrErrorWithDetails<Draft, DraftError>
 }
 
-export async function draftCommand(args: Partial<DraftArguments>,
+export function draftCommand(args: Partial<DraftArguments>,
                                    voiceChannelMembers: string[],
                                    userData: UserData,
-                                   civData: CivData): Promise<DraftCommandResult> {
+                                   civData: CivData): DraftCommandResult {
     const draftArgs = fillDefaultArguments(args, userData);
 
     const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));

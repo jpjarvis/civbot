@@ -83,7 +83,7 @@ export default class SlashCommandHandler {
         
         const voiceChannelMembers = await getVoiceChannelMembers(interaction);
 
-        const response = await draftCommand(
+        const response = draftCommand(
             draftArgumentsOrError.result,
             voiceChannelMembers,
             await this.userDataStore.load(serverId),

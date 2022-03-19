@@ -121,7 +121,7 @@ export default class MessageHandler {
             }
             const voiceChannel = await getVoiceChannel(client, msg.member!)
             const voiceChannelMembers = voiceChannel?.members.map(m => m.user.username) ?? [];
-            const response = await draftCommand(
+            const response = draftCommand(
                 parsedArgs.result,
                 voiceChannelMembers,
                 await this.userDataStore.load(serverId),
