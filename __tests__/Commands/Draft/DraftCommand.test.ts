@@ -84,4 +84,11 @@ describe('draftCommand', () => {
         expect(draft[0].civs).toHaveLength(5);
         expect(result.civGroupsUsed).toStrictEqual(["civ6-vanilla"]);
     });
+    
+    it('should only include civs from specified civ groups', () => {
+        const result = draftCommand({civGroups: ["lekmod"]}, ["player1"], emptyUserData, civData);
+        const draft = extractResultAndAssertIsNotError(result.draftResult);
+        
+        expect(draft.every(de => de.civs.every(civ => civ.includes("lekmod"))));
+    })
 })
