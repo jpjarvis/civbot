@@ -43,10 +43,9 @@ export async function draftCommand(args: Partial<DraftArguments>,
 
     const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
 
-    const civs = await selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
+    const civs = selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
     return {civGroupsUsed: draftArgs.civGroups, draftResult: draftResult}
 }
-
