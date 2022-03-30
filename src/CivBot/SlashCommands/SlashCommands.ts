@@ -23,101 +23,93 @@ const draftCommand: ApplicationCommandData = {
     ]
 };
 
-const configCommand: ApplicationCommandData = {
-    name: "config",
-    description: "Configure CivBot",
+const civGroupsCommand: ApplicationCommandData = {
+    name: "civ-groups",
+    description: "Manage civ groups",
     options: [
         {
             type: "SUB_COMMAND",
-            name: "show",
-            description: "Show CivBot's current configuration"
-        },
-        {
-            type: "SUB_COMMAND_GROUP",
-            name: "civ-groups",
-            description: "Manage civ groups",
+            name: "enable",
+            description: "Add a civ group to your drafts",
             options: [
                 {
-                    type: "SUB_COMMAND",
-                    name: "enable",
-                    description: "Add a civ group to your drafts",
-                    options: [
-                        {
-                            type: "STRING",
-                            name: "civ-group",
-                            description: "The civ group to add",
-                            required: true,
-                            choices: CivGroups.map(cg => {
-                                return {
-                                    name: cg,
-                                    value: cg
-                                };
-                            })
-                        }
-                    ]
-                },
-                {
-                    type: "SUB_COMMAND",
-                    name: "disable",
-                    description: "Remove a civ group to your drafts",
-                    options: [
-                        {
-                            type: "STRING",
-                            name: "civ-group",
-                            description: "The civ group to remove",
-                            required: true,
-                            choices: CivGroups.map(cg => {
-                                return {
-                                    name: cg,
-                                    value: cg
-                                };
-                            })
-                        }
-                    ]
+                    type: "STRING",
+                    name: "civ-group",
+                    description: "The civ group to add",
+                    required: true,
+                    choices: CivGroups.map(cg => {
+                        return {
+                            name: cg,
+                            value: cg
+                        };
+                    })
                 }
             ]
         },
         {
-            type: "SUB_COMMAND_GROUP",
-            name: "civs",
-            description: "Manage custom civs",
+            type: "SUB_COMMAND",
+            name: "disable",
+            description: "Remove a civ group to your drafts",
             options: [
                 {
-                    type: "SUB_COMMAND",
-                    name: "add",
-                    description: "Add custom civs",
-                    options: [
-                        {
-                            type: "STRING",
-                            name: "civs",
-                            description: "Comma-separated list of civs to add",
-                            required: true
-                        }
-                    ]
-                },
-                {
-                    type: "SUB_COMMAND",
-                    name: "remove",
-                    description: "Remove custom civs",
-                    options: [
-                        {
-                            type: "STRING",
-                            name: "civs",
-                            description: "Comma-separated list of civs to remove",
-                            required: true
-                        }
-                    ]
-                },
-                {
-                    type: "SUB_COMMAND",
-                    name: "clear",
-                    description: "Remove all custom civs",
-                    options: []
+                    type: "STRING",
+                    name: "civ-group",
+                    description: "The civ group to remove",
+                    required: true,
+                    choices: CivGroups.map(cg => {
+                        return {
+                            name: cg,
+                            value: cg
+                        };
+                    })
                 }
             ]
         }
-
     ]
 };
 
-export const Commands = [draftCommand, configCommand];
+const civsCommand: ApplicationCommandData = {
+    name: "civs",
+    description: "Manage custom civs",
+    options: [
+        {
+            type: "SUB_COMMAND",
+            name: "add",
+            description: "Add custom civs",
+            options: [
+                {
+                    type: "STRING",
+                    name: "civs",
+                    description: "Comma-separated list of civs to add",
+                    required: true
+                }
+            ]
+        },
+        {
+            type: "SUB_COMMAND",
+            name: "remove",
+            description: "Remove custom civs",
+            options: [
+                {
+                    type: "STRING",
+                    name: "civs",
+                    description: "Comma-separated list of civs to remove",
+                    required: true
+                }
+            ]
+        },
+        {
+            type: "SUB_COMMAND",
+            name: "clear",
+            description: "Remove all custom civs",
+            options: []
+        }
+    ]
+};
+
+const configCommand: ApplicationCommandData = {
+    name: "config",
+    description: "Show CivBot's current configuration"
+};
+
+export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand];
