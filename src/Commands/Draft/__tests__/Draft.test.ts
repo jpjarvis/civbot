@@ -1,5 +1,5 @@
-﻿import {extractErrorAndAssertIsError, extractResultAndAssertIsNotError, generateArray} from "../../TestUtils";
-import {draft} from "../../../src/CivBot/Commands/Draft/Draft";
+﻿import {extractErrorAndAssertIsError, extractResultAndAssertIsNotError, generateArray} from "../../../TestUtils";
+import {draft} from "../Draft";
 
 describe('draft', () => {
     

@@ -1,13 +1,12 @@
-﻿import {DraftArguments, draftCommand} from "../../../src/CivBot/Commands/Draft/DraftCommand";
-import UserData from "../../../src/CivBot/Types/UserData";
-import {CivData} from "../../../src/CivBot/CivData";
+﻿import {DraftArguments, draftCommand} from "../DraftCommand";
+import UserData from "../../../Types/UserData";
+import {CivData} from "../../../CivData";
 import {
     extractErrorAndAssertIsError,
     extractResultAndAssertIsNotError,
-    generateArray,
     generateArrayWithNames
-} from "../../TestUtils";
-import {CivGroup} from "../../../src/CivBot/Types/CivGroups";
+} from "../../../TestUtils";
+import {CivGroup} from "../../../Types/CivGroups";
 
 describe('draftCommand', () => {
     

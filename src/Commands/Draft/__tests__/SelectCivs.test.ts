@@ -1,6 +1,6 @@
-import {CivData} from "../../../src/CivData";
-import {CivGroup} from "../../../src/Types/CivGroups";
-import {selectCivs} from "../../../src/Commands/Draft/SelectCivs";
+import {CivData} from "../../../CivData";
+import {CivGroup} from "../../../Types/CivGroups";
+import {selectCivs} from "../SelectCivs";
 
 const fakeCivData: CivData = {
     civs: {
