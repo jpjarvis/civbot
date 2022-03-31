@@ -1,4 +1,4 @@
-﻿import {ResultOrErrorWithDetails} from "../src/CivBot/Types/ResultOrError";
+﻿import {ResultOrErrorWithDetails} from "../src/Types/ResultOrError";
 
 export function generateArray(count: number): string[] {
     return generateArrayWithNames(count, "item");
