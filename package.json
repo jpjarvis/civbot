@@ -31,7 +31,7 @@
     },
     "scripts": {
         "start": "ts-node src/CivBot/Start.ts",
-        "update-slashes": "ts-node src/CivBot/SlashCommands/UpdateSlashCommands.ts",
+        "update-slashes": "ts-node src/SlashCommands/UpdateSlashCommands.ts",
         "test": "jest"
     }
 }
