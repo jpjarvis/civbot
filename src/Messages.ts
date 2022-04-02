@@ -62,7 +62,7 @@ civbot civs [COMMAND]
     }
 
     public static get GenericError(): string {
-        return "Uh oh, something's got wrong. It's probably Jack's fault.";
+        return "Uh oh, something's gone wrong. It's probably Jack's fault.";
     }
 
     public static get Wowser(): string {
