@@ -1,10 +1,11 @@
 import {CivGroup} from "../../Types/CivGroups";
 import {draft} from "./Draft";
 import {selectCivs} from "./SelectCivs";
-import UserData from "../../Types/UserData";
+import {UserData} from "../../Types/UserData";
 import {CivData} from "../../CivData";
 import {ResultOrErrorWithDetails} from "../../Types/ResultOrError";
 import {Draft, DraftError} from "./DraftTypes";
+import UserSettings from "../../Types/UserSettings";
 
 export interface DraftArguments {
     numberOfAi: number,
@@ -12,8 +13,8 @@ export interface DraftArguments {
     civGroups: CivGroup[]
 }
 
-function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userData: UserData): DraftArguments {
-    const defaultArgs = userData.defaultDraftSettings;
+function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {
+    const defaultArgs = userSettings.defaultDraftSettings;
 
     return {
         numberOfAi: partialArgs.numberOfAi ?? defaultArgs.numberOfAi ?? 0,
@@ -37,13 +38,13 @@ export type DraftCommandResult = {
 
 export function draftCommand(args: Partial<DraftArguments>,
                                    voiceChannelMembers: string[],
-                                   userData: UserData,
+                                   userSettings: UserSettings,
                                    civData: CivData): DraftCommandResult {
-    const draftArgs = fillDefaultArguments(args, userData);
+    const draftArgs = fillDefaultArguments(args, userSettings);
 
     const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
 
-    const civs = selectCivs(new Set(draftArgs.civGroups), civData, userData.customCivs);
+    const civs = selectCivs(new Set(draftArgs.civGroups), civData, userSettings.customCivs);
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 

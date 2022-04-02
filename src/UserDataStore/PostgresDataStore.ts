@@ -1,4 +1,4 @@
-import UserData from "../Types/UserData";
+import {createEmptyUserData, UserData} from "../Types/UserData";
 import {Client} from "pg";
 import {UserDataStore} from "./UserDataStore";
 
@@ -17,7 +17,7 @@ export default class PostgresDataStore implements UserDataStore {
         const result = await client.query("select data from userdata where serverid = $1", [tenantId])
         
         if (!result.rows || result.rows.length == 0) {
-            const userData = new UserData();
+            const userData = createEmptyUserData();
             await client.query(
                 "insert into userdata VALUES ($1, $2)",
                 [tenantId, JSON.stringify(userData)]

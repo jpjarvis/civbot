@@ -89,7 +89,7 @@ export default class SlashCommandHandler {
         const response = draftCommand(
             draftArgumentsOrError.result,
             voiceChannelMembers,
-            await this.userDataStore.load(serverId),
+            (await this.userDataStore.load(serverId)).activeUserSettings,
             this.getCivData());
 
         await interaction.reply(generateDraftCommandOutputMessage(response));
@@ -98,12 +98,12 @@ export default class SlashCommandHandler {
     private async handleShowConfig(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
 
-        const userData = await this.userDataStore.load(serverId);
+        const userSettings = (await this.userDataStore.load(serverId)).activeUserSettings;
 
         let response = "";
-        response += `Using civ groups: \`\`\`\n${userData.defaultDraftSettings?.civGroups?.join("\n")}\`\`\`` + "\n";
-        if (userData.customCivs) {
-            response += `Custom civs:\`\`\`\n${userData.customCivs.join("\n")}\`\`\``;
+        response += `Using civ groups: \`\`\`\n${userSettings.defaultDraftSettings?.civGroups?.join("\n")}\`\`\`` + "\n";
+        if (userSettings.customCivs) {
+            response += `Custom civs:\`\`\`\n${userSettings.customCivs.join("\n")}\`\`\``;
         }
         await interaction.reply(response);
     }
@@ -113,17 +113,17 @@ export default class SlashCommandHandler {
 
         const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!;
 
-        const userData = await this.userDataStore.load(serverId);
+        const userData = await this.userDataStore.load(serverId)
 
-        if (!userData.defaultDraftSettings.civGroups) {
-            userData.defaultDraftSettings.civGroups = [];
+        if (!userData.activeUserSettings.defaultDraftSettings.civGroups) {
+            userData.activeUserSettings.defaultDraftSettings.civGroups = [];
         }
 
-        if (userData.defaultDraftSettings.civGroups.includes(civGroup)) {
+        if (userData.activeUserSettings.defaultDraftSettings.civGroups.includes(civGroup)) {
             await interaction.reply(`\`${civGroup}\` is already being used.`);
             return;
         }
-        userData.defaultDraftSettings.civGroups.push(civGroup);
+        userData.activeUserSettings.defaultDraftSettings.civGroups.push(civGroup);
         await interaction.reply(`\`${civGroup}\` will now be used in your drafts.`);
 
         await this.userDataStore.save(serverId, userData);
@@ -136,16 +136,16 @@ export default class SlashCommandHandler {
 
         const userData = await this.userDataStore.load(serverId);
 
-        if (!userData.defaultDraftSettings.civGroups) {
-            userData.defaultDraftSettings.civGroups = [];
+        if (!userData.activeUserSettings.defaultDraftSettings.civGroups) {
+            userData.activeUserSettings.defaultDraftSettings.civGroups = [];
         }
 
-        const toRemoveIndex = userData.defaultDraftSettings.civGroups.indexOf(civGroup);
-        if (!userData.defaultDraftSettings.civGroups.includes(civGroup)) {
+        const toRemoveIndex = userData.activeUserSettings.defaultDraftSettings.civGroups.indexOf(civGroup);
+        if (!userData.activeUserSettings.defaultDraftSettings.civGroups.includes(civGroup)) {
             await interaction.reply(`\`${civGroup}\` is not being used.`);
             return;
         }
-        userData.defaultDraftSettings.civGroups.splice(toRemoveIndex, 1);
+        userData.activeUserSettings.defaultDraftSettings.civGroups.splice(toRemoveIndex, 1);
         await interaction.reply(`\`${civGroup}\` will no longer be used in your drafts.`);
 
         await this.userDataStore.save(serverId, userData);
@@ -157,7 +157,7 @@ export default class SlashCommandHandler {
         const userData = await this.userDataStore.load(serverId);
 
         const civs = interaction.options.getString("civs")!.split(",").map(s => s.trim());
-        userData.customCivs = userData.customCivs.concat(civs);
+        userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.concat(civs);
         await this.userDataStore.save(serverId, userData);
         await interaction.reply(`Added ${civs.length} custom civs.`);
     }
@@ -166,12 +166,12 @@ export default class SlashCommandHandler {
         const serverId = interaction.guildId!;
 
         const userData = await this.userDataStore.load(serverId);
-        const originalNumberOfCivs = userData.customCivs.length;
+        const originalNumberOfCivs = userData.activeUserSettings.customCivs.length;
 
         const civs = interaction.options.getString("civs")!.split(",").map(s => s.trim());
 
-        const failedCivs = civs.filter(c => !userData.customCivs.includes(c));
-        userData.customCivs = userData.customCivs.filter(c => !civs.includes(c));
+        const failedCivs = civs.filter(c => !userData.activeUserSettings.customCivs.includes(c));
+        userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.filter(c => !civs.includes(c));
 
         await this.userDataStore.save(serverId, userData);
 
@@ -179,7 +179,7 @@ export default class SlashCommandHandler {
         if (failedCivs.length > 0) {
             message += `Civ(s) \`${failedCivs.join(", ")}\` not found.\n`;
         }
-        message += `Removed ${originalNumberOfCivs - userData.customCivs.length} custom civ(s).`;
+        message += `Removed ${originalNumberOfCivs - userData.activeUserSettings.customCivs.length} custom civ(s).`;
         await interaction.reply(message);
     }
 
@@ -187,7 +187,7 @@ export default class SlashCommandHandler {
         const serverId = interaction.guildId!;
 
         const userData = await this.userDataStore.load(serverId);
-        userData.customCivs = [];
+        userData.activeUserSettings.customCivs = [];
         await this.userDataStore.save(serverId, userData);
         await interaction.reply("All custom civs deleted.");
     }

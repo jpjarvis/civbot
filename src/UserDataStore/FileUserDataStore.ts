@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import UserData from "../Types/UserData";
+import {createEmptyUserData, UserData} from "../Types/UserData";
 import {UserDataStore} from "./UserDataStore";
 
 export default class FileUserDataStore implements UserDataStore {
@@ -15,7 +15,7 @@ export default class FileUserDataStore implements UserDataStore {
                 return;
             })
             .catch(() => {
-                fs.promises.writeFile(filePath, JSON.stringify(new UserData()));
+                fs.promises.writeFile(filePath, JSON.stringify(createEmptyUserData()));
                 console.log(`Creating ${filePath}`);
             });
     }

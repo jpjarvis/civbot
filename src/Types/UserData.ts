@@ -1,10 +1,27 @@
-import {DraftArguments} from '../Commands/Draft/DraftCommand';
+import {UserDataStore} from "../UserDataStore/UserDataStore";
+import UserSettings from "./UserSettings";
 
-export default class UserData {
-    defaultDraftSettings: Partial<DraftArguments> = {
-        civGroups: [
-            "civ5-vanilla"
-        ]
-    };
-    customCivs: Array<string> = [];
+export type UserData = {
+    activeUserSettings: UserSettings;
+    profiles: Map<string, UserSettings>;
+}
+
+export function createEmptyUserData(): UserData {
+    return {
+        activeUserSettings: new UserSettings(),
+        profiles: new Map<string, UserSettings>()
+    }
+}
+
+export class UserDataAccessor {
+    private userDataStore: UserDataStore
+    
+    constructor(userDataStore: UserDataStore) {
+        this.userDataStore = userDataStore;
+    }
+    
+    async getActiveUserSettings(tenantId: string) {
+        const data = await this.userDataStore.load(tenantId);
+        return data.activeUserSettings;
+    }
 }

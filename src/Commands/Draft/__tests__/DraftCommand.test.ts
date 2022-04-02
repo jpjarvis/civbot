@@ -1,5 +1,4 @@
 ﻿import {DraftArguments, draftCommand} from "../DraftCommand";
-import UserData from "../../../Types/UserData";
 import {CivData} from "../../../CivData";
 import {
     extractErrorAndAssertIsError,
@@ -7,10 +6,11 @@ import {
     generateArrayWithNames
 } from "../../../TestUtils";
 import {CivGroup} from "../../../Types/CivGroups";
+import UserSettings from "../../../Types/UserSettings";
 
 describe('draftCommand', () => {
     
-    const emptyUserData: UserData = {
+    const emptyUserSettings: UserSettings = {
         defaultDraftSettings: {},
         customCivs: []
     }
@@ -34,7 +34,7 @@ describe('draftCommand', () => {
             civGroups: ['civ5-vanilla']
         }
         
-        const result = draftCommand(draftArgs, [], emptyUserData, civData);
+        const result = draftCommand(draftArgs, [], emptyUserSettings, civData);
         expect(result.draftResult.isError).toBe(true)
         if (!result.draftResult.isError) {
             return;
@@ -50,14 +50,14 @@ describe('draftCommand', () => {
             civGroups: ['civ5-vanilla']
         }
 
-        const result = draftCommand(draftArgs, ["player1"], emptyUserData, civData);
+        const result = draftCommand(draftArgs, ["player1"], emptyUserSettings, civData);
         const error = extractErrorAndAssertIsError(result.draftResult);
 
         expect(error).toBe("not-enough-civs");
     });
     
     it('should fall back to default arguments if none are provided in arguments or user data', () => {
-        const result = draftCommand({}, ["player1"], emptyUserData, civData);
+        const result = draftCommand({}, ["player1"], emptyUserSettings, civData);
         
         const draft = extractResultAndAssertIsNotError(result.draftResult);
         
@@ -67,7 +67,7 @@ describe('draftCommand', () => {
     });
     
     it('should fall back to user data arguments if none provided in arguments', () => {
-        const userData : UserData = {
+        const userSettings : UserSettings = {
             defaultDraftSettings: {
                 numberOfAi: 1,
                 civGroups: ["civ6-vanilla"],
@@ -76,7 +76,7 @@ describe('draftCommand', () => {
             customCivs: []
         }
         
-        const result = draftCommand({}, ["player1"], userData, civData); 
+        const result = draftCommand({}, ["player1"], userSettings, civData); 
         const draft = extractResultAndAssertIsNotError(result.draftResult);
         
         expect(draft).toHaveLength(2);
@@ -85,7 +85,7 @@ describe('draftCommand', () => {
     });
     
     it('should only include civs from specified civ groups', () => {
-        const result = draftCommand({civGroups: ["lekmod"]}, ["player1"], emptyUserData, civData);
+        const result = draftCommand({civGroups: ["lekmod"]}, ["player1"], emptyUserSettings, civData);
         const draft = extractResultAndAssertIsNotError(result.draftResult);
         
         expect(draft.every(de => de.civs.every(civ => civ.includes("lekmod"))));

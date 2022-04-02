@@ -124,7 +124,7 @@ export default class MessageHandler {
             const response = draftCommand(
                 parsedArgs.result,
                 voiceChannelMembers,
-                await this.userDataStore.load(serverId),
+                (await this.userDataStore.load(serverId)).activeUserSettings,
                 this.getCivData()
             );
             msg.channel.send(generateDraftCommandOutputMessage(response));
@@ -141,22 +141,22 @@ export default class MessageHandler {
                 }
 
                 const userData = await this.userDataStore.load(serverId);
-                userData.customCivs = userData.customCivs.concat(civsToAdd);
+                userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.concat(civsToAdd);
                 await this.userDataStore.save(serverId, userData);
                 msg.channel.send(Messages.AddedCustomCivs);
             } else if (args[2] === "clear") {
                 const userData = await this.userDataStore.load(serverId);
-                userData.customCivs = [];
+                userData.activeUserSettings.customCivs = [];
                 await this.userDataStore.save(serverId, userData);
                 msg.channel.send(Messages.ClearedCustomCivs);
             } else if (args[2] === "show") {
                 const userData = await this.userDataStore.load(serverId);
-                if (userData.customCivs.length === 0) {
+                if (userData.activeUserSettings.customCivs.length === 0) {
                     msg.channel.send(Messages.NoCustomCivs);
                     return;
                 }
                 msg.channel.send(
-                    `\`\`\`\n${userData.customCivs.join("\n")}\`\`\``
+                    `\`\`\`\n${userData.activeUserSettings.customCivs.join("\n")}\`\`\``
                 );
             }
         }
