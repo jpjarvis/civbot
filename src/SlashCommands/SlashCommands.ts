@@ -112,4 +112,35 @@ const configCommand: ApplicationCommandData = {
     description: "Show CivBot's current configuration"
 };
 
-export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand];
+const profilesCommand: ApplicationCommandData = {
+    name: "profiles",
+    description: "Load and save settings profiles",
+    options: [
+        {
+            type: "SUB_COMMAND",
+            name: "load",
+            description: "Load a profile's settings",
+            options: [
+                {
+                    type: "STRING",
+                    name: "profile-name",
+                    description: "Name of the profile to load"
+                }
+            ]
+        },
+        {
+            type: "SUB_COMMAND",
+            name: "save",
+            description: "Save the current settings into a profile",
+            options: [
+                {
+                    type: "STRING",
+                    name: "profile-name",
+                    description: "Name to save the profile as. If a profile with the same name exists, it will be overwritten."
+                }
+            ]
+        }
+    ]
+}
+
+export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand];

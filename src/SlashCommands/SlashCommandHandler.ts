@@ -191,7 +191,38 @@ export default class SlashCommandHandler {
         await this.userDataStore.save(serverId, userData);
         await interaction.reply("All custom civs deleted.");
     }
+    
+    private async handleLoadProfile(interaction: CommandInteraction) {
+        const serverId = interaction.guildId!;
+        
+        const profileToLoad = interaction.options.getString("profile-name")!;
+        const userData = await this.userDataStore.load(serverId);
+        
+        const profileSettings = userData.profiles[profileToLoad];
+        
+        if (!profileSettings) {
+            await interaction.reply(`No profile with the name \`${profileToLoad}\` exists.`);
+            return;
+        }
+        
+        userData.activeUserSettings = profileSettings;
+        
+        await this.userDataStore.save(serverId, userData);
+        await interaction.reply(`Loaded settings from profile \`${profileToLoad}\`.`);
+    }
 
+    private async handleSaveProfile(interaction: CommandInteraction) {
+        const serverId = interaction.guildId!;
+
+        const profileName = interaction.options.getString("profile-name")!;
+        const userData = await this.userDataStore.load(serverId);
+
+        userData.profiles[profileName] = userData.activeUserSettings;
+        
+        await this.userDataStore.save(serverId, userData);
+        await interaction.reply(`Saved current settings as \`${profileName}\`.`);
+    }
+    
     async handle(interaction: CommandInteraction) {
         if (interaction.commandName === "draft") {
             await this.handleDraft(interaction);
@@ -232,6 +263,20 @@ export default class SlashCommandHandler {
 
             if (subcommand === "clear") {
                 await this.handleClearCustomCivs(interaction);
+                return;
+            }
+        }
+        
+        if (interaction.commandName === "profiles") {
+            const subcommand = interaction.options.getSubcommand();
+
+            if (subcommand === "load") {
+                await this.handleLoadProfile(interaction);
+                return;
+            }
+
+            if (subcommand === "save") {
+                await this.handleSaveProfile(interaction);
                 return;
             }
         }
