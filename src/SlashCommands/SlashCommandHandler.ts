@@ -280,5 +280,7 @@ export default class SlashCommandHandler {
                 return;
             }
         }
+
+        await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.")
     }
 }
