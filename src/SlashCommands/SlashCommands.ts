@@ -139,6 +139,11 @@ const profilesCommand: ApplicationCommandData = {
                     description: "Name to save the profile as. If a profile with the same name exists, it will be overwritten."
                 }
             ]
+        },
+        {
+            type: "SUB_COMMAND",
+            name: "show",
+            description: "List your saved profiles"
         }
     ]
 }

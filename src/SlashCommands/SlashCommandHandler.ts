@@ -6,6 +6,7 @@ import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {ResultOrErrorWithDetails} from "../Types/ResultOrError";
 import {CivData} from "../CivData";
 import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
+import UserSettings from "../Types/UserSettings";
 
 function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");
@@ -222,6 +223,25 @@ export default class SlashCommandHandler {
         await this.userDataStore.save(serverId, userData);
         await interaction.reply(`Saved current settings as \`${profileName}\`.`);
     }
+
+    private async handleShowProfiles(interaction: CommandInteraction) {
+        const serverId = interaction.guildId!;
+        const userData = await this.userDataStore.load(serverId);
+        
+        const profileNames = Object.keys(userData.profiles);
+
+        function createProfileString(profileName: string, userSettings: UserSettings) {
+            const civGroupsString = userSettings.defaultDraftSettings.civGroups?.map(x => `\`${x}\``).join(",");
+            const customCivsString = userSettings.customCivs.length > 0 ? ` and ${userSettings.customCivs.length} custom civs` : ""
+            return `\`${profileName}\`: ${civGroupsString}${customCivsString}`;
+        }
+
+        const message = profileNames.length > 0 ? 
+            profileNames.map(x => createProfileString(x, userData.profiles[x])).join("\n")
+            : "You don't have any saved profiles.";
+        
+        await interaction.reply(message);
+    }
     
     async handle(interaction: CommandInteraction) {
         if (interaction.commandName === "draft") {
@@ -277,6 +297,11 @@ export default class SlashCommandHandler {
 
             if (subcommand === "save") {
                 await this.handleSaveProfile(interaction);
+                return;
+            }
+            
+            if (subcommand === "show") {
+                await this.handleShowProfiles(interaction);
                 return;
             }
         }
