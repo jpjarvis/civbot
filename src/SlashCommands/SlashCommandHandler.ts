@@ -6,7 +6,15 @@ import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {ResultOrErrorWithDetails} from "../Types/ResultOrError";
 import {CivData} from "../CivData";
 import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
-import UserSettings from "../Types/UserSettings";
+import {showConfigCommand} from "../Commands/Config/ShowConfigCommand";
+import {enableCivGroupCommand} from "../Commands/CivGroups/EnableCivGroupCommand";
+import {disableCivGroupCommand} from "../Commands/CivGroups/DisableCivGroupCommand";
+import {addCustomCivsCommand} from "../Commands/CustomCivs/AddCustomCivsCommand";
+import {removeCustomCivsCommand} from "../Commands/CustomCivs/RemoveCustomCivsCommand";
+import {clearCustomCivsCommand} from "../Commands/CustomCivs/ClearCustomCivsCommand";
+import {loadProfileCommand} from "../Commands/Profiles/LoadProfileCommand";
+import {saveProfileCommand} from "../Commands/Profiles/SaveProfileCommand";
+import {showProfilesCommand} from "../Commands/Profiles/ShowProfilesCommand";
 
 function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");
@@ -37,6 +45,38 @@ function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGro
     };
 }
 
+function extractCustomCivsArgument(interaction: CommandInteraction): string[] {
+    return interaction.options.getString("civs")!.split(",").map(s => s.trim());
+}
+
+function extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWithDetails<Partial<DraftArguments>, string> {
+    const ai = interaction.options.getInteger("ai") ?? undefined;
+    const civs = interaction.options.getInteger("civs") ?? undefined;
+    const civGroupString = interaction.options.getString("civ-groups") ?? undefined;
+
+    let civGroups: CivGroup[] | undefined = undefined;
+    if (civGroupString) {
+        let parseResult = parseCivGroups(civGroupString);
+        if (!parseResult.isError) {
+            civGroups = parseResult.result;
+        } else {
+            return {
+                isError: true,
+                error: `Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.error.invalidGroups}`
+            };
+        }
+    }
+
+    return {
+        isError: false,
+        result: {
+            numberOfCivs: civs,
+            numberOfAi: ai,
+            civGroups: civGroups
+        }
+    };
+}
+
 export default class SlashCommandHandler {
     private readonly userDataStore: UserDataStore;
     private readonly getCivData: () => CivData;
@@ -46,39 +86,11 @@ export default class SlashCommandHandler {
         this.getCivData = getCivData;
     }
 
-    private static extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWithDetails<Partial<DraftArguments>, string> {
-        const ai = interaction.options.getInteger("ai") ?? undefined;
-        const civs = interaction.options.getInteger("civs") ?? undefined;
-        const civGroupString = interaction.options.getString("civ-groups") ?? undefined;
-
-        let civGroups: CivGroup[] | undefined = undefined;
-        if (civGroupString) {
-            let parseResult = parseCivGroups(civGroupString);
-            if (!parseResult.isError) {
-                civGroups = parseResult.result;
-            } else {
-                return {
-                    isError: true,
-                    error: `Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.error.invalidGroups}`
-                };
-            }
-        }
-
-        return {
-            isError: false,
-            result: {
-                numberOfCivs: civs,
-                numberOfAi: ai,
-                civGroups: civGroups
-            }
-        };
-    }
-
     private async handleDraft(interaction: CommandInteraction) {
 
         const serverId = interaction.guildId!;
 
-        const draftArgumentsOrError = SlashCommandHandler.extractDraftArguments(interaction);
+        const draftArgumentsOrError = extractDraftArguments(interaction);
 
         if (draftArgumentsOrError.isError) {
             await interaction.reply(draftArgumentsOrError.error);
@@ -98,151 +110,78 @@ export default class SlashCommandHandler {
 
     private async handleShowConfig(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
-
         const userSettings = (await this.userDataStore.load(serverId)).activeUserSettings;
 
-        let response = "";
-        response += `Using civ groups: \`\`\`\n${userSettings.defaultDraftSettings?.civGroups?.join("\n")}\`\`\`` + "\n";
-        if (userSettings.customCivs) {
-            response += `Custom civs:\`\`\`\n${userSettings.customCivs.join("\n")}\`\`\``;
-        }
+        let response = showConfigCommand(userSettings);
         await interaction.reply(response);
     }
 
     private async handleEnableCivGroup(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
-
         const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!;
 
-        const userData = await this.userDataStore.load(serverId)
-
-        if (!userData.activeUserSettings.defaultDraftSettings.civGroups) {
-            userData.activeUserSettings.defaultDraftSettings.civGroups = [];
-        }
-
-        if (userData.activeUserSettings.defaultDraftSettings.civGroups.includes(civGroup)) {
-            await interaction.reply(`\`${civGroup}\` is already being used.`);
-            return;
-        }
-        userData.activeUserSettings.defaultDraftSettings.civGroups.push(civGroup);
-        await interaction.reply(`\`${civGroup}\` will now be used in your drafts.`);
-
-        await this.userDataStore.save(serverId, userData);
+        const message = await enableCivGroupCommand(this.userDataStore, serverId, civGroup);
+        await interaction.reply(message);
     }
 
     private async handleDisableCivGroup(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
-
         const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!;
 
-        const userData = await this.userDataStore.load(serverId);
-
-        if (!userData.activeUserSettings.defaultDraftSettings.civGroups) {
-            userData.activeUserSettings.defaultDraftSettings.civGroups = [];
-        }
-
-        const toRemoveIndex = userData.activeUserSettings.defaultDraftSettings.civGroups.indexOf(civGroup);
-        if (!userData.activeUserSettings.defaultDraftSettings.civGroups.includes(civGroup)) {
-            await interaction.reply(`\`${civGroup}\` is not being used.`);
-            return;
-        }
-        userData.activeUserSettings.defaultDraftSettings.civGroups.splice(toRemoveIndex, 1);
-        await interaction.reply(`\`${civGroup}\` will no longer be used in your drafts.`);
-
-        await this.userDataStore.save(serverId, userData);
+        const message = await disableCivGroupCommand(this.userDataStore, serverId, civGroup);
+        await interaction.reply(message);
     }
 
     private async handleAddCustomCivs(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
+        const civs = extractCustomCivsArgument(interaction);
 
-        const userData = await this.userDataStore.load(serverId);
-
-        const civs = interaction.options.getString("civs")!.split(",").map(s => s.trim());
-        userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.concat(civs);
-        await this.userDataStore.save(serverId, userData);
-        await interaction.reply(`Added ${civs.length} custom civs.`);
+        const message = await addCustomCivsCommand(this.userDataStore, serverId, civs);
+        await interaction.reply(message);
     }
 
     private async handleRemoveCustomCivs(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
+        const civs = extractCustomCivsArgument(interaction);
 
-        const userData = await this.userDataStore.load(serverId);
-        const originalNumberOfCivs = userData.activeUserSettings.customCivs.length;
-
-        const civs = interaction.options.getString("civs")!.split(",").map(s => s.trim());
-
-        const failedCivs = civs.filter(c => !userData.activeUserSettings.customCivs.includes(c));
-        userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.filter(c => !civs.includes(c));
-
-        await this.userDataStore.save(serverId, userData);
-
-        let message: string = "";
-        if (failedCivs.length > 0) {
-            message += `Civ(s) \`${failedCivs.join(", ")}\` not found.\n`;
-        }
-        message += `Removed ${originalNumberOfCivs - userData.activeUserSettings.customCivs.length} custom civ(s).`;
+        const message = await removeCustomCivsCommand(this.userDataStore, serverId, civs);
         await interaction.reply(message);
     }
 
     private async handleClearCustomCivs(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
 
-        const userData = await this.userDataStore.load(serverId);
-        userData.activeUserSettings.customCivs = [];
-        await this.userDataStore.save(serverId, userData);
-        await interaction.reply("All custom civs deleted.");
+        const message = await clearCustomCivsCommand(this.userDataStore, serverId);
+        await interaction.reply(message);
     }
-    
+
     private async handleLoadProfile(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
-        
+
         const profileToLoad = interaction.options.getString("profile-name")!;
-        const userData = await this.userDataStore.load(serverId);
-        
-        const profileSettings = userData.profiles[profileToLoad];
-        
-        if (!profileSettings) {
-            await interaction.reply(`No profile with the name \`${profileToLoad}\` exists.`);
-            return;
-        }
-        
-        userData.activeUserSettings = profileSettings;
-        
-        await this.userDataStore.save(serverId, userData);
-        await interaction.reply(`Loaded settings from profile \`${profileToLoad}\`.`);
+
+        const message = await loadProfileCommand(this.userDataStore, serverId, profileToLoad);
+        await interaction.reply(message);
     }
 
     private async handleSaveProfile(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
 
-        const profileName = interaction.options.getString("profile-name")!;
-        const userData = await this.userDataStore.load(serverId);
+        const profileToLoad = interaction.options.getString("profile-name")!;
 
-        userData.profiles[profileName] = userData.activeUserSettings;
-        
-        await this.userDataStore.save(serverId, userData);
-        await interaction.reply(`Saved current settings as \`${profileName}\`.`);
+        const message = await saveProfileCommand(this.userDataStore, serverId, profileToLoad);
+        await interaction.reply(message);
     }
 
     private async handleShowProfiles(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
         const userData = await this.userDataStore.load(serverId);
         
-        const profileNames = Object.keys(userData.profiles);
+        const message = await showProfilesCommand(userData);
 
-        function createProfileString(profileName: string, userSettings: UserSettings) {
-            const civGroupsString = userSettings.defaultDraftSettings.civGroups?.map(x => `\`${x}\``).join(",");
-            const customCivsString = userSettings.customCivs.length > 0 ? ` and ${userSettings.customCivs.length} custom civs` : ""
-            return `\`${profileName}\`: ${civGroupsString}${customCivsString}`;
-        }
-
-        const message = profileNames.length > 0 ? 
-            profileNames.map(x => createProfileString(x, userData.profiles[x])).join("\n")
-            : "You don't have any saved profiles.";
-        
         await interaction.reply(message);
     }
-    
+
     async handle(interaction: CommandInteraction) {
         if (interaction.commandName === "draft") {
             await this.handleDraft(interaction);
@@ -286,7 +225,7 @@ export default class SlashCommandHandler {
                 return;
             }
         }
-        
+
         if (interaction.commandName === "profiles") {
             const subcommand = interaction.options.getSubcommand();
 
@@ -299,13 +238,13 @@ export default class SlashCommandHandler {
                 await this.handleSaveProfile(interaction);
                 return;
             }
-            
+
             if (subcommand === "show") {
                 await this.handleShowProfiles(interaction);
                 return;
             }
         }
 
-        await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.")
+        await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
     }
 }

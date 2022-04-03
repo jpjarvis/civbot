@@ -7,6 +7,8 @@ import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {CivData} from "../CivData";
 import {ResultOrError} from "../Types/ResultOrError";
 import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
+import {addCustomCivsCommand} from "../Commands/CustomCivs/AddCustomCivsCommand";
+import {clearCustomCivsCommand} from "../Commands/CustomCivs/ClearCustomCivsCommand";
 
 function extractArgValue(args: Array<string>, argName: string): ResultOrError<number> {
     let index = args.findIndex((a) => a === argName);
@@ -119,7 +121,7 @@ export default class MessageHandler {
                 msg.channel.send(Messages.BadlyFormed);
                 return;
             }
-            const voiceChannel = await getVoiceChannel(client, msg.member!)
+            const voiceChannel = await getVoiceChannel(client, msg.member!);
             const voiceChannelMembers = voiceChannel?.members.map(m => m.user.username) ?? [];
             const response = draftCommand(
                 parsedArgs.result,
@@ -128,28 +130,28 @@ export default class MessageHandler {
                 this.getCivData()
             );
             msg.channel.send(generateDraftCommandOutputMessage(response));
-        } else if (args[1] === "civs") {
+        } 
+        else if (args[1] === "civs") {
             if (args[2] === "add") {
                 const civsToAdd = args
                     .slice(3)
                     .join(" ")
                     .split(",")
                     .map((c) => c.trim());
+                
                 if (civsToAdd.length === 0) {
                     msg.channel.send(Messages.BadlyFormed);
                     return;
                 }
 
-                const userData = await this.userDataStore.load(serverId);
-                userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.concat(civsToAdd);
-                await this.userDataStore.save(serverId, userData);
-                msg.channel.send(Messages.AddedCustomCivs);
-            } else if (args[2] === "clear") {
-                const userData = await this.userDataStore.load(serverId);
-                userData.activeUserSettings.customCivs = [];
-                await this.userDataStore.save(serverId, userData);
-                msg.channel.send(Messages.ClearedCustomCivs);
-            } else if (args[2] === "show") {
+                const message = await addCustomCivsCommand(this.userDataStore, serverId, civsToAdd);
+                msg.channel.send(message);
+            } 
+            else if (args[2] === "clear") {
+                const message = await clearCustomCivsCommand(this.userDataStore, serverId);
+                msg.channel.send(message);
+            } 
+            else if (args[2] === "show") {
                 const userData = await this.userDataStore.load(serverId);
                 if (userData.activeUserSettings.customCivs.length === 0) {
                     msg.channel.send(Messages.NoCustomCivs);
