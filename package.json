@@ -13,6 +13,7 @@
         "discord.io": "^2.5.3",
         "discord.js": "13.1.0",
         "fetch": "^1.1.0",
+        "jest-extended": "^2.0.0",
         "pg": "^8.7.1",
         "reflect-metadata": "^0.1.13",
         "shuffle-array": "^1.0.1",

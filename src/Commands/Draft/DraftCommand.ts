@@ -1,8 +1,6 @@
 import {CivGroup} from "../../Types/CivGroups";
 import {draft} from "./Draft";
 import {selectCivs} from "./SelectCivs";
-import {UserData} from "../../Types/UserData";
-import {CivData} from "../../CivData";
 import {ResultOrErrorWithDetails} from "../../Types/ResultOrError";
 import {Draft, DraftError} from "./DraftTypes";
 import UserSettings from "../../Types/UserSettings";
@@ -38,13 +36,12 @@ export type DraftCommandResult = {
 
 export function draftCommand(args: Partial<DraftArguments>,
                                    voiceChannelMembers: string[],
-                                   userSettings: UserSettings,
-                                   civData: CivData): DraftCommandResult {
+                                   userSettings: UserSettings): DraftCommandResult {
     const draftArgs = fillDefaultArguments(args, userSettings);
 
     const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
 
-    const civs = selectCivs(new Set(draftArgs.civGroups), civData, userSettings.customCivs);
+    const civs = selectCivs(new Set(draftArgs.civGroups), userSettings.customCivs);
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 

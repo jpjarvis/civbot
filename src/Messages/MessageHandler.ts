@@ -4,7 +4,6 @@ import {getVoiceChannel} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
 import {Client, Message} from "discord.js";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {CivData} from "../CivData";
 import {ResultOrError} from "../Types/ResultOrError";
 import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
 import {addCustomCivsCommand} from "../Commands/CustomCivs/AddCustomCivsCommand";
@@ -83,11 +82,9 @@ function parseDraftArgs(args: string[]): ResultOrError<Partial<DraftArguments>> 
 
 export default class MessageHandler {
     private userDataStore: UserDataStore;
-    private getCivData: () => CivData;
 
-    constructor(userDataStore: UserDataStore, getCivData: () => CivData) {
+    constructor(userDataStore: UserDataStore) {
         this.userDataStore = userDataStore;
-        this.getCivData = getCivData;
     }
 
     async handle(msg: Message, client: Client): Promise<void> {
@@ -126,8 +123,7 @@ export default class MessageHandler {
             const response = draftCommand(
                 parsedArgs.result,
                 voiceChannelMembers,
-                (await this.userDataStore.load(serverId)).activeUserSettings,
-                this.getCivData()
+                (await this.userDataStore.load(serverId)).activeUserSettings
             );
             msg.channel.send(generateDraftCommandOutputMessage(response));
         } 

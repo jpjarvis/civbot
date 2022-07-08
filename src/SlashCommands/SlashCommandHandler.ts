@@ -4,7 +4,6 @@ import {getVoiceChannelMembers} from "../DiscordUtils";
 import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
 import {UserDataStore} from "../UserDataStore/UserDataStore";
 import {ResultOrErrorWithDetails} from "../Types/ResultOrError";
-import {CivData} from "../CivData";
 import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
 import {showConfigCommand} from "../Commands/Config/ShowConfigCommand";
 import {enableCivGroupCommand} from "../Commands/CivGroups/EnableCivGroupCommand";
@@ -79,11 +78,9 @@ function extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWi
 
 export default class SlashCommandHandler {
     private readonly userDataStore: UserDataStore;
-    private readonly getCivData: () => CivData;
 
-    constructor(userDataStore: UserDataStore, getCivData: () => CivData) {
+    constructor(userDataStore: UserDataStore) {
         this.userDataStore = userDataStore;
-        this.getCivData = getCivData;
     }
 
     private async handleDraft(interaction: CommandInteraction) {
@@ -102,8 +99,7 @@ export default class SlashCommandHandler {
         const response = draftCommand(
             draftArgumentsOrError.result,
             voiceChannelMembers,
-            (await this.userDataStore.load(serverId)).activeUserSettings,
-            this.getCivData());
+            (await this.userDataStore.load(serverId)).activeUserSettings);
 
         await interaction.reply(generateDraftCommandOutputMessage(response));
     }

@@ -1,13 +1,5 @@
 ﻿import {ResultOrErrorWithDetails} from "../src/Types/ResultOrError";
 
-export function generateArray(count: number): string[] {
-    return generateArrayWithNames(count, "item");
-}
-
-export function generateArrayWithNames(count: number, itemName: string): string[] {
-    return Array.from(Array(count)).map((_,i) => `${itemName}${i}`);
-}
-
 export function extractResultAndAssertIsNotError<TResult, TError>(resultOrError: ResultOrErrorWithDetails<TResult, TError>): TResult {
     expect(resultOrError.isError).toBe(false);
     if (!resultOrError.isError) {
