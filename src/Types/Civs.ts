@@ -1,10 +1,4 @@
-import {Civ5CivGroup, Civ6CivGroup} from "./CivGroups";
-
-type CivsType = {
-    [group in Civ5CivGroup | Civ6CivGroup]: string[]
-}
-
-export const Civs: CivsType = {
+export const Civs = {
     "civ5-vanilla": [
         "America",
         "Arabia",
