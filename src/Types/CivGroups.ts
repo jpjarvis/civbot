@@ -1,10 +1,8 @@
 import {Civs} from "./Civs";
 
 export type CivGroup = keyof typeof Civs | "custom";
+export const CivGroups = Object.keys(Civs).concat("custom") as CivGroup[];
 
 export function stringToCivGroup(string: string): CivGroup | undefined {
-    if (Object.keys(Civs).includes(string) || string === "custom") {
-        return string as CivGroup;
-    }
-    return undefined;
+    return CivGroups.find(cg => cg === string);
 }
