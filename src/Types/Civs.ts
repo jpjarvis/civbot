@@ -182,4 +182,4 @@ export const Civs = {
         "Cyrus",
         "Jadwiga"
     ]
-} as const;
+};

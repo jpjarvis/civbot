@@ -11,4 +11,3 @@ export function selectCivs(groups: Set<CivGroup>, customCivs: string[]): string[
         })
         .reduce((prev: string[], current: string[]) => current.concat(prev), []);
 }
-
