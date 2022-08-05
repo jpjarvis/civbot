@@ -4,8 +4,8 @@ import { UserDataStore } from "./UserDataStore";
 
 const connectionString = process.env["DATABASE_URL"]!;
 
-export default class PostgresDataStore implements UserDataStore {
-    async load(tenantId: string): Promise<UserData> {
+export const PostgresDataStore: UserDataStore = {
+    load: async (tenantId: string) => {
         const client = new Client({
             connectionString: connectionString,
             ssl: {
@@ -25,9 +25,9 @@ export default class PostgresDataStore implements UserDataStore {
         const row = result.rows[0]["data"];
         await client.end();
         return JSON.parse(row);
-    }
+    },
 
-    async save(tenantId: string, userData: UserData): Promise<void> {
+    save: async (tenantId: string, userData: UserData) => {
         const client = new Client({
             connectionString: connectionString,
             ssl: {
@@ -48,5 +48,5 @@ export default class PostgresDataStore implements UserDataStore {
         }
 
         await client.end();
-    }
-}
+    },
+};

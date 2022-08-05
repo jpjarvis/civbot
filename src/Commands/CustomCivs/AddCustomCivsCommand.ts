@@ -1,12 +1,8 @@
-import { UserDataStore } from "../../UserDataStore/UserDataStore";
+import { loadUserData, saveUserData } from "../../UserDataStore";
 
-export async function addCustomCivsCommand(
-    userDataStore: UserDataStore,
-    tenantId: string,
-    civs: string[]
-): Promise<string> {
-    const userData = await userDataStore.load(tenantId);
+export async function addCustomCivsCommand(tenantId: string, civs: string[]): Promise<string> {
+    const userData = await loadUserData(tenantId);
     userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.concat(civs);
-    await userDataStore.save(tenantId, userData);
+    await saveUserData(tenantId, userData);
     return `Added ${civs.length} custom civs.`;
 }

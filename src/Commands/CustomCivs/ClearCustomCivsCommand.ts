@@ -1,8 +1,8 @@
-import { UserDataStore } from "../../UserDataStore/UserDataStore";
+import { loadUserData, saveUserData } from "../../UserDataStore";
 
-export async function clearCustomCivsCommand(userDataStore: UserDataStore, tenantId: string) {
-    const userData = await userDataStore.load(tenantId);
+export async function clearCustomCivsCommand(tenantId: string) {
+    const userData = await loadUserData(tenantId);
     userData.activeUserSettings.customCivs = [];
-    await userDataStore.save(tenantId, userData);
+    await saveUserData(tenantId, userData);
     return "All custom civs deleted.";
 }

@@ -1,7 +1,7 @@
-import { UserDataStore } from "../../UserDataStore/UserDataStore";
+import { loadUserData, saveUserData } from "../../UserDataStore";
 
-export async function loadProfileCommand(userDataStore: UserDataStore, tenantId: string, profileName: string) {
-    const userData = await userDataStore.load(tenantId);
+export async function loadProfileCommand(tenantId: string, profileName: string) {
+    const userData = await loadUserData(tenantId);
 
     const profileSettings = userData.profiles[profileName];
 
@@ -11,6 +11,6 @@ export async function loadProfileCommand(userDataStore: UserDataStore, tenantId:
 
     userData.activeUserSettings = profileSettings;
 
-    await userDataStore.save(tenantId, userData);
+    await saveUserData(tenantId, userData);
     return `Loaded settings from profile \`${profileName}\`.`;
 }
