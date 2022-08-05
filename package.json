@@ -8,7 +8,8 @@
         "node": "^17.x"
     },
     "prettier": {
-        "tabWidth": 4
+        "tabWidth": 4,
+        "printWidth": 120
     },
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
