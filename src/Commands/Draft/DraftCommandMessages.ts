@@ -1,6 +1,6 @@
 ﻿import Messages from "../../Messages";
-import {DraftCommandResult} from "./DraftCommand";
-import {DraftEntry} from "./DraftTypes";
+import { DraftCommandResult } from "./DraftCommand";
+import { DraftEntry } from "./DraftTypes";
 
 function getPlayerDraftString(draftEntry: DraftEntry): string {
     let response = `${draftEntry.player} `.padEnd(20, " ");
@@ -15,7 +15,7 @@ export function generateDraftCommandOutputMessage(draftCommandResult: DraftComma
     let message = "";
     const sendMessage = (m: string) => {
         message += m + "\n";
-    }
+    };
 
     if (draftCommandResult.draftResult.isError) {
         if (draftCommandResult.draftResult.error == "no-players") {
@@ -23,15 +23,14 @@ export function generateDraftCommandOutputMessage(draftCommandResult: DraftComma
         } else if (draftCommandResult.draftResult.error == "not-enough-civs") {
             sendMessage(Messages.NotEnoughCivs);
         }
-    }
-    else {
-        let draftString = draftCommandResult.draftResult.result.map(x => getPlayerDraftString(x)).join("\n");
-        
+    } else {
+        let draftString = draftCommandResult.draftResult.result.map((x) => getPlayerDraftString(x)).join("\n");
+
         if (draftString === "") {
             sendMessage(Messages.NoPlayers);
         } else {
-            sendMessage(`Drafting for ${draftCommandResult.civGroupsUsed.map(cg => `\`${cg}\``).join(", ")}`);
-            sendMessage("\`\`\`" + draftString + "\`\`\`");
+            sendMessage(`Drafting for ${draftCommandResult.civGroupsUsed.map((cg) => `\`${cg}\``).join(", ")}`);
+            sendMessage("```" + draftString + "```");
         }
     }
 

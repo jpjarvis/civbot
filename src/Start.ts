@@ -1,18 +1,18 @@
-import {Client, Intents} from "discord.js";
+import { Client, Intents } from "discord.js";
 import Messages from "./Messages";
-import {getToken} from "./Auth";
-import {constructCivBot} from "./Configuration";
+import { getToken } from "./Auth";
+import { constructCivBot } from "./Configuration";
 
 async function start() {
     const client = new Client({
         intents: [
             Intents.FLAGS.GUILDS,
             Intents.FLAGS.GUILD_MESSAGES,
-            Intents.FLAGS.GUILD_VOICE_STATES
-        ]
+            Intents.FLAGS.GUILD_VOICE_STATES,
+        ],
     });
-    
-    const civBot = constructCivBot()
+
+    const civBot = constructCivBot();
 
     client.once("ready", async () => {
         console.log("CivBot is alive!");

@@ -1,26 +1,26 @@
-import {CommandInteraction} from "discord.js";
-import {CivGroup, stringToCivGroup} from "../Types/CivGroups";
-import {getVoiceChannelMembers} from "../DiscordUtils";
-import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
-import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {ResultOrErrorWithDetails} from "../Types/ResultOrError";
-import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
-import {showConfigCommand} from "../Commands/Config/ShowConfigCommand";
-import {enableCivGroupCommand} from "../Commands/CivGroups/EnableCivGroupCommand";
-import {disableCivGroupCommand} from "../Commands/CivGroups/DisableCivGroupCommand";
-import {addCustomCivsCommand} from "../Commands/CustomCivs/AddCustomCivsCommand";
-import {removeCustomCivsCommand} from "../Commands/CustomCivs/RemoveCustomCivsCommand";
-import {clearCustomCivsCommand} from "../Commands/CustomCivs/ClearCustomCivsCommand";
-import {loadProfileCommand} from "../Commands/Profiles/LoadProfileCommand";
-import {saveProfileCommand} from "../Commands/Profiles/SaveProfileCommand";
-import {showProfilesCommand} from "../Commands/Profiles/ShowProfilesCommand";
+import { CommandInteraction } from "discord.js";
+import { CivGroup, stringToCivGroup } from "../Types/CivGroups";
+import { getVoiceChannelMembers } from "../DiscordUtils";
+import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
+import { UserDataStore } from "../UserDataStore/UserDataStore";
+import { ResultOrErrorWithDetails } from "../Types/ResultOrError";
+import { generateDraftCommandOutputMessage } from "../Commands/Draft/DraftCommandMessages";
+import { showConfigCommand } from "../Commands/Config/ShowConfigCommand";
+import { enableCivGroupCommand } from "../Commands/CivGroups/EnableCivGroupCommand";
+import { disableCivGroupCommand } from "../Commands/CivGroups/DisableCivGroupCommand";
+import { addCustomCivsCommand } from "../Commands/CustomCivs/AddCustomCivsCommand";
+import { removeCustomCivsCommand } from "../Commands/CustomCivs/RemoveCustomCivsCommand";
+import { clearCustomCivsCommand } from "../Commands/CustomCivs/ClearCustomCivsCommand";
+import { loadProfileCommand } from "../Commands/Profiles/LoadProfileCommand";
+import { saveProfileCommand } from "../Commands/Profiles/SaveProfileCommand";
+import { showProfilesCommand } from "../Commands/Profiles/ShowProfilesCommand";
 
 function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");
     const civGroups: CivGroup[] = [];
     const invalidGroups: string[] = [];
 
-    strings.forEach(string => {
+    strings.forEach((string) => {
         const civGroup = stringToCivGroup(string);
         if (civGroup) {
             civGroups.push(civGroup);
@@ -33,22 +33,27 @@ function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGro
         return {
             isError: true,
             error: {
-                invalidGroups: invalidGroups
-            }
+                invalidGroups: invalidGroups,
+            },
         };
     }
 
     return {
         isError: false,
-        result: civGroups
+        result: civGroups,
     };
 }
 
 function extractCustomCivsArgument(interaction: CommandInteraction): string[] {
-    return interaction.options.getString("civs")!.split(",").map(s => s.trim());
+    return interaction.options
+        .getString("civs")!
+        .split(",")
+        .map((s) => s.trim());
 }
 
-function extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWithDetails<Partial<DraftArguments>, string> {
+function extractDraftArguments(
+    interaction: CommandInteraction
+): ResultOrErrorWithDetails<Partial<DraftArguments>, string> {
     const ai = interaction.options.getInteger("ai") ?? undefined;
     const civs = interaction.options.getInteger("civs") ?? undefined;
     const civGroupString = interaction.options.getString("civ-groups") ?? undefined;
@@ -61,7 +66,7 @@ function extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWi
         } else {
             return {
                 isError: true,
-                error: `Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.error.invalidGroups}`
+                error: `Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.error.invalidGroups}`,
             };
         }
     }
@@ -71,8 +76,8 @@ function extractDraftArguments(interaction: CommandInteraction): ResultOrErrorWi
         result: {
             numberOfCivs: civs,
             numberOfAi: ai,
-            civGroups: civGroups
-        }
+            civGroups: civGroups,
+        },
     };
 }
 
@@ -84,7 +89,6 @@ export default class SlashCommandHandler {
     }
 
     private async handleDraft(interaction: CommandInteraction) {
-
         const serverId = interaction.guildId!;
 
         const draftArgumentsOrError = extractDraftArguments(interaction);
@@ -99,7 +103,8 @@ export default class SlashCommandHandler {
         const response = draftCommand(
             draftArgumentsOrError.result,
             voiceChannelMembers,
-            (await this.userDataStore.load(serverId)).activeUserSettings);
+            (await this.userDataStore.load(serverId)).activeUserSettings
+        );
 
         await interaction.reply(generateDraftCommandOutputMessage(response));
     }
@@ -172,7 +177,7 @@ export default class SlashCommandHandler {
     private async handleShowProfiles(interaction: CommandInteraction) {
         const serverId = interaction.guildId!;
         const userData = await this.userDataStore.load(serverId);
-        
+
         const message = await showProfilesCommand(userData);
 
         await interaction.reply(message);

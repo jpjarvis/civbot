@@ -1,4 +1,4 @@
-import {UserDataStore} from "../../UserDataStore/UserDataStore";
+import { UserDataStore } from "../../UserDataStore/UserDataStore";
 
 export async function clearCustomCivsCommand(userDataStore: UserDataStore, tenantId: string) {
     const userData = await userDataStore.load(tenantId);

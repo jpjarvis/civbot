@@ -7,6 +7,9 @@
     "engines": {
         "node": "^17.x"
     },
+    "prettier": {
+        "tabWidth": 4
+    },
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
         "@types/pg": "^8.6.1",

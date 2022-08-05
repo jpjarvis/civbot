@@ -1,11 +1,10 @@
-import {CivGroup} from "../../../Types/CivGroups";
-import {selectCivs} from "../SelectCivs";
-import {Civs} from "../../../Types/Civs";
+import { CivGroup } from "../../../Types/CivGroups";
+import { selectCivs } from "../SelectCivs";
+import { Civs } from "../../../Types/Civs";
 
 const customCivs = ["custom1"];
 
 describe("selectCivs", () => {
-
     it("should return no civs if no civ groups are given", () => {
         const civs = selectCivs(new Set<CivGroup>(), customCivs);
         expect(civs).toHaveLength(0);

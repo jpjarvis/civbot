@@ -1,5 +1,5 @@
-﻿import {CivGroup} from "../../Types/CivGroups";
-import {Civs} from "../../Types/Civs";
+﻿import { CivGroup } from "../../Types/CivGroups";
+import { Civs } from "../../Types/Civs";
 
 export function selectCivs(groups: Set<CivGroup>, customCivs: string[]): string[] {
     return Array.from(groups)

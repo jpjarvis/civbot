@@ -42,10 +42,10 @@ export const Civs = {
         "Spain",
         "Sweden",
         "Mali",
-        "The Zulu"
+        "The Zulu",
     ],
 
-    "lekmod": [
+    lekmod: [
         "Akkad",
         "Argentina",
         "Ayyubids",
@@ -109,7 +109,7 @@ export const Civs = {
         "Mysore",
         "Philippines",
         "Maurya",
-        "Colombia"
+        "Colombia",
     ],
 
     "civ6-vanilla": [
@@ -132,7 +132,7 @@ export const Civs = {
         "Peter",
         "Tomyris",
         "Philip II",
-        "Gilgamesh"
+        "Gilgamesh",
     ],
 
     "civ6-rnf": [
@@ -144,7 +144,7 @@ export const Civs = {
         "Lautaro",
         "Genghis Khan",
         "Robert the Bruce",
-        "Shaka"
+        "Shaka",
     ],
 
     "civ6-gs": [
@@ -157,7 +157,7 @@ export const Civs = {
         "Kupe",
         "Suleiman",
         "Dido",
-        "Kristina"
+        "Kristina",
     ],
 
     "civ6-frontier": [
@@ -170,16 +170,8 @@ export const Civs = {
         "Lady Six Sky",
         "Kublai Khan (Mongolia)",
         "João III",
-        "Bà Triệu"
+        "Bà Triệu",
     ],
 
-    "civ6-extra": [
-        "John Curtin",
-        "Gitarja",
-        "Jayavarman VII",
-        "Alexander",
-        "Amanitore",
-        "Cyrus",
-        "Jadwiga"
-    ]
+    "civ6-extra": ["John Curtin", "Gitarja", "Jayavarman VII", "Alexander", "Amanitore", "Cyrus", "Jadwiga"],
 };

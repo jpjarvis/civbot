@@ -1,13 +1,13 @@
 import Messages from "../Messages";
-import {CivGroup} from "../Types/CivGroups";
-import {getVoiceChannel} from "../DiscordUtils";
-import {DraftArguments, draftCommand} from "../Commands/Draft/DraftCommand";
-import {Client, Message} from "discord.js";
-import {UserDataStore} from "../UserDataStore/UserDataStore";
-import {ResultOrError} from "../Types/ResultOrError";
-import {generateDraftCommandOutputMessage} from "../Commands/Draft/DraftCommandMessages";
-import {addCustomCivsCommand} from "../Commands/CustomCivs/AddCustomCivsCommand";
-import {clearCustomCivsCommand} from "../Commands/CustomCivs/ClearCustomCivsCommand";
+import { CivGroup } from "../Types/CivGroups";
+import { getVoiceChannel } from "../DiscordUtils";
+import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
+import { Client, Message } from "discord.js";
+import { UserDataStore } from "../UserDataStore/UserDataStore";
+import { ResultOrError } from "../Types/ResultOrError";
+import { generateDraftCommandOutputMessage } from "../Commands/Draft/DraftCommandMessages";
+import { addCustomCivsCommand } from "../Commands/CustomCivs/AddCustomCivsCommand";
+import { clearCustomCivsCommand } from "../Commands/CustomCivs/ClearCustomCivsCommand";
 
 function extractArgValue(args: Array<string>, argName: string): ResultOrError<number> {
     let index = args.findIndex((a) => a === argName);
@@ -16,13 +16,13 @@ function extractArgValue(args: Array<string>, argName: string): ResultOrError<nu
         let result = parseInt(args[index + 1]);
         if (isNaN(result)) {
             // Badly formed, so we give an error
-            return {isError: true};
+            return { isError: true };
         }
 
-        return {isError: false, result: result};
+        return { isError: false, result: result };
     }
-    
-    return {isError: true};
+
+    return { isError: true };
 }
 
 function parseDraftArgs(args: string[]): ResultOrError<Partial<DraftArguments>> {
@@ -31,7 +31,7 @@ function parseDraftArgs(args: string[]): ResultOrError<Partial<DraftArguments>> 
     if (args.includes("ai")) {
         let aiArgValue = extractArgValue(args, "ai");
         if (aiArgValue.isError) {
-            return {isError: true};
+            return { isError: true };
         }
         draftArgs.numberOfAi = aiArgValue.result;
     }
@@ -39,7 +39,7 @@ function parseDraftArgs(args: string[]): ResultOrError<Partial<DraftArguments>> 
     if (args.includes("civs")) {
         let numCivsArgValue = extractArgValue(args, "civs");
         if (numCivsArgValue.isError) {
-            return {isError: true};
+            return { isError: true };
         }
         draftArgs.numberOfCivs = numCivsArgValue.result;
     }
@@ -77,7 +77,7 @@ function parseDraftArgs(args: string[]): ResultOrError<Partial<DraftArguments>> 
         draftArgs.civGroups = civGroupsSpecified;
     }
 
-    return {isError: false, result: draftArgs};
+    return { isError: false, result: draftArgs };
 }
 
 export default class MessageHandler {
@@ -119,22 +119,21 @@ export default class MessageHandler {
                 return;
             }
             const voiceChannel = await getVoiceChannel(client, msg.member!);
-            const voiceChannelMembers = voiceChannel?.members.map(m => m.user.username) ?? [];
+            const voiceChannelMembers = voiceChannel?.members.map((m) => m.user.username) ?? [];
             const response = draftCommand(
                 parsedArgs.result,
                 voiceChannelMembers,
                 (await this.userDataStore.load(serverId)).activeUserSettings
             );
             msg.channel.send(generateDraftCommandOutputMessage(response));
-        } 
-        else if (args[1] === "civs") {
+        } else if (args[1] === "civs") {
             if (args[2] === "add") {
                 const civsToAdd = args
                     .slice(3)
                     .join(" ")
                     .split(",")
                     .map((c) => c.trim());
-                
+
                 if (civsToAdd.length === 0) {
                     msg.channel.send(Messages.BadlyFormed);
                     return;
@@ -142,20 +141,16 @@ export default class MessageHandler {
 
                 const message = await addCustomCivsCommand(this.userDataStore, serverId, civsToAdd);
                 msg.channel.send(message);
-            } 
-            else if (args[2] === "clear") {
+            } else if (args[2] === "clear") {
                 const message = await clearCustomCivsCommand(this.userDataStore, serverId);
                 msg.channel.send(message);
-            } 
-            else if (args[2] === "show") {
+            } else if (args[2] === "show") {
                 const userData = await this.userDataStore.load(serverId);
                 if (userData.activeUserSettings.customCivs.length === 0) {
                     msg.channel.send(Messages.NoCustomCivs);
                     return;
                 }
-                msg.channel.send(
-                    `\`\`\`\n${userData.activeUserSettings.customCivs.join("\n")}\`\`\``
-                );
+                msg.channel.send(`\`\`\`\n${userData.activeUserSettings.customCivs.join("\n")}\`\`\``);
             }
         }
     }

@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import {createEmptyUserData, UserData} from "../Types/UserData";
-import {UserDataStore} from "./UserDataStore";
+import * as fs from "fs";
+import * as path from "path";
+import { createEmptyUserData, UserData } from "../Types/UserData";
+import { UserDataStore } from "./UserDataStore";
 
 export default class FileUserDataStore implements UserDataStore {
     getUserDataPath(tenantId: string) {
@@ -9,7 +9,8 @@ export default class FileUserDataStore implements UserDataStore {
     }
 
     async ensureExists(filePath: string): Promise<void> {
-        return fs.promises.mkdir(path.dirname(filePath), {recursive: true})
+        return fs.promises
+            .mkdir(path.dirname(filePath), { recursive: true })
             .then(() => fs.promises.readFile(filePath))
             .then(() => {
                 return;
@@ -22,14 +23,13 @@ export default class FileUserDataStore implements UserDataStore {
 
     async save(tenantId: string, userData: UserData): Promise<void> {
         let filePath = this.getUserDataPath(tenantId);
-        return this.ensureExists(filePath)
-            .then(() => fs.promises.writeFile(filePath, JSON.stringify(userData)));
+        return this.ensureExists(filePath).then(() => fs.promises.writeFile(filePath, JSON.stringify(userData)));
     }
 
     async load(tenantId: string): Promise<UserData> {
         let filePath = this.getUserDataPath(tenantId);
         return this.ensureExists(filePath)
-            .then(() => fs.promises.readFile(filePath, 'utf8'))
+            .then(() => fs.promises.readFile(filePath, "utf8"))
             .then((value) => JSON.parse(value));
     }
 }

@@ -1,13 +1,10 @@
-import {ApplicationCommandManager, Client, Intents} from "discord.js";
-import {Commands} from "./SlashCommands";
-import {getToken} from "../Auth";
+import { ApplicationCommandManager, Client, Intents } from "discord.js";
+import { Commands } from "./SlashCommands";
+import { getToken } from "../Auth";
 
 async function updateSlashCommands() {
     const client = new Client({
-        intents: [
-            Intents.FLAGS.GUILDS,
-            Intents.FLAGS.GUILD_MESSAGES
-        ]
+        intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
     });
 
     client.once("ready", async () => {

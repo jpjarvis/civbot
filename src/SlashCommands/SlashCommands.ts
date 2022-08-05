@@ -1,5 +1,5 @@
-import {ApplicationCommandData} from "discord.js";
-import {CivGroups} from "../Types/CivGroups";
+import { ApplicationCommandData } from "discord.js";
+import { CivGroups } from "../Types/CivGroups";
 
 const draftCommand: ApplicationCommandData = {
     name: "draft",
@@ -8,19 +8,19 @@ const draftCommand: ApplicationCommandData = {
         {
             type: "INTEGER",
             name: "ai",
-            description: "Number of extra AI players to add (Default is 0)"
+            description: "Number of extra AI players to add (Default is 0)",
         },
         {
             type: "INTEGER",
             name: "civs",
-            description: "Number of civs to draft for each player (Default is 3)"
+            description: "Number of civs to draft for each player (Default is 3)",
         },
         {
             type: "STRING",
             name: "civ-groups",
-            description: "Space-separated list of civ groups to include"
-        }
-    ]
+            description: "Space-separated list of civ groups to include",
+        },
+    ],
 };
 
 const civGroupsCommand: ApplicationCommandData = {
@@ -37,14 +37,14 @@ const civGroupsCommand: ApplicationCommandData = {
                     name: "civ-group",
                     description: "The civ group to add",
                     required: true,
-                    choices: CivGroups.map(cg => {
+                    choices: CivGroups.map((cg) => {
                         return {
                             name: cg,
-                            value: cg
+                            value: cg,
                         };
-                    })
-                }
-            ]
+                    }),
+                },
+            ],
         },
         {
             type: "SUB_COMMAND",
@@ -56,16 +56,16 @@ const civGroupsCommand: ApplicationCommandData = {
                     name: "civ-group",
                     description: "The civ group to remove",
                     required: true,
-                    choices: CivGroups.map(cg => {
+                    choices: CivGroups.map((cg) => {
                         return {
                             name: cg,
-                            value: cg
+                            value: cg,
                         };
-                    })
-                }
-            ]
-        }
-    ]
+                    }),
+                },
+            ],
+        },
+    ],
 };
 
 const civsCommand: ApplicationCommandData = {
@@ -81,9 +81,9 @@ const civsCommand: ApplicationCommandData = {
                     type: "STRING",
                     name: "civs",
                     description: "Comma-separated list of civs to add",
-                    required: true
-                }
-            ]
+                    required: true,
+                },
+            ],
         },
         {
             type: "SUB_COMMAND",
@@ -94,22 +94,22 @@ const civsCommand: ApplicationCommandData = {
                     type: "STRING",
                     name: "civs",
                     description: "Comma-separated list of civs to remove",
-                    required: true
-                }
-            ]
+                    required: true,
+                },
+            ],
         },
         {
             type: "SUB_COMMAND",
             name: "clear",
             description: "Remove all custom civs",
-            options: []
-        }
-    ]
+            options: [],
+        },
+    ],
 };
 
 const configCommand: ApplicationCommandData = {
     name: "config",
-    description: "Show CivBot's current configuration"
+    description: "Show CivBot's current configuration",
 };
 
 const profilesCommand: ApplicationCommandData = {
@@ -124,9 +124,9 @@ const profilesCommand: ApplicationCommandData = {
                 {
                     type: "STRING",
                     name: "profile-name",
-                    description: "Name of the profile to load"
-                }
-            ]
+                    description: "Name of the profile to load",
+                },
+            ],
         },
         {
             type: "SUB_COMMAND",
@@ -136,16 +136,17 @@ const profilesCommand: ApplicationCommandData = {
                 {
                     type: "STRING",
                     name: "profile-name",
-                    description: "Name to save the profile as. If a profile with the same name exists, it will be overwritten."
-                }
-            ]
+                    description:
+                        "Name to save the profile as. If a profile with the same name exists, it will be overwritten.",
+                },
+            ],
         },
         {
             type: "SUB_COMMAND",
             name: "show",
-            description: "List your saved profiles"
-        }
-    ]
-}
+            description: "List your saved profiles",
+        },
+    ],
+};
 
 export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand];

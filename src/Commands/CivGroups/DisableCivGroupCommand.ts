@@ -1,7 +1,11 @@
-import {UserDataStore} from "../../UserDataStore/UserDataStore";
-import {CivGroup} from "../../Types/CivGroups";
+import { UserDataStore } from "../../UserDataStore/UserDataStore";
+import { CivGroup } from "../../Types/CivGroups";
 
-export async function disableCivGroupCommand(userDataStore: UserDataStore, tenantId: string, civGroup: CivGroup): Promise<string> {
+export async function disableCivGroupCommand(
+    userDataStore: UserDataStore,
+    tenantId: string,
+    civGroup: CivGroup
+): Promise<string> {
     const userData = await userDataStore.load(tenantId);
 
     if (!userData.activeUserSettings.defaultDraftSettings.civGroups) {
@@ -14,6 +18,6 @@ export async function disableCivGroupCommand(userDataStore: UserDataStore, tenan
     }
     userData.activeUserSettings.defaultDraftSettings.civGroups.splice(toRemoveIndex, 1);
     await userDataStore.save(tenantId, userData);
-    
+
     return `\`${civGroup}\` will no longer be used in your drafts.`;
 }

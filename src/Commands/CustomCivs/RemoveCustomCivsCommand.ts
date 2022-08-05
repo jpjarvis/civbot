@@ -1,10 +1,14 @@
-import {UserDataStore} from "../../UserDataStore/UserDataStore";
+import { UserDataStore } from "../../UserDataStore/UserDataStore";
 
-export async function removeCustomCivsCommand(userDataStore: UserDataStore, tenantId: string, civs: string[]): Promise<string> {
+export async function removeCustomCivsCommand(
+    userDataStore: UserDataStore,
+    tenantId: string,
+    civs: string[]
+): Promise<string> {
     const userData = await userDataStore.load(tenantId);
-    
-    const failedCivs = civs.filter(c => !userData.activeUserSettings.customCivs.includes(c));
-    userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.filter(c => !civs.includes(c));
+
+    const failedCivs = civs.filter((c) => !userData.activeUserSettings.customCivs.includes(c));
+    userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.filter((c) => !civs.includes(c));
 
     await userDataStore.save(tenantId, userData);
 

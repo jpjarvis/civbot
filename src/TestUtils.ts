@@ -1,6 +1,8 @@
-﻿import {ResultOrErrorWithDetails} from "../src/Types/ResultOrError";
+﻿import { ResultOrErrorWithDetails } from "./Types/ResultOrError";
 
-export function extractResultAndAssertIsNotError<TResult, TError>(resultOrError: ResultOrErrorWithDetails<TResult, TError>): TResult {
+export function extractResultAndAssertIsNotError<TResult, TError>(
+    resultOrError: ResultOrErrorWithDetails<TResult, TError>
+): TResult {
     expect(resultOrError.isError).toBe(false);
     if (!resultOrError.isError) {
         return resultOrError.result;
@@ -10,7 +12,9 @@ export function extractResultAndAssertIsNotError<TResult, TError>(resultOrError:
     throw Error("Some quantum shit is going on here");
 }
 
-export function extractErrorAndAssertIsError<TResult, TError>(resultOrError: ResultOrErrorWithDetails<TResult, TError>): TError {
+export function extractErrorAndAssertIsError<TResult, TError>(
+    resultOrError: ResultOrErrorWithDetails<TResult, TError>
+): TError {
     expect(resultOrError.isError).toBe(true);
     if (resultOrError.isError) {
         return resultOrError.error;
