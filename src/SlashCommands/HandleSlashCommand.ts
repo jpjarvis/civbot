@@ -2,7 +2,7 @@ import { CommandInteraction } from "discord.js";
 import { CivGroup, stringToCivGroup } from "../Types/CivGroups";
 import { getVoiceChannelMembers } from "../DiscordUtils";
 import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
-import { Result } from "../Types/Option";
+import { Result } from "../Types/Result";
 import { generateDraftCommandOutputMessage } from "../Commands/Draft/DraftCommandMessages";
 import { showConfigCommand } from "../Commands/Config/ShowConfigCommand";
 import { enableCivGroupCommand } from "../Commands/CivGroups/EnableCivGroupCommand";
@@ -106,7 +106,7 @@ function parseCivGroups(civGroupString: string): Result<CivGroup[], { invalidGro
 
     return {
         isError: false,
-        result: civGroups,
+        value: civGroups,
     };
 }
 
@@ -139,7 +139,7 @@ function extractDraftArguments(
 
     return {
         isError: false,
-        result: {
+        value: {
             numberOfCivs: civs,
             numberOfAi: ai,
             civGroups: civGroups,

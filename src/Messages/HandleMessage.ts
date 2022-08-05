@@ -3,7 +3,6 @@ import { CivGroup } from "../Types/CivGroups";
 import { getVoiceChannel } from "../DiscordUtils";
 import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
 import { Client, Message } from "discord.js";
-import { Option } from "../Types/Option";
 import { generateDraftCommandOutputMessage } from "../Commands/Draft/DraftCommandMessages";
 import { addCustomCivsCommand } from "../Commands/CustomCivs/AddCustomCivsCommand";
 import { clearCustomCivsCommand } from "../Commands/CustomCivs/ClearCustomCivsCommand";
@@ -36,14 +35,14 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
     // civbot draft
     else if (args[1] === "draft") {
         const parsedArgs = parseDraftArgs(args);
-        if (!parsedArgs.isSome) {
+        if (!parsedArgs) {
             msg.channel.send(Messages.BadlyFormed);
             return;
         }
         const voiceChannel = await getVoiceChannel(client, msg.member!);
         const voiceChannelMembers = voiceChannel?.members.map((m) => m.user.username) ?? [];
         const response = draftCommand(
-            parsedArgs.value,
+            parsedArgs,
             voiceChannelMembers,
             (await loadUserData(serverId)).activeUserSettings
         );
@@ -77,39 +76,39 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
     }
 }
 
-function extractArgValue(args: Array<string>, argName: string): Option<number> {
+function extractArgValue(args: Array<string>, argName: string): number | undefined {
     let index = args.findIndex((a) => a === argName);
 
     if (index >= 0) {
         let result = parseInt(args[index + 1]);
         if (isNaN(result)) {
             // Badly formed, so we give an error
-            return { isSome: false };
+            return undefined;
         }
 
-        return { isSome: true, value: result };
+        return result;
     }
 
-    return { isSome: false };
+    return undefined;
 }
 
-function parseDraftArgs(args: string[]): Option<Partial<DraftArguments>> {
+function parseDraftArgs(args: string[]): Partial<DraftArguments> | undefined {
     let draftArgs: Partial<DraftArguments> = {};
 
     if (args.includes("ai")) {
         let aiArgValue = extractArgValue(args, "ai");
-        if (!aiArgValue.isSome) {
-            return { isSome: false };
+        if (!aiArgValue) {
+            return undefined;
         }
-        draftArgs.numberOfAi = aiArgValue.value;
+        draftArgs.numberOfAi = aiArgValue;
     }
 
     if (args.includes("civs")) {
         let numCivsArgValue = extractArgValue(args, "civs");
-        if (!numCivsArgValue.isSome) {
-            return { isSome: false };
+        if (!numCivsArgValue) {
+            return undefined;
         }
-        draftArgs.numberOfCivs = numCivsArgValue.value;
+        draftArgs.numberOfCivs = numCivsArgValue;
     }
 
     const civGroupsSpecified: CivGroup[] = [];
@@ -145,5 +144,5 @@ function parseDraftArgs(args: string[]): Option<Partial<DraftArguments>> {
         draftArgs.civGroups = civGroupsSpecified;
     }
 
-    return { isSome: true, value: draftArgs };
+    return draftArgs;
 }

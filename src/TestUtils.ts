@@ -1,4 +1,4 @@
-﻿import { Result } from "./Types/Option";
+﻿import { Result } from "./Types/Result";
 
 export function extractResultAndAssertIsNotError<TResult, TError>(
     resultOrError: Result<TResult, TError>

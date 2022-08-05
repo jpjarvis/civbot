@@ -1,7 +1,7 @@
 import { CivGroup } from "../../Types/CivGroups";
 import { draft } from "./Draft";
 import { selectCivs } from "./SelectCivs";
-import { Result } from "../../Types/Option";
+import { Result } from "../../Types/Result";
 import { Draft, DraftError } from "./DraftTypes";
 import UserSettings from "../../Types/UserSettings";
 
