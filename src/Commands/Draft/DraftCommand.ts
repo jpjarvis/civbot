@@ -1,7 +1,7 @@
 import { CivGroup } from "../../Types/CivGroups";
 import { draft } from "./Draft";
 import { selectCivs } from "./SelectCivs";
-import { ResultOrErrorWithDetails } from "../../Types/ResultOrError";
+import { Result } from "../../Types/Option";
 import { Draft, DraftError } from "./DraftTypes";
 import UserSettings from "../../Types/UserSettings";
 
@@ -31,7 +31,7 @@ function generateAiPlayers(numberOfAiPlayers: number) {
 
 export type DraftCommandResult = {
     civGroupsUsed: CivGroup[];
-    draftResult: ResultOrErrorWithDetails<Draft, DraftError>;
+    draftResult: Result<Draft, DraftError>;
 };
 
 export function draftCommand(

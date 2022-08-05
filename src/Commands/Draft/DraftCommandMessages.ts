@@ -24,7 +24,7 @@ export function generateDraftCommandOutputMessage(draftCommandResult: DraftComma
             sendMessage(Messages.NotEnoughCivs);
         }
     } else {
-        let draftString = draftCommandResult.draftResult.result.map((x) => getPlayerDraftString(x)).join("\n");
+        let draftString = draftCommandResult.draftResult.value.map((x) => getPlayerDraftString(x)).join("\n");
 
         if (draftString === "") {
             sendMessage(Messages.NoPlayers);

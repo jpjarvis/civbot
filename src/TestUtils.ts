@@ -1,11 +1,11 @@
-﻿import { ResultOrErrorWithDetails } from "./Types/ResultOrError";
+﻿import { Result } from "./Types/Option";
 
 export function extractResultAndAssertIsNotError<TResult, TError>(
-    resultOrError: ResultOrErrorWithDetails<TResult, TError>
+    resultOrError: Result<TResult, TError>
 ): TResult {
     expect(resultOrError.isError).toBe(false);
     if (!resultOrError.isError) {
-        return resultOrError.result;
+        return resultOrError.value;
     }
 
     // This should never happen ever
@@ -13,7 +13,7 @@ export function extractResultAndAssertIsNotError<TResult, TError>(
 }
 
 export function extractErrorAndAssertIsError<TResult, TError>(
-    resultOrError: ResultOrErrorWithDetails<TResult, TError>
+    resultOrError: Result<TResult, TError>
 ): TError {
     expect(resultOrError.isError).toBe(true);
     if (resultOrError.isError) {

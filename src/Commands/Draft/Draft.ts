@@ -1,6 +1,6 @@
 import { Draft, DraftError } from "./DraftTypes";
 import * as shuffle from "shuffle-array";
-import { ResultOrErrorWithDetails } from "../../Types/ResultOrError";
+import { Result } from "../../Types/Option";
 
 function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): Draft {
     shuffle(civs);
@@ -14,7 +14,7 @@ export function draft(
     players: string[],
     civsPerPlayer: number,
     civs: string[]
-): ResultOrErrorWithDetails<Draft, DraftError> {
+): Result<Draft, DraftError> {
     if (players.length == 0) {
         return { isError: true, error: "no-players" };
     }

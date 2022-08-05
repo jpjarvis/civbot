@@ -2,7 +2,7 @@ import { CommandInteraction } from "discord.js";
 import { CivGroup, stringToCivGroup } from "../Types/CivGroups";
 import { getVoiceChannelMembers } from "../DiscordUtils";
 import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
-import { ResultOrErrorWithDetails } from "../Types/ResultOrError";
+import { Result } from "../Types/Option";
 import { generateDraftCommandOutputMessage } from "../Commands/Draft/DraftCommandMessages";
 import { showConfigCommand } from "../Commands/Config/ShowConfigCommand";
 import { enableCivGroupCommand } from "../Commands/CivGroups/EnableCivGroupCommand";
@@ -81,7 +81,7 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
     await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
 }
 
-function parseCivGroups(civGroupString: string): ResultOrErrorWithDetails<CivGroup[], { invalidGroups: string[] }> {
+function parseCivGroups(civGroupString: string): Result<CivGroup[], { invalidGroups: string[] }> {
     const strings = civGroupString.split(" ");
     const civGroups: CivGroup[] = [];
     const invalidGroups: string[] = [];
@@ -119,7 +119,7 @@ function extractCustomCivsArgument(interaction: CommandInteraction): string[] {
 
 function extractDraftArguments(
     interaction: CommandInteraction
-): ResultOrErrorWithDetails<Partial<DraftArguments>, string> {
+): Result<Partial<DraftArguments>, string> {
     const ai = interaction.options.getInteger("ai") ?? undefined;
     const civs = interaction.options.getInteger("civs") ?? undefined;
     const civGroupString = interaction.options.getString("civ-groups") ?? undefined;
@@ -128,7 +128,7 @@ function extractDraftArguments(
     if (civGroupString) {
         let parseResult = parseCivGroups(civGroupString);
         if (!parseResult.isError) {
-            civGroups = parseResult.result;
+            civGroups = parseResult.value;
         } else {
             return {
                 isError: true,
@@ -160,7 +160,7 @@ async function handleDraft(interaction: CommandInteraction) {
     const voiceChannelMembers = await getVoiceChannelMembers(interaction);
 
     const response = draftCommand(
-        draftArgumentsOrError.result,
+        draftArgumentsOrError.value,
         voiceChannelMembers,
         (await loadUserData(serverId)).activeUserSettings
     );
