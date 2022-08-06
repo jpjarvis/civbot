@@ -1,5 +1,5 @@
 import { UserData } from "../../Types/UserData";
-import UserSettings from "../../Types/UserSettings";
+import { UserSettings } from "../../Types/UserSettings";
 
 function createProfileString(profileName: string, userSettings: UserSettings) {
     const civGroupsString = userSettings.defaultDraftSettings.civGroups?.map((x) => `\`${x}\``).join(",");

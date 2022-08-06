@@ -1,4 +1,4 @@
-import UserSettings from "./UserSettings";
+import { UserSettings } from "./UserSettings";
 
 export type UserData = {
     activeUserSettings: UserSettings;
@@ -9,7 +9,12 @@ export type UserData = {
 
 export function createEmptyUserData(): UserData {
     return {
-        activeUserSettings: new UserSettings(),
+        activeUserSettings: {
+            defaultDraftSettings: {
+                civGroups: ["civ5-vanilla"]
+            },
+            customCivs: []
+        },
         profiles: {},
     };
 }

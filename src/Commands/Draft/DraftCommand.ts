@@ -3,9 +3,9 @@ import { draft } from "./Draft";
 import { selectCivs } from "./SelectCivs";
 import { Result } from "../../Types/Result";
 import { Draft, DraftError } from "./DraftTypes";
-import UserSettings from "../../Types/UserSettings";
+import { UserSettings } from "../../Types/UserSettings";
 
-export interface DraftArguments {
+export type DraftArguments = {
     numberOfAi: number;
     numberOfCivs: number;
     civGroups: CivGroup[];
