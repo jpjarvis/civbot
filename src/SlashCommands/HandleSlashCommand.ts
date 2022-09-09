@@ -14,6 +14,7 @@ import { loadProfileCommand } from "../Commands/Profiles/LoadProfileCommand";
 import { saveProfileCommand } from "../Commands/Profiles/SaveProfileCommand";
 import { showProfilesCommand } from "../Commands/Profiles/ShowProfilesCommand";
 import { loadUserData } from "../UserDataStore";
+import {banCommand} from "../Commands/Ban/BanCommand";
 
 export async function handleSlashCommand(interaction: CommandInteraction) {
     if (interaction.commandName === "draft") {
@@ -76,6 +77,11 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
             await handleShowProfiles(interaction);
             return;
         }
+    }
+    
+    if (interaction.commandName === "ban") {
+        await handleBan(interaction);
+        return;
     }
 
     await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
@@ -239,5 +245,14 @@ async function handleShowProfiles(interaction: CommandInteraction) {
 
     const message = await showProfilesCommand(userData);
 
+    await interaction.reply(message);
+}
+
+async function handleBan(interaction: CommandInteraction) {
+    const serverId = interaction.guildId!;
+    
+    const civToBan = interaction.options.getString("civ")!;
+    const message = await banCommand(serverId, civToBan);
+    
     await interaction.reply(message);
 }

@@ -13,7 +13,8 @@ export function createEmptyUserData(): UserData {
             defaultDraftSettings: {
                 civGroups: ["civ5-vanilla"]
             },
-            customCivs: []
+            customCivs: [],
+            bannedCivs: []
         },
         profiles: {},
     };

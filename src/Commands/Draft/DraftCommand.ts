@@ -43,7 +43,7 @@ export function draftCommand(
 
     const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
 
-    const civs = selectCivs(new Set(draftArgs.civGroups), userSettings.customCivs);
+    const civs = selectCivs(new Set(draftArgs.civGroups), userSettings.customCivs, userSettings.bannedCivs);
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 

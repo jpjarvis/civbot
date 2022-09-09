@@ -149,4 +149,17 @@ const profilesCommand: ApplicationCommandData = {
     ],
 };
 
-export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand];
+const banCommand: ApplicationCommandData = {
+    name: "ban",
+    description: "Ban a civ, preventing it from appearing in drafts",
+    options: [
+        {
+            type: "STRING",
+            name: "civ",
+            description:
+                "Name of the civ to ban",
+        }
+    ],
+};
+
+export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand, banCommand];

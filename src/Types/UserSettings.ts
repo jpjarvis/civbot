@@ -2,5 +2,6 @@ import { DraftArguments } from "../Commands/Draft/DraftCommand";
 
 export type UserSettings = {
     defaultDraftSettings: Partial<DraftArguments>;
-    customCivs: Array<string>;
+    customCivs: string[];
+    bannedCivs: string[];
 };
