@@ -162,4 +162,17 @@ const banCommand: ApplicationCommandData = {
     ],
 };
 
-export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand, banCommand];
+const unbanCommand: ApplicationCommandData = {
+    name: "unban",
+    description: "Unban a civ that was previously banned with /ban",
+    options: [
+        {
+            type: "STRING",
+            name: "civ",
+            description:
+                "Name of the banned civ to unban",
+        }
+    ],
+};
+
+export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand, banCommand, unbanCommand];

@@ -13,7 +13,7 @@ async function updateSlashCommands() {
         console.log("Updating slash commands...");
 
         for (let command of Commands) {
-            await applicationCommandManager.create(command);
+            await applicationCommandManager.create(command, "493399082757259284");
         }
 
         console.log("Done");

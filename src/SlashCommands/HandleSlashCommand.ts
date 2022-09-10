@@ -14,7 +14,8 @@ import { loadProfileCommand } from "../Commands/Profiles/LoadProfileCommand";
 import { saveProfileCommand } from "../Commands/Profiles/SaveProfileCommand";
 import { showProfilesCommand } from "../Commands/Profiles/ShowProfilesCommand";
 import { loadUserData } from "../UserDataStore";
-import {banCommand} from "../Commands/Ban/BanCommand";
+import { banCommand } from "../Commands/Ban/BanCommand";
+import { unbanCommand } from "../Commands/Ban/UnbanCommand";
 
 export async function handleSlashCommand(interaction: CommandInteraction) {
     if (interaction.commandName === "draft") {
@@ -78,9 +79,14 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
             return;
         }
     }
-    
+
     if (interaction.commandName === "ban") {
         await handleBan(interaction);
+        return;
+    }
+
+    if (interaction.commandName === "unban") {
+        await handleUnban(interaction);
         return;
     }
 
@@ -123,9 +129,7 @@ function extractCustomCivsArgument(interaction: CommandInteraction): string[] {
         .map((s) => s.trim());
 }
 
-function extractDraftArguments(
-    interaction: CommandInteraction
-): Result<Partial<DraftArguments>, string> {
+function extractDraftArguments(interaction: CommandInteraction): Result<Partial<DraftArguments>, string> {
     const ai = interaction.options.getInteger("ai") ?? undefined;
     const civs = interaction.options.getInteger("civs") ?? undefined;
     const civGroupString = interaction.options.getString("civ-groups") ?? undefined;
@@ -250,9 +254,18 @@ async function handleShowProfiles(interaction: CommandInteraction) {
 
 async function handleBan(interaction: CommandInteraction) {
     const serverId = interaction.guildId!;
-    
+
     const civToBan = interaction.options.getString("civ")!;
     const message = await banCommand(serverId, civToBan);
-    
+
+    await interaction.reply(message);
+}
+
+async function handleUnban(interaction: CommandInteraction) {
+    const serverId = interaction.guildId!;
+
+    const civToUnban = interaction.options.getString("civ")!;
+    const message = await unbanCommand(serverId, civToUnban);
+
     await interaction.reply(message);
 }
