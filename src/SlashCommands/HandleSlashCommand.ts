@@ -3,7 +3,6 @@ import { CivGroup, stringToCivGroup } from "../Types/CivGroups";
 import { getVoiceChannelMembers } from "../DiscordUtils";
 import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
 import { Result } from "../Types/Result";
-import { generateDraftCommandOutputMessage } from "../Commands/Draft/DraftCommandMessages";
 import { showConfigCommand } from "../Commands/Config/ShowConfigCommand";
 import { enableCivGroupCommand } from "../Commands/CivGroups/EnableCivGroupCommand";
 import { disableCivGroupCommand } from "../Commands/CivGroups/DisableCivGroupCommand";
@@ -175,7 +174,7 @@ async function handleDraft(interaction: CommandInteraction) {
         (await loadUserData(serverId)).activeUserSettings
     );
 
-    await interaction.reply(generateDraftCommandOutputMessage(response));
+    await interaction.reply(response);
 }
 
 async function handleShowConfig(interaction: CommandInteraction) {

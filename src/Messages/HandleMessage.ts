@@ -3,7 +3,6 @@ import { CivGroup } from "../Types/CivGroups";
 import { getVoiceChannel } from "../DiscordUtils";
 import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
 import { Client, Message } from "discord.js";
-import { generateDraftCommandOutputMessage } from "../Commands/Draft/DraftCommandMessages";
 import { addCustomCivsCommand } from "../Commands/CustomCivs/AddCustomCivsCommand";
 import { clearCustomCivsCommand } from "../Commands/CustomCivs/ClearCustomCivsCommand";
 import { loadUserData } from "../UserDataStore";
@@ -46,7 +45,7 @@ export async function handleMessage(msg: Message, client: Client): Promise<void>
             voiceChannelMembers,
             (await loadUserData(serverId)).activeUserSettings
         );
-        msg.channel.send(generateDraftCommandOutputMessage(response));
+        msg.channel.send(response);
     } else if (args[1] === "civs") {
         if (args[2] === "add") {
             const civsToAdd = args
