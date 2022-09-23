@@ -1,6 +1,6 @@
-import { CivGroup } from "../../../Types/CivGroups";
+import { CivGroup } from "../../../Civs/CivGroups";
 import { selectCivs } from "../SelectCivs";
-import { Civs } from "../../../Types/Civs";
+import { Civs } from "../../../Civs/Civs";
 
 const customCivs = ["custom1"];
 

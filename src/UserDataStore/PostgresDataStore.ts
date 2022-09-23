@@ -1,4 +1,4 @@
-import { createEmptyUserData, UserData } from "../Types/UserData";
+import { createEmptyUserData, UserData } from "../UserData/UserData";
 import { Client } from "pg";
 import { UserDataStore } from "./UserDataStore";
 

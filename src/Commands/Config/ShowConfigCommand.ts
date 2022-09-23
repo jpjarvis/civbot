@@ -1,4 +1,4 @@
-import { UserSettings } from "../../Types/UserSettings";
+import { UserSettings } from "../../UserData/UserSettings";
 
 export function showConfigCommand(userSettings: UserSettings): string {
     let response = "";

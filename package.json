@@ -36,7 +36,7 @@
     },
     "scripts": {
         "start": "ts-node src/Start.ts",
-        "update-slashes": "ts-node src/SlashCommands/UpdateSlashCommands.ts",
+        "update-slashes": "ts-node src/Discord/SlashCommands/UpdateSlashCommands.ts",
         "test": "jest"
     }
 }

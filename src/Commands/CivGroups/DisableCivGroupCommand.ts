@@ -1,4 +1,4 @@
-import { CivGroup } from "../../Types/CivGroups";
+import { CivGroup } from "../../Civs/CivGroups";
 import { loadUserData, saveUserData } from "../../UserDataStore";
 
 export async function disableCivGroupCommand(tenantId: string, civGroup: CivGroup): Promise<string> {

@@ -1,6 +1,6 @@
 ﻿import Messages from "../../Messages";
 import { Draft, DraftEntry, DraftError } from "./DraftTypes";
-import { CivGroup } from "../../Types/CivGroups";
+import { CivGroup } from "../../Civs/CivGroups";
 import { Result } from "../../Types/Result";
 
 function getPlayerDraftString(draftEntry: DraftEntry): string {

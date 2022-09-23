@@ -1,8 +1,8 @@
 import { Client, Intents } from "discord.js";
 import Messages from "./Messages";
 import { getToken } from "./Auth";
-import { handleSlashCommand } from "./SlashCommands/HandleSlashCommand";
-import { handleMessage } from "./Messages/HandleMessage";
+import { handleSlashCommand } from "./Discord/SlashCommands/HandleSlashCommand";
+import { handleMessage } from "./Discord/Messages/HandleMessage";
 
 async function start() {
     const client = new Client({

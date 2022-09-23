@@ -1,5 +1,5 @@
 import { ApplicationCommandData } from "discord.js";
-import { CivGroups } from "../Types/CivGroups";
+import { CivGroups } from "../../Civs/CivGroups";
 
 const draftCommand: ApplicationCommandData = {
     name: "draft",

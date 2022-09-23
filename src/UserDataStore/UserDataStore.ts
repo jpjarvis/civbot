@@ -1,4 +1,4 @@
-import { UserData } from "../Types/UserData";
+import { UserData } from "../UserData/UserData";
 
 export type UserDataStore = {
     load(tenantId: string): Promise<UserData>;

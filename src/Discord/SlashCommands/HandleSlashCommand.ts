@@ -1,20 +1,20 @@
 import { CommandInteraction } from "discord.js";
-import { CivGroup, stringToCivGroup } from "../Types/CivGroups";
-import { getVoiceChannelMembers } from "../DiscordUtils";
-import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
-import { Result } from "../Types/Result";
-import { showConfigCommand } from "../Commands/Config/ShowConfigCommand";
-import { enableCivGroupCommand } from "../Commands/CivGroups/EnableCivGroupCommand";
-import { disableCivGroupCommand } from "../Commands/CivGroups/DisableCivGroupCommand";
-import { addCustomCivsCommand } from "../Commands/CustomCivs/AddCustomCivsCommand";
-import { removeCustomCivsCommand } from "../Commands/CustomCivs/RemoveCustomCivsCommand";
-import { clearCustomCivsCommand } from "../Commands/CustomCivs/ClearCustomCivsCommand";
-import { loadProfileCommand } from "../Commands/Profiles/LoadProfileCommand";
-import { saveProfileCommand } from "../Commands/Profiles/SaveProfileCommand";
-import { showProfilesCommand } from "../Commands/Profiles/ShowProfilesCommand";
-import { loadUserData } from "../UserDataStore";
-import { banCommand } from "../Commands/Ban/BanCommand";
-import { unbanCommand } from "../Commands/Ban/UnbanCommand";
+import { CivGroup, stringToCivGroup } from "../../Civs/CivGroups";
+import { getVoiceChannelMembers } from "../VoiceChannels";
+import { DraftArguments, draftCommand } from "../../Commands/Draft/DraftCommand";
+import { Result } from "../../Types/Result";
+import { showConfigCommand } from "../../Commands/Config/ShowConfigCommand";
+import { enableCivGroupCommand } from "../../Commands/CivGroups/EnableCivGroupCommand";
+import { disableCivGroupCommand } from "../../Commands/CivGroups/DisableCivGroupCommand";
+import { addCustomCivsCommand } from "../../Commands/CustomCivs/AddCustomCivsCommand";
+import { removeCustomCivsCommand } from "../../Commands/CustomCivs/RemoveCustomCivsCommand";
+import { clearCustomCivsCommand } from "../../Commands/CustomCivs/ClearCustomCivsCommand";
+import { loadProfileCommand } from "../../Commands/Profiles/LoadProfileCommand";
+import { saveProfileCommand } from "../../Commands/Profiles/SaveProfileCommand";
+import { showProfilesCommand } from "../../Commands/Profiles/ShowProfilesCommand";
+import { loadUserData } from "../../UserDataStore";
+import { banCommand } from "../../Commands/Ban/BanCommand";
+import { unbanCommand } from "../../Commands/Ban/UnbanCommand";
 
 export async function handleSlashCommand(interaction: CommandInteraction) {
     if (interaction.commandName === "draft") {

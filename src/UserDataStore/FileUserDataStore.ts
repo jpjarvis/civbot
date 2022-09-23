@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { createEmptyUserData, UserData } from "../Types/UserData";
+import { createEmptyUserData, UserData } from "../UserData/UserData";
 import { UserDataStore } from "./UserDataStore";
 
 function getUserDataPath(tenantId: string) {

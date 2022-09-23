@@ -1,7 +1,7 @@
-import { CivGroup } from "../../Types/CivGroups";
+import { CivGroup } from "../../Civs/CivGroups";
 import { draft } from "./Draft";
 import { selectCivs } from "./SelectCivs";
-import { UserSettings } from "../../Types/UserSettings";
+import { UserSettings } from "../../UserData/UserSettings";
 import { generateDraftCommandOutputMessage } from "./DraftCommandMessages";
 
 export type DraftArguments = {

@@ -1,5 +1,5 @@
 ﻿import { DraftArguments, draftCommand } from "../DraftCommand";
-import { UserSettings } from "../../../Types/UserSettings";
+import { UserSettings } from "../../../UserData/UserSettings";
 import Messages from "../../../Messages";
 
 function extractDraftMessageLines(draftMessage: string) {

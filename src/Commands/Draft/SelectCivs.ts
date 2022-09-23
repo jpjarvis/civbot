@@ -1,5 +1,5 @@
-﻿import { CivGroup } from "../../Types/CivGroups";
-import { Civs } from "../../Types/Civs";
+﻿import { CivGroup } from "../../Civs/CivGroups";
+import { Civs } from "../../Civs/Civs";
 
 export function selectCivs(groups: Set<CivGroup>, customCivs: string[], bannedCivs: string[]): string[] {
     return Array.from(groups)

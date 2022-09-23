@@ -1,11 +1,11 @@
-import Messages from "../Messages";
-import { CivGroup } from "../Types/CivGroups";
-import { getVoiceChannel } from "../DiscordUtils";
-import { DraftArguments, draftCommand } from "../Commands/Draft/DraftCommand";
+import Messages from "../../Messages";
+import { CivGroup } from "../../Civs/CivGroups";
+import { getVoiceChannel } from "../VoiceChannels";
+import { DraftArguments, draftCommand } from "../../Commands/Draft/DraftCommand";
 import { Client, Message } from "discord.js";
-import { addCustomCivsCommand } from "../Commands/CustomCivs/AddCustomCivsCommand";
-import { clearCustomCivsCommand } from "../Commands/CustomCivs/ClearCustomCivsCommand";
-import { loadUserData } from "../UserDataStore";
+import { addCustomCivsCommand } from "../../Commands/CustomCivs/AddCustomCivsCommand";
+import { clearCustomCivsCommand } from "../../Commands/CustomCivs/ClearCustomCivsCommand";
+import { loadUserData } from "../../UserDataStore";
 
 export async function handleMessage(msg: Message, client: Client): Promise<void> {
     if (!msg.content.startsWith("civbot")) {
