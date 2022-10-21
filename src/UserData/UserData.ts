@@ -7,7 +7,7 @@ export type UserData = {
     };
 };
 
-export function createEmptyUserData(): UserData {
+export function createDefaultUserData(): UserData {
     return {
         activeUserSettings: {
             defaultDraftSettings: {

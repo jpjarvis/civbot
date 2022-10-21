@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { createEmptyUserData, UserData } from "../UserData/UserData";
+import { createDefaultUserData, UserData } from "../UserData/UserData";
 import { UserDataStore } from "./UserDataStore";
 
 function getUserDataPath(tenantId: string) {
@@ -12,7 +12,7 @@ async function ensureExists(filePath: string): Promise<void> {
     try {
         await fs.promises.readFile(filePath);
     } catch {
-        await fs.promises.writeFile(filePath, JSON.stringify(createEmptyUserData()));
+        await fs.promises.writeFile(filePath, JSON.stringify(createDefaultUserData()));
         console.log(`Creating ${filePath}`);
     }
 }
