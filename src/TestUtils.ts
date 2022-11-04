@@ -1,4 +1,4 @@
-﻿import { Result } from "./Types/Result";
+﻿import { Result } from "./Functional/Result";
 
 export function extractResultAndAssertIsNotError<TResult, TError>(
     resultOrError: Result<TResult, TError>
@@ -7,7 +7,7 @@ export function extractResultAndAssertIsNotError<TResult, TError>(
     if (!resultOrError.isError) {
         return resultOrError.value;
     }
-
+    
     // This should never happen ever
     throw Error("Some quantum shit is going on here");
 }

@@ -2,7 +2,7 @@ import { CommandInteraction } from "discord.js";
 import { CivGroup, stringToCivGroup } from "../../Civs/CivGroups";
 import { getVoiceChannelMembers } from "../VoiceChannels";
 import { DraftArguments, draftCommand } from "../../Commands/Draft/DraftCommand";
-import { Result } from "../../Types/Result";
+import { Result } from "../../Functional/Result";
 import { showConfigCommand } from "../../Commands/Config/ShowConfigCommand";
 import { enableCivGroupCommand } from "../../Commands/CivGroups/EnableCivGroupCommand";
 import { disableCivGroupCommand } from "../../Commands/CivGroups/DisableCivGroupCommand";
