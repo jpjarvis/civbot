@@ -110,6 +110,10 @@ export const Civs = {
         "Philippines",
         "Maurya",
         "Colombia",
+        "Georgia",
+        "Palmyra",
+        "Yugoslavia",
+        "Switzerland"
     ],
 
     "civ6-vanilla": [
