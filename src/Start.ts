@@ -3,6 +3,7 @@ import Messages from "./Messages";
 import { getToken } from "./Auth";
 import { handleSlashCommand } from "./Discord/SlashCommands/HandleSlashCommand";
 import { handleMessage } from "./Discord/Messages/HandleMessage";
+import {logError, logException, logInfo} from "./Log";
 
 async function start() {
     const client = new Client({
@@ -10,7 +11,7 @@ async function start() {
     });
 
     client.once("ready", async () => {
-        console.log("CivBot is alive!");
+        logInfo("CivBot is alive!");
     });
 
     client.on("interactionCreate", async (interaction) => {
@@ -19,7 +20,9 @@ async function start() {
         try {
             await handleSlashCommand(interaction);
         } catch (e) {
-            console.log(e);
+            if (e instanceof Error) {
+                logException(e);
+            }
             await interaction.reply(Messages.GenericError);
         }
     });
@@ -28,7 +31,9 @@ async function start() {
         try {
             await handleMessage(message, client);
         } catch (e) {
-            console.log(e);
+            if (e instanceof Error) {
+                logException(e);
+            }
             message.channel.send(Messages.GenericError);
         }
     });

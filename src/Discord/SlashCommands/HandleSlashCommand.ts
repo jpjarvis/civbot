@@ -15,8 +15,11 @@ import { showProfilesCommand } from "../../Commands/Profiles/ShowProfilesCommand
 import { loadUserData } from "../../UserDataStore";
 import { banCommand } from "../../Commands/Ban/BanCommand";
 import { unbanCommand } from "../../Commands/Ban/UnbanCommand";
+import {logError, logInfo} from "../../Log";
 
 export async function handleSlashCommand(interaction: CommandInteraction) {
+    logInfo(`Received interaction "${interaction.commandName}" with parameters { ${interaction.options.data.map(x => `${x.name}: ${x.value}`).join(", ")} }`);
+    
     if (interaction.commandName === "draft") {
         await handleDraft(interaction);
         return;
@@ -89,6 +92,7 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
         return;
     }
 
+    logError(`Unrecognised slash command ${interaction.commandName}`);
     await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
 }
 
