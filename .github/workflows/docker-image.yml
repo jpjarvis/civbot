@@ -28,4 +28,4 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: true # optional, default is false
         # List of tags
-        tags: ghcr.io/jpjarvis/civbot:0.2.0
+        tags: ghcr.io/jpjarvis/civbot:0.2.0.${{github.run_number}}
