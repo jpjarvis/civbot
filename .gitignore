@@ -28,7 +28,6 @@ build/Release
 node_modules
 
 auth.json
-package-lock.json
 
 # Vim undo files
 *~
