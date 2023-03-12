@@ -1,4 +1,4 @@
-name: Build and push Docker image
+name: Build and test Docker image
 
 on:
   push:
@@ -20,13 +20,20 @@ jobs:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and push Docker image
+    - name: Build and test
+      uses: docker/build-push-action@v4.0.0
+      with:
+        # List of tags
+        tags: civbot:test
+        target: test
+    - name: Publish docker image
       # You may pin to the exact commit or the version.
       # uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
       uses: docker/build-push-action@v4.0.0
+      if: ${{ endsWith(github.ref, '/master') }} # only push on master
       with:
         # Push is a shorthand for --output=type=registry
-        push: ${{ endsWith(github.ref, '/master') }} # only push on master
+        push: true
         # List of tags
         tags: ghcr.io/jpjarvis/civbot:0.2.0-${{github.run_number}}
-        no-cache: true
+        target: production
