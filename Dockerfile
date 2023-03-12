@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 RUN npm install
-COPY . .
+COPY src src
+COPY tsconfig.json .
 
 CMD ["npm", "start"]
