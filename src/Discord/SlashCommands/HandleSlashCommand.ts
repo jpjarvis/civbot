@@ -92,7 +92,7 @@ export async function handleSlashCommand(interaction: CommandInteraction) {
         return;
     }
 
-    logError(`Unrecognised slash command ${interaction.commandName}`);
+    logError(`Unrecognised slash command ${interaction.commandName}.`);
     await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
 }
 
