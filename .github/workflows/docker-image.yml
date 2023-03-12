@@ -5,9 +5,7 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-
-env:
-  DOCKER_IMAGE_TAG: ghcr.io/jpjarvis/civbot:0.2.0-${{github.run_number}}
+    
 jobs:
 
   build:
@@ -30,4 +28,4 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: ${{ endsWith(github.ref, '/master') }} # only push on master
         # List of tags
-        tags: $DOCKER_IMAGE_TAG
+        tags: ghcr.io/jpjarvis/civbot:0.2.0-${{github.run_number}}
