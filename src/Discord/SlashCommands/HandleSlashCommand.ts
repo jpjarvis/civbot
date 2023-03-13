@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import {ChatInputCommandInteraction, CommandInteraction} from "discord.js";
 import { CivGroup, stringToCivGroup } from "../../Civs/CivGroups";
 import { getVoiceChannelMembers } from "../VoiceChannels";
 import { DraftArguments, draftCommand } from "../../Commands/Draft/DraftCommand";
@@ -17,7 +17,7 @@ import { banCommand } from "../../Commands/Ban/BanCommand";
 import { unbanCommand } from "../../Commands/Ban/UnbanCommand";
 import {logError, logInfo} from "../../Log";
 
-export async function handleSlashCommand(interaction: CommandInteraction) {
+export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     logInfo(`Received interaction "${interaction.commandName}" with parameters { ${interaction.options.data.map(x => `${x.name}: ${x.value}`).join(", ")} }`);
     
     if (interaction.commandName === "draft") {
@@ -125,14 +125,14 @@ function parseCivGroups(civGroupString: string): Result<CivGroup[], { invalidGro
     };
 }
 
-function extractCustomCivsArgument(interaction: CommandInteraction): string[] {
+function extractCustomCivsArgument(interaction: ChatInputCommandInteraction): string[] {
     return interaction.options
         .getString("civs")!
         .split(",")
         .map((s) => s.trim());
 }
 
-function extractDraftArguments(interaction: CommandInteraction): Result<Partial<DraftArguments>, string> {
+function extractDraftArguments(interaction: ChatInputCommandInteraction): Result<Partial<DraftArguments>, string> {
     const ai = interaction.options.getInteger("ai") ?? undefined;
     const civs = interaction.options.getInteger("civs") ?? undefined;
     const civGroupString = interaction.options.getString("civ-groups") ?? undefined;
@@ -160,7 +160,7 @@ function extractDraftArguments(interaction: CommandInteraction): Result<Partial<
     };
 }
 
-async function handleDraft(interaction: CommandInteraction) {
+async function handleDraft(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const draftArgumentsOrError = extractDraftArguments(interaction);
@@ -181,7 +181,7 @@ async function handleDraft(interaction: CommandInteraction) {
     await interaction.reply(response);
 }
 
-async function handleShowConfig(interaction: CommandInteraction) {
+async function handleShowConfig(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const userSettings = (await loadUserData(serverId)).activeUserSettings;
 
@@ -189,7 +189,7 @@ async function handleShowConfig(interaction: CommandInteraction) {
     await interaction.reply(response);
 }
 
-async function handleEnableCivGroup(interaction: CommandInteraction) {
+async function handleEnableCivGroup(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!;
 
@@ -197,7 +197,7 @@ async function handleEnableCivGroup(interaction: CommandInteraction) {
     await interaction.reply(message);
 }
 
-async function handleDisableCivGroup(interaction: CommandInteraction) {
+async function handleDisableCivGroup(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!;
 
@@ -205,7 +205,7 @@ async function handleDisableCivGroup(interaction: CommandInteraction) {
     await interaction.reply(message);
 }
 
-async function handleAddCustomCivs(interaction: CommandInteraction) {
+async function handleAddCustomCivs(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const civs = extractCustomCivsArgument(interaction);
 
@@ -213,7 +213,7 @@ async function handleAddCustomCivs(interaction: CommandInteraction) {
     await interaction.reply(message);
 }
 
-async function handleRemoveCustomCivs(interaction: CommandInteraction) {
+async function handleRemoveCustomCivs(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const civs = extractCustomCivsArgument(interaction);
 
@@ -221,14 +221,14 @@ async function handleRemoveCustomCivs(interaction: CommandInteraction) {
     await interaction.reply(message);
 }
 
-async function handleClearCustomCivs(interaction: CommandInteraction) {
+async function handleClearCustomCivs(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const message = await clearCustomCivsCommand(serverId);
     await interaction.reply(message);
 }
 
-async function handleLoadProfile(interaction: CommandInteraction) {
+async function handleLoadProfile(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const profileToLoad = interaction.options.getString("profile-name")!;
@@ -237,7 +237,7 @@ async function handleLoadProfile(interaction: CommandInteraction) {
     await interaction.reply(message);
 }
 
-async function handleSaveProfile(interaction: CommandInteraction) {
+async function handleSaveProfile(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const profileToLoad = interaction.options.getString("profile-name")!;
@@ -246,7 +246,7 @@ async function handleSaveProfile(interaction: CommandInteraction) {
     await interaction.reply(message);
 }
 
-async function handleShowProfiles(interaction: CommandInteraction) {
+async function handleShowProfiles(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const userData = await loadUserData(serverId);
 
@@ -255,7 +255,7 @@ async function handleShowProfiles(interaction: CommandInteraction) {
     await interaction.reply(message);
 }
 
-async function handleBan(interaction: CommandInteraction) {
+async function handleBan(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const civToBan = interaction.options.getString("civ")!;
@@ -264,7 +264,7 @@ async function handleBan(interaction: CommandInteraction) {
     await interaction.reply(message);
 }
 
-async function handleUnban(interaction: CommandInteraction) {
+async function handleUnban(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const civToUnban = interaction.options.getString("civ")!;

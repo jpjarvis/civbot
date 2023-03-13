@@ -1,19 +1,17 @@
-import { ApplicationCommandManager, Client, Intents } from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import { Commands } from "./SlashCommands";
 import { getToken } from "../../Auth";
 
 async function updateSlashCommands() {
     const client = new Client({
-        intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+        intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
     });
 
     client.once("ready", async () => {
-        const applicationCommandManager = new ApplicationCommandManager(client);
-
         console.log("Updating slash commands...");
 
         for (let command of Commands) {
-            await applicationCommandManager.create(command, "493399082757259284");
+            client.application?.commands.create(command);
         }
 
         console.log("Done");
