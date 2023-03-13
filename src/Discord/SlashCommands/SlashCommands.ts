@@ -1,4 +1,4 @@
-import { ApplicationCommandData } from "discord.js";
+import { ApplicationCommandData, ApplicationCommandOptionType } from "discord.js";
 import { CivGroups } from "../../Civs/CivGroups";
 
 const draftCommand: ApplicationCommandData = {
@@ -6,17 +6,17 @@ const draftCommand: ApplicationCommandData = {
     description: "Drafts a civ game for the players in your voice channel",
     options: [
         {
-            type: "INTEGER",
+            type: ApplicationCommandOptionType.Integer,
             name: "ai",
             description: "Number of extra AI players to add (Default is 0)",
         },
         {
-            type: "INTEGER",
+            type: ApplicationCommandOptionType.Integer,
             name: "civs",
             description: "Number of civs to draft for each player (Default is 3)",
         },
         {
-            type: "STRING",
+            type: ApplicationCommandOptionType.String,
             name: "civ-groups",
             description: "Space-separated list of civ groups to include",
         },
@@ -28,12 +28,12 @@ const civGroupsCommand: ApplicationCommandData = {
     description: "Manage civ groups",
     options: [
         {
-            type: "SUB_COMMAND",
+            type: ApplicationCommandOptionType.Subcommand,
             name: "enable",
             description: "Add a civ group to your drafts",
             options: [
                 {
-                    type: "STRING",
+                    type: ApplicationCommandOptionType.String,
                     name: "civ-group",
                     description: "The civ group to add",
                     required: true,
@@ -47,12 +47,12 @@ const civGroupsCommand: ApplicationCommandData = {
             ],
         },
         {
-            type: "SUB_COMMAND",
+            type: ApplicationCommandOptionType.Subcommand,
             name: "disable",
             description: "Remove a civ group to your drafts",
             options: [
                 {
-                    type: "STRING",
+                    type: ApplicationCommandOptionType.String,
                     name: "civ-group",
                     description: "The civ group to remove",
                     required: true,
@@ -73,12 +73,12 @@ const civsCommand: ApplicationCommandData = {
     description: "Manage custom civs",
     options: [
         {
-            type: "SUB_COMMAND",
+            type: ApplicationCommandOptionType.Subcommand,
             name: "add",
             description: "Add custom civs",
             options: [
                 {
-                    type: "STRING",
+                    type: ApplicationCommandOptionType.String,
                     name: "civs",
                     description: "Comma-separated list of civs to add",
                     required: true,
@@ -86,12 +86,12 @@ const civsCommand: ApplicationCommandData = {
             ],
         },
         {
-            type: "SUB_COMMAND",
+            type: ApplicationCommandOptionType.Subcommand,
             name: "remove",
             description: "Remove custom civs",
             options: [
                 {
-                    type: "STRING",
+                    type: ApplicationCommandOptionType.String,
                     name: "civs",
                     description: "Comma-separated list of civs to remove",
                     required: true,
@@ -99,7 +99,7 @@ const civsCommand: ApplicationCommandData = {
             ],
         },
         {
-            type: "SUB_COMMAND",
+            type: ApplicationCommandOptionType.Subcommand,
             name: "clear",
             description: "Remove all custom civs",
             options: [],
@@ -117,24 +117,24 @@ const profilesCommand: ApplicationCommandData = {
     description: "Load and save settings profiles",
     options: [
         {
-            type: "SUB_COMMAND",
+            type: ApplicationCommandOptionType.Subcommand,
             name: "load",
             description: "Load a profile's settings",
             options: [
                 {
-                    type: "STRING",
+                    type: ApplicationCommandOptionType.String,
                     name: "profile-name",
                     description: "Name of the profile to load",
                 },
             ],
         },
         {
-            type: "SUB_COMMAND",
+            type: ApplicationCommandOptionType.Subcommand,
             name: "save",
             description: "Save the current settings into a profile",
             options: [
                 {
-                    type: "STRING",
+                    type: ApplicationCommandOptionType.String,
                     name: "profile-name",
                     description:
                         "Name to save the profile as. If a profile with the same name exists, it will be overwritten.",
@@ -142,7 +142,7 @@ const profilesCommand: ApplicationCommandData = {
             ],
         },
         {
-            type: "SUB_COMMAND",
+            type: ApplicationCommandOptionType.Subcommand,
             name: "show",
             description: "List your saved profiles",
         },
@@ -154,7 +154,7 @@ const banCommand: ApplicationCommandData = {
     description: "Ban a civ, preventing it from appearing in drafts",
     options: [
         {
-            type: "STRING",
+            type: ApplicationCommandOptionType.String,
             name: "civ",
             description:
                 "Name of the civ to ban",
@@ -167,7 +167,7 @@ const unbanCommand: ApplicationCommandData = {
     description: "Unban a civ that was previously banned with /ban",
     options: [
         {
-            type: "STRING",
+            type: ApplicationCommandOptionType.String,
             name: "civ",
             description:
                 "Name of the banned civ to unban",
