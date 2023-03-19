@@ -176,6 +176,26 @@ export const Civs = {
         "João III",
         "Bà Triệu",
     ],
+    
+    "civ6-leaderpass": [
+        "Abraham Lincoln",
+        "Nzinga Mbande",
+        "Tokugawa",
+        "Nader Shah",
+        "Wu Zetian",
+        "Yongle",
+        "Ramses II",
+        "Sundiata Keita",
+        "Theodora",
+        "Sejong",
+        "Ludwig II",
+        "Saladin (Sultan)",
+        "Suleiman (Muhtesem)",
+        "Qin Shi Huang (Unifier)",
+        "Cleopatra (Ptolemaic)"
+    ],
 
     "civ6-extra": ["John Curtin", "Gitarja", "Jayavarman VII", "Alexander", "Amanitore", "Cyrus", "Jadwiga"],
+    
+    "civ6-personas": ["Teddy Roosevelt (Rough Rider)", "Catherine de Medici (Magnificence)"]
 };
