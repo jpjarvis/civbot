@@ -137,6 +137,7 @@ export const Civs = {
         "Tomyris",
         "Philip II",
         "Gilgamesh",
+        "Julius Caesar"
     ],
 
     "civ6-rnf": [
