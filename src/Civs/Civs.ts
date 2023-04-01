@@ -193,7 +193,10 @@ export const Civs = {
         "Saladin (Sultan)",
         "Suleiman (Muhtesem)",
         "Qin Shi Huang (Unifier)",
-        "Cleopatra (Ptolemaic)"
+        "Cleopatra (Ptolemaic)",
+        "Elizabeth I",
+        "Victoria (Age of Steam)",
+        "Harald Hardrada (Varangian)"
     ],
 
     "civ6-extra": ["John Curtin", "Gitarja", "Jayavarman VII", "Alexander", "Amanitore", "Cyrus", "Jadwiga"],
