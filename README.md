@@ -12,4 +12,5 @@ CivBot lets you draft civs from the following categories:
 - `civ6-rnf` - Civ 6 Rise and Fall
 - `civ6-gs` - Civ 6 Gathering Storm
 - `civ6-frontier` - Civ 6 Frontier Pass
+- `civ6-leaderpass` - Civ 6 Leader Pass
 - `civ6-extra` - All other Civ 6 DLC
