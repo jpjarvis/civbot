@@ -1,4 +1,4 @@
-import {ChatInputCommandInteraction, CommandInteraction} from "discord.js";
+import {ChatInputCommandInteraction} from "discord.js";
 import { CivGroup, stringToCivGroup } from "../../Civs/CivGroups";
 import { getVoiceChannelMembers } from "../VoiceChannels";
 import { DraftArguments, draftCommand } from "../../Commands/Draft/DraftCommand";
@@ -9,9 +9,6 @@ import { disableCivGroupCommand } from "../../Commands/CivGroups/DisableCivGroup
 import { addCustomCivsCommand } from "../../Commands/CustomCivs/AddCustomCivsCommand";
 import { removeCustomCivsCommand } from "../../Commands/CustomCivs/RemoveCustomCivsCommand";
 import { clearCustomCivsCommand } from "../../Commands/CustomCivs/ClearCustomCivsCommand";
-import { loadProfileCommand } from "../../Commands/Profiles/LoadProfileCommand";
-import { saveProfileCommand } from "../../Commands/Profiles/SaveProfileCommand";
-import { showProfilesCommand } from "../../Commands/Profiles/ShowProfilesCommand";
 import { loadUserData } from "../../UserDataStore";
 import { banCommand } from "../../Commands/Ban/BanCommand";
 import { unbanCommand } from "../../Commands/Ban/UnbanCommand";
@@ -61,25 +58,6 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
 
         if (subcommand === "clear") {
             await handleClearCustomCivs(interaction);
-            return;
-        }
-    }
-
-    if (interaction.commandName === "profiles") {
-        const subcommand = interaction.options.getSubcommand();
-
-        if (subcommand === "load") {
-            await handleLoadProfile(interaction);
-            return;
-        }
-
-        if (subcommand === "save") {
-            await handleSaveProfile(interaction);
-            return;
-        }
-
-        if (subcommand === "show") {
-            await handleShowProfiles(interaction);
             return;
         }
     }
@@ -234,33 +212,6 @@ async function handleClearCustomCivs(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const message = await clearCustomCivsCommand(serverId);
-    await interaction.reply(message);
-}
-
-async function handleLoadProfile(interaction: ChatInputCommandInteraction) {
-    const serverId = interaction.guildId!;
-
-    const profileToLoad = interaction.options.getString("profile-name")!;
-
-    const message = await loadProfileCommand(serverId, profileToLoad);
-    await interaction.reply(message);
-}
-
-async function handleSaveProfile(interaction: ChatInputCommandInteraction) {
-    const serverId = interaction.guildId!;
-
-    const profileToLoad = interaction.options.getString("profile-name")!;
-
-    const message = await saveProfileCommand(serverId, profileToLoad);
-    await interaction.reply(message);
-}
-
-async function handleShowProfiles(interaction: ChatInputCommandInteraction) {
-    const serverId = interaction.guildId!;
-    const userData = await loadUserData(serverId);
-
-    const message = await showProfilesCommand(userData);
-
     await interaction.reply(message);
 }
 
