@@ -14,11 +14,11 @@ const CivGroupMetadata: { [a in CivGroup]: { displayName: string; game: CivGame 
     custom: {displayName: "Custom civs", game: "All"},
     lekmod: {displayName: "LEKMOD", game: "Civ 5"},
     "civ5-vanilla": {
-        displayName: "Vanilla",
+        displayName: "Base game + DLC",
         game: "Civ 5"
     },
     "civ6-vanilla": {
-        displayName: "Vanilla",
+        displayName: "Base game",
         game: "Civ 6"
     }
 }
