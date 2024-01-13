@@ -3,7 +3,7 @@ import {CivGame} from "../Civs/CivGames";
 
 export type UserData = {
     game: CivGame
-    activeUserSettings: UserSettings;
+    userSettings: { [game in CivGame]: UserSettings };
     profiles: {
         [name in string]: UserSettings;
     };
@@ -12,12 +12,21 @@ export type UserData = {
 export function createDefaultUserData(): UserData {
     return {
         game: "Civ V",
-        activeUserSettings: {
-            defaultDraftSettings: {
-                civGroups: ["civ5-vanilla"]
+        userSettings: {
+            "Civ V": {
+                defaultDraftSettings: {
+                    civGroups: ["civ5-vanilla"]
+                },
+                customCivs: [],
+                bannedCivs: []
             },
-            customCivs: [],
-            bannedCivs: []
+            "Civ VI": {
+                defaultDraftSettings: {
+                    civGroups: ["civ6-vanilla", "civ6-rnf", "civ6-gs", "civ6-extra", "civ6-frontier", "civ6-leaderpass", "civ6-personas"]
+                },
+                customCivs: [],
+                bannedCivs: []
+            }
         },
         profiles: {
             "civ5": {

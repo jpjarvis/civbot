@@ -179,10 +179,11 @@ async function handleDraft(interaction: ChatInputCommandInteraction) {
 
     const voiceChannelMembers = await getVoiceChannelMembers(interaction);
 
+    const userData = await loadUserData(serverId)
     const response = draftCommand(
         draftArgumentsOrError.value,
         voiceChannelMembers,
-        (await loadUserData(serverId)).activeUserSettings
+        userData.userSettings[userData.game]
     );
 
     await interaction.reply(response);
@@ -190,7 +191,8 @@ async function handleDraft(interaction: ChatInputCommandInteraction) {
 
 async function handleShowConfig(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
-    const userSettings = (await loadUserData(serverId)).activeUserSettings;
+    const userData = await loadUserData(serverId);
+    const userSettings = userData.userSettings[userData.game];
 
     let response = showConfigCommand(userSettings);
     await interaction.reply(response);

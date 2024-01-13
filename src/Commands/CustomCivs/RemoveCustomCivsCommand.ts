@@ -3,8 +3,8 @@ import { loadUserData, saveUserData } from "../../UserDataStore";
 export async function removeCustomCivsCommand(tenantId: string, civs: string[]): Promise<string> {
     const userData = await loadUserData(tenantId);
 
-    const failedCivs = civs.filter((c) => !userData.activeUserSettings.customCivs.includes(c));
-    userData.activeUserSettings.customCivs = userData.activeUserSettings.customCivs.filter((c) => !civs.includes(c));
+    const failedCivs = civs.filter((c) => !userData.userSettings[userData.game].customCivs.includes(c));
+    userData.userSettings[userData.game].customCivs = userData.userSettings[userData.game].customCivs.filter((c) => !civs.includes(c));
 
     await saveUserData(tenantId, userData);
 

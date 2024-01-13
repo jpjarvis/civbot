@@ -9,7 +9,7 @@ export async function loadProfileCommand(tenantId: string, profileName: string) 
         return `No profile with the name \`${profileName}\` exists.`;
     }
 
-    userData.activeUserSettings = profileSettings;
+    userData.userSettings[userData.game] = profileSettings;
 
     await saveUserData(tenantId, userData);
     return `Loaded settings from profile \`${profileName}\`.`;

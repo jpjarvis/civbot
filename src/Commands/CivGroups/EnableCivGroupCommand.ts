@@ -1,18 +1,23 @@
 import { CivGroup } from "../../Civs/CivGroups";
 import { loadUserData, saveUserData } from "../../UserDataStore";
+import {User} from "discord.js";
 
 export async function enableCivGroupCommand(tenantId: string, civGroup: CivGroup): Promise<string> {
     const userData = await loadUserData(tenantId);
 
-    if (!userData.activeUserSettings.defaultDraftSettings.civGroups) {
-        userData.activeUserSettings.defaultDraftSettings.civGroups = [];
+    const defaultDraftSettings = userData.userSettings[userData.game].defaultDraftSettings;
+    
+    if (!defaultDraftSettings.civGroups) {
+        defaultDraftSettings.civGroups = [];
     }
 
-    if (userData.activeUserSettings.defaultDraftSettings.civGroups.includes(civGroup)) {
+    if (defaultDraftSettings.civGroups.includes(civGroup)) {
         return `\`${civGroup}\` is already being used.`;
     }
-    userData.activeUserSettings.defaultDraftSettings.civGroups.push(civGroup);
+    defaultDraftSettings.civGroups.push(civGroup);
 
+    userData.userSettings[userData.game].defaultDraftSettings = defaultDraftSettings;
+    
     await saveUserData(tenantId, userData);
     return `\`${civGroup}\` will now be used in your drafts.`;
 }
