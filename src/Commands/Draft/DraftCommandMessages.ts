@@ -1,6 +1,6 @@
 ﻿import Messages from "../../Messages";
 import { Draft, DraftEntry, DraftError } from "./DraftTypes";
-import { CivGroup } from "../../Civs/CivGroups";
+import {CivGroup, displayName} from "../../Civs/CivGroups";
 import { Result } from "../../Functional/Result";
 
 function getPlayerDraftString(draftEntry: DraftEntry): string {
@@ -30,7 +30,7 @@ export function generateDraftCommandOutputMessage(civGroupsUsed: CivGroup[], dra
         if (draftString === "") {
             sendMessage(Messages.NoPlayers);
         } else {
-            sendMessage(`Drafting for ${civGroupsUsed.map((cg) => `\`${cg}\``).join(", ")}`);
+            sendMessage(`Drafting for ${civGroupsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ")}`);
             sendMessage("```" + draftString + "```");
         }
     }

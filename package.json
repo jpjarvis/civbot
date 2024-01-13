@@ -1,6 +1,6 @@
 {
     "name": "civ-bot",
-    "version": "0.2.3",
+    "version": "0.3.0",
     "description": "",
     "main": "Start.js",
     "author": "Wesley Presley",
@@ -34,7 +34,6 @@
     },
     "scripts": {
         "dev": "ts-node src/Start.ts",
-        "update-slashes": "ts-node src/Discord/SlashCommands/UpdateSlashCommands.ts",
         "test": "jest",
         "build": "tsc",
         "start": "node build/Start.js"

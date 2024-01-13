@@ -8,11 +8,11 @@ export async function unbanCommand(tenantId: string, civToUnban: string) {
 
     const userData = await loadUserData(tenantId);
 
-    if (!userData.activeUserSettings.bannedCivs.includes(civToUnban)) {
+    if (!userData.userSettings[userData.game].bannedCivs.includes(civToUnban)) {
         return `${civToUnban} is not banned, so it cannot be unbanned.`;
     }
-    const toRemoveIndex = userData.activeUserSettings.bannedCivs.indexOf(civToUnban);
-    userData.activeUserSettings.bannedCivs.splice(toRemoveIndex, 1);
+    const toRemoveIndex = userData.userSettings[userData.game].bannedCivs.indexOf(civToUnban);
+    userData.userSettings[userData.game].bannedCivs.splice(toRemoveIndex, 1);
 
     await saveUserData(tenantId, userData);
     return `${civToUnban} has been unbanned. It will appear in your drafts once again.`;

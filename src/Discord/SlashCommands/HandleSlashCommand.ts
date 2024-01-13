@@ -16,6 +16,8 @@ import { loadUserData } from "../../UserDataStore";
 import { banCommand } from "../../Commands/Ban/BanCommand";
 import { unbanCommand } from "../../Commands/Ban/UnbanCommand";
 import {logError, logInfo} from "../../Log";
+import {switchGameCommand} from "../../Commands/SwitchGame/SwitchGameCommand";
+import {updateSlashCommandsForServer} from "./UpdateSlashCommands";
 
 export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     logInfo(`Received interaction "${interaction.commandName}" with parameters { ${interaction.options.data.map(x => `${x.name}: ${x.value}`).join(", ")} }`);
@@ -91,7 +93,12 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
         await handleUnban(interaction);
         return;
     }
-
+    
+    if (interaction.commandName === "switch-game") {
+        await handleSwitchGame(interaction);
+        return;
+    }
+    
     logError(`Unrecognised slash command ${interaction.commandName}.`);
     await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
 }
@@ -172,10 +179,11 @@ async function handleDraft(interaction: ChatInputCommandInteraction) {
 
     const voiceChannelMembers = await getVoiceChannelMembers(interaction);
 
+    const userData = await loadUserData(serverId)
     const response = draftCommand(
         draftArgumentsOrError.value,
         voiceChannelMembers,
-        (await loadUserData(serverId)).activeUserSettings
+        userData.userSettings[userData.game]
     );
 
     await interaction.reply(response);
@@ -183,7 +191,8 @@ async function handleDraft(interaction: ChatInputCommandInteraction) {
 
 async function handleShowConfig(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
-    const userSettings = (await loadUserData(serverId)).activeUserSettings;
+    const userData = await loadUserData(serverId);
+    const userSettings = userData.userSettings[userData.game];
 
     let response = showConfigCommand(userSettings);
     await interaction.reply(response);
@@ -271,4 +280,14 @@ async function handleUnban(interaction: ChatInputCommandInteraction) {
     const message = await unbanCommand(serverId, civToUnban);
 
     await interaction.reply(message);
+}
+
+async function handleSwitchGame(interaction: ChatInputCommandInteraction) {
+    const serverId = interaction.guildId!;
+    
+    const game = await switchGameCommand(serverId);
+
+    await updateSlashCommandsForServer(interaction.client, serverId);
+    
+    await interaction.reply(`Switched to drafting for ${game}.`);
 }
