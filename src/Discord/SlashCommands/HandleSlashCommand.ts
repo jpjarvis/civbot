@@ -1,11 +1,11 @@
 import {ChatInputCommandInteraction} from "discord.js";
-import { CivGroup, stringToCivGroup } from "../../Civs/CivGroups";
+import { Expansion, stringToExpansion } from "../../Civs/Expansions";
 import { getVoiceChannelMembers } from "../VoiceChannels";
 import { DraftArguments, draftCommand } from "../../Commands/Draft/DraftCommand";
 import { Result } from "../../Functional/Result";
 import { showConfigCommand } from "../../Commands/Config/ShowConfigCommand";
-import { enableCivGroupCommand } from "../../Commands/CivGroups/EnableCivGroupCommand";
-import { disableCivGroupCommand } from "../../Commands/CivGroups/DisableCivGroupCommand";
+import { enableExpansionCommand } from "../../Commands/Expansions/EnableExpansionCommand";
+import { disableExpansionCommand } from "../../Commands/Expansions/DisableExpansionCommand";
 import { addCustomCivsCommand } from "../../Commands/CustomCivs/AddCustomCivsCommand";
 import { removeCustomCivsCommand } from "../../Commands/CustomCivs/RemoveCustomCivsCommand";
 import { clearCustomCivsCommand } from "../../Commands/CustomCivs/ClearCustomCivsCommand";
@@ -29,16 +29,16 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
         return;
     }
 
-    if (interaction.commandName === "civ-groups") {
+    if (interaction.commandName === "expansions") {
         const subcommand = interaction.options.getSubcommand();
 
         if (subcommand === "enable") {
-            await handleEnableCivGroup(interaction);
+            await handleEnableExpansion(interaction);
             return;
         }
 
         if (subcommand === "disable") {
-            await handleDisableCivGroup(interaction);
+            await handleDisableExpansion(interaction);
             return;
         }
     }
@@ -81,32 +81,32 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
     await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
 }
 
-function parseCivGroups(civGroupString: string): Result<CivGroup[], { invalidGroups: string[] }> {
-    const strings = civGroupString.split(" ");
-    const civGroups: CivGroup[] = [];
-    const invalidGroups: string[] = [];
+function parseExpansions(expansionsString: string): Result<Expansion[], { invalidExpansions: string[] }> {
+    const strings = expansionsString.split(" ");
+    const expansions: Expansion[] = [];
+    const invalidExpansions: string[] = [];
 
     strings.forEach((string) => {
-        const civGroup = stringToCivGroup(string);
-        if (civGroup) {
-            civGroups.push(civGroup);
+        const expansion = stringToExpansion(string);
+        if (expansion) {
+            expansions.push(expansion);
         } else {
-            invalidGroups.push(string);
+            invalidExpansions.push(string);
         }
     });
 
-    if (invalidGroups.length > 0) {
+    if (invalidExpansions.length > 0) {
         return {
             isError: true,
             error: {
-                invalidGroups: invalidGroups,
+                invalidExpansions: invalidExpansions,
             },
         };
     }
 
     return {
         isError: false,
-        value: civGroups,
+        value: expansions,
     };
 }
 
@@ -120,17 +120,17 @@ function extractCustomCivsArgument(interaction: ChatInputCommandInteraction): st
 function extractDraftArguments(interaction: ChatInputCommandInteraction): Result<Partial<DraftArguments>, string> {
     const ai = interaction.options.getInteger("ai") ?? undefined;
     const civs = interaction.options.getInteger("civs") ?? undefined;
-    const civGroupString = interaction.options.getString("civ-groups") ?? undefined;
+    const expansionsString = interaction.options.getString("expansions") ?? undefined;
 
-    let civGroups: CivGroup[] | undefined = undefined;
-    if (civGroupString) {
-        let parseResult = parseCivGroups(civGroupString);
+    let expansions: Expansion[] | undefined = undefined;
+    if (expansionsString) {
+        let parseResult = parseExpansions(expansionsString);
         if (!parseResult.isError) {
-            civGroups = parseResult.value;
+            expansions = parseResult.value;
         } else {
             return {
                 isError: true,
-                error: `Failed to parse civ-groups argument - the following are not valid civ groups: ${parseResult.error.invalidGroups}`,
+                error: `Failed to parse expansions argument - the following are not valid expansions: ${parseResult.error.invalidExpansions}`,
             };
         }
     }
@@ -140,7 +140,7 @@ function extractDraftArguments(interaction: ChatInputCommandInteraction): Result
         value: {
             numberOfCivs: civs,
             numberOfAi: ai,
-            civGroups: civGroups,
+            expansions: expansions,
         },
     };
 }
@@ -176,19 +176,19 @@ async function handleShowConfig(interaction: ChatInputCommandInteraction) {
     await interaction.reply(response);
 }
 
-async function handleEnableCivGroup(interaction: ChatInputCommandInteraction) {
+async function handleEnableExpansion(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
-    const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!;
+    const expansion = stringToExpansion(interaction.options.getString("expansion")!)!;
 
-    const message = await enableCivGroupCommand(serverId, civGroup);
+    const message = await enableExpansionCommand(serverId, expansion);
     await interaction.reply(message);
 }
 
-async function handleDisableCivGroup(interaction: ChatInputCommandInteraction) {
+async function handleDisableExpansion(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
-    const civGroup = stringToCivGroup(interaction.options.getString("civ-group")!)!;
+    const expansion = stringToExpansion(interaction.options.getString("expansion")!)!;
 
-    const message = await disableCivGroupCommand(serverId, civGroup);
+    const message = await disableExpansionCommand(serverId, expansion);
     await interaction.reply(message);
 }
 

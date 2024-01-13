@@ -1,9 +1,9 @@
 import { UserSettings } from "../../UserData/UserSettings";
-import {displayName} from "../../Civs/CivGroups";
+import {displayName} from "../../Civs/Expansions";
 
 export function showConfigCommand(userSettings: UserSettings): string {
     let response = "";
-    response += `Using civ groups: \`\`\`\n${userSettings.defaultDraftSettings?.civGroups?.map(displayName).join("\n")}\`\`\`` + "\n";
+    response += `Using expansions: \`\`\`\n${userSettings.defaultDraftSettings?.expansions?.map(displayName).join("\n")}\`\`\`` + "\n";
     if (userSettings.customCivs) {
         response += `Custom civs:\`\`\`\n${userSettings.customCivs.sort().join("\n")}\`\`\``;
     }

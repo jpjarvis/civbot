@@ -1,4 +1,4 @@
-import { CivGroup } from "../../Civs/CivGroups";
+import { Expansion } from "../../Civs/Expansions";
 import { draft } from "./Draft";
 import { selectCivs } from "./SelectCivs";
 import { UserSettings } from "../../UserData/UserSettings";
@@ -7,7 +7,7 @@ import { generateDraftCommandOutputMessage } from "./DraftCommandMessages";
 export type DraftArguments = {
     numberOfAi: number;
     numberOfCivs: number;
-    civGroups: CivGroup[];
+    expansions: Expansion[];
 };
 
 export function draftCommand(args: Partial<DraftArguments>, voiceChannelMembers: string[], userSettings: UserSettings) {
@@ -15,11 +15,11 @@ export function draftCommand(args: Partial<DraftArguments>, voiceChannelMembers:
 
     const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
 
-    const civs = selectCivs(new Set(draftArgs.civGroups), userSettings.customCivs, userSettings.bannedCivs);
+    const civs = selectCivs(new Set(draftArgs.expansions), userSettings.customCivs, userSettings.bannedCivs);
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
-    return generateDraftCommandOutputMessage(draftArgs.civGroups, draftResult);
+    return generateDraftCommandOutputMessage(draftArgs.expansions, draftResult);
 }
 
 function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {
@@ -28,7 +28,7 @@ function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings
     return {
         numberOfAi: partialArgs.numberOfAi ?? defaultArgs.numberOfAi ?? 0,
         numberOfCivs: partialArgs.numberOfCivs ?? defaultArgs.numberOfCivs ?? 3,
-        civGroups: partialArgs.civGroups ?? defaultArgs.civGroups ?? ["civ5-vanilla"],
+        expansions: partialArgs.expansions ?? defaultArgs.expansions ?? ["civ5-vanilla"],
     };
 }
 
