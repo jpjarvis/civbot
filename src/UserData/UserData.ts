@@ -1,6 +1,8 @@
-import { UserSettings } from "./UserSettings";
+import {UserSettings} from "./UserSettings";
+import {CivGame} from "../Civs/CivGames";
 
 export type UserData = {
+    game: CivGame
     activeUserSettings: UserSettings;
     profiles: {
         [name in string]: UserSettings;
@@ -9,6 +11,7 @@ export type UserData = {
 
 export function createDefaultUserData(): UserData {
     return {
+        game: "Civ V",
         activeUserSettings: {
             defaultDraftSettings: {
                 civGroups: ["civ5-vanilla"]

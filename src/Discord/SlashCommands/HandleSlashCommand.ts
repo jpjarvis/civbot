@@ -16,6 +16,7 @@ import { loadUserData } from "../../UserDataStore";
 import { banCommand } from "../../Commands/Ban/BanCommand";
 import { unbanCommand } from "../../Commands/Ban/UnbanCommand";
 import {logError, logInfo} from "../../Log";
+import {switchGameCommand} from "../../Commands/SwitchGame/SwitchGameCommand";
 
 export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     logInfo(`Received interaction "${interaction.commandName}" with parameters { ${interaction.options.data.map(x => `${x.name}: ${x.value}`).join(", ")} }`);
@@ -89,6 +90,11 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
 
     if (interaction.commandName === "unban") {
         await handleUnban(interaction);
+        return;
+    }
+    
+    if (interaction.commandName === "switch-game") {
+        await handleSwitchGame(interaction);
         return;
     }
 
@@ -271,4 +277,12 @@ async function handleUnban(interaction: ChatInputCommandInteraction) {
     const message = await unbanCommand(serverId, civToUnban);
 
     await interaction.reply(message);
+}
+
+async function handleSwitchGame(interaction: ChatInputCommandInteraction) {
+    const serverId = interaction.guildId!;
+    
+    const game = await switchGameCommand(serverId);
+    
+    await interaction.reply(`Switched to drafting for ${game}.`);
 }

@@ -175,4 +175,10 @@ const unbanCommand: ApplicationCommandData = {
     ],
 };
 
-export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand, banCommand, unbanCommand];
+const switchGameCommand : ApplicationCommandData = {
+    name: "switch-game",
+    description: "Switch between drafting for Civ 5 and Civ 6.",
+    options: []
+};
+
+export const Commands = [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand, banCommand, unbanCommand, switchGameCommand];
