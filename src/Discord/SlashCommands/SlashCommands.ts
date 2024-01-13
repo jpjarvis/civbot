@@ -179,7 +179,7 @@ export function getCommands(game: CivGame) {
 
     const switchGameCommand : ApplicationCommandData = {
         name: "switch-game",
-        description: "Switch between drafting for Civ 5 and Civ 6.",
+        description: `Switch to drafting for ${game === "Civ V" ? "Civ VI" : "Civ V"}`,
         options: []
     };
 
