@@ -2,7 +2,6 @@ import {Client, GatewayIntentBits} from "discord.js";
 import Messages from "./Messages";
 import { getToken } from "./Auth";
 import { handleSlashCommand } from "./Discord/SlashCommands/HandleSlashCommand";
-import { handleMessage } from "./Discord/Messages/HandleMessage";
 import {logException, logInfo} from "./Log";
 
 async function start() {
@@ -24,17 +23,6 @@ async function start() {
                 logException(e);
             }
             await interaction.reply(Messages.GenericError);
-        }
-    });
-
-    client.on("messageCreate", async (message) => {
-        try {
-            await handleMessage(message, client);
-        } catch (e) {
-            if (e instanceof Error) {
-                logException(e);
-            }
-            message.channel.send(Messages.GenericError);
         }
     });
 
