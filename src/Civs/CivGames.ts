@@ -1,1 +1,1 @@
-export type CivGame = "Civ V" | "Civ VI";
+export type CivGame = "Civ 5" | "Civ 6";

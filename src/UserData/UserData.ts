@@ -11,16 +11,16 @@ export type UserData = {
 
 export function createDefaultUserData(): UserData {
     return {
-        game: "Civ V",
+        game: "Civ 5",
         userSettings: {
-            "Civ V": {
+            "Civ 5": {
                 defaultDraftSettings: {
                     civGroups: ["civ5-vanilla"]
                 },
                 customCivs: [],
                 bannedCivs: []
             },
-            "Civ VI": {
+            "Civ 6": {
                 defaultDraftSettings: {
                     civGroups: ["civ6-vanilla", "civ6-rnf", "civ6-gs", "civ6-extra", "civ6-frontier", "civ6-leaderpass", "civ6-personas"]
                 },
