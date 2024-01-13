@@ -1,4 +1,4 @@
-import { CivGroup } from "../../Civs/CivGroups";
+import {CivGroup, displayName} from "../../Civs/CivGroups";
 import { loadUserData, saveUserData } from "../../UserDataStore";
 
 export async function disableCivGroupCommand(tenantId: string, civGroup: CivGroup): Promise<string> {
@@ -12,12 +12,12 @@ export async function disableCivGroupCommand(tenantId: string, civGroup: CivGrou
 
     const toRemoveIndex = defaultDraftSettings.civGroups.indexOf(civGroup);
     if (!defaultDraftSettings.civGroups.includes(civGroup)) {
-        return `\`${civGroup}\` is not being used.`;
+        return `\`${displayName(civGroup)}\` is not being used.`;
     }
     defaultDraftSettings.civGroups.splice(toRemoveIndex, 1);
     
     userData.userSettings[userData.game].defaultDraftSettings = defaultDraftSettings;
     await saveUserData(tenantId, userData);
 
-    return `\`${civGroup}\` will no longer be used in your drafts.`;
+    return `\`${displayName(civGroup)}\` will no longer be used in your drafts.`;
 }

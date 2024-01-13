@@ -1,8 +1,9 @@
 import { UserData } from "../../UserData/UserData";
 import { UserSettings } from "../../UserData/UserSettings";
+import {displayName} from "../../Civs/CivGroups";
 
 function createProfileString(profileName: string, userSettings: UserSettings) {
-    const civGroupsString = userSettings.defaultDraftSettings.civGroups?.map((x) => `\`${x}\``).join(",");
+    const civGroupsString = userSettings.defaultDraftSettings.civGroups?.map((x) => `\`${displayName(x)}\``).join(",");
     const customCivsString =
         userSettings.customCivs.length > 0 ? ` and ${userSettings.customCivs.length} custom civs` : "";
     return `\`${profileName}\`: ${civGroupsString}${customCivsString}`;
