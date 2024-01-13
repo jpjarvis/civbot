@@ -114,43 +114,6 @@ export function getCommands(game: CivGame) {
         description: "Show CivBot's current configuration",
     };
 
-    const profilesCommand: ApplicationCommandData = {
-        name: "profiles",
-        description: "Load and save settings profiles",
-        options: [
-            {
-                type: ApplicationCommandOptionType.Subcommand,
-                name: "load",
-                description: "Load a profile's settings",
-                options: [
-                    {
-                        type: ApplicationCommandOptionType.String,
-                        name: "profile-name",
-                        description: "Name of the profile to load",
-                    },
-                ],
-            },
-            {
-                type: ApplicationCommandOptionType.Subcommand,
-                name: "save",
-                description: "Save the current settings into a profile",
-                options: [
-                    {
-                        type: ApplicationCommandOptionType.String,
-                        name: "profile-name",
-                        description:
-                            "Name to save the profile as. If a profile with the same name exists, it will be overwritten.",
-                    },
-                ],
-            },
-            {
-                type: ApplicationCommandOptionType.Subcommand,
-                name: "show",
-                description: "List your saved profiles",
-            },
-        ],
-    };
-
     const banCommand: ApplicationCommandData = {
         name: "ban",
         description: "Ban a civ, preventing it from appearing in drafts",
@@ -183,5 +146,5 @@ export function getCommands(game: CivGame) {
         options: []
     };
 
-    return [draftCommand, civGroupsCommand, civsCommand, configCommand, profilesCommand, banCommand, unbanCommand, switchGameCommand];
+    return [draftCommand, civGroupsCommand, civsCommand, configCommand, banCommand, unbanCommand, switchGameCommand];
 }
