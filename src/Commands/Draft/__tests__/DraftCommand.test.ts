@@ -55,7 +55,7 @@ describe("draftCommand", () => {
 
         expect(draftLines).toHaveLength(1);
         expect(draftLines[0].fullText).toStartWith("player1");
-        expect(civGroupsLine).toContain("Vanilla");
+        expect(civGroupsLine).toContain("Base game + DLC");
     });
 
     it("should fall back to user data arguments if none provided in arguments", () => {
@@ -74,6 +74,6 @@ describe("draftCommand", () => {
 
         expect(draftLines).toHaveLength(2);
         expect(draftLines[0].civsCount).toBe(5);
-        expect(civGroupsLine).toStrictEqual("Drafting for `Vanilla`");
+        expect(civGroupsLine).toStrictEqual("Drafting for `Base game`");
     });
 });
