@@ -34,7 +34,6 @@
     },
     "scripts": {
         "dev": "ts-node src/Start.ts",
-        "update-slashes": "ts-node src/Discord/SlashCommands/UpdateSlashCommands.ts",
         "test": "jest",
         "build": "tsc",
         "start": "node build/Start.js"

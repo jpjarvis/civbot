@@ -1,24 +1,18 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client } from "discord.js";
 import {getCommands} from "./SlashCommands";
-import { getToken } from "../../Auth";
+import {loadUserData} from "../../UserDataStore";
+import {logInfo} from "../../Log";
 
-async function updateSlashCommands() {
-    const client = new Client({
-        intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-    });
-
-    client.once("ready", async () => {
-        console.log("Updating slash commands...");
-
-        for (let command of getCommands("Civ V")) {
-            client.application?.commands.create(command, "493399082757259284");
-        }
-
-        console.log("Done");
-        await client.destroy();
-    });
-
-    await client.login(getToken());
+export async function updateSlashCommandsForAllServers(client: Client) {
+    const guilds = client.guilds.valueOf().keys();
+    for (let serverId of guilds) {
+        logInfo(`Updating commands for guild ${serverId}...`);
+        await updateSlashCommandsForServer(client, serverId);
+    }
+    logInfo("Done!");
 }
 
-updateSlashCommands();
+export async function updateSlashCommandsForServer(client: Client, serverId: string) {
+    const userData = await loadUserData(serverId);
+    client.application?.commands.set(getCommands(userData.game), serverId);
+}
