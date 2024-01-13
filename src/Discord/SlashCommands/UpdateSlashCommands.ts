@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { Commands } from "./SlashCommands";
+import {getCommands} from "./SlashCommands";
 import { getToken } from "../../Auth";
 
 async function updateSlashCommands() {
@@ -10,7 +10,7 @@ async function updateSlashCommands() {
     client.once("ready", async () => {
         console.log("Updating slash commands...");
 
-        for (let command of Commands) {
+        for (let command of getCommands("Civ V")) {
             client.application?.commands.create(command, "493399082757259284");
         }
 

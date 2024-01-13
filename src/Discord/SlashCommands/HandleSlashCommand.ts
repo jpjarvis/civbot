@@ -17,6 +17,7 @@ import { banCommand } from "../../Commands/Ban/BanCommand";
 import { unbanCommand } from "../../Commands/Ban/UnbanCommand";
 import {logError, logInfo} from "../../Log";
 import {switchGameCommand} from "../../Commands/SwitchGame/SwitchGameCommand";
+import {getCommands} from "./SlashCommands";
 
 export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     logInfo(`Received interaction "${interaction.commandName}" with parameters { ${interaction.options.data.map(x => `${x.name}: ${x.value}`).join(", ")} }`);
@@ -97,7 +98,7 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
         await handleSwitchGame(interaction);
         return;
     }
-
+    
     logError(`Unrecognised slash command ${interaction.commandName}.`);
     await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
 }
@@ -283,6 +284,11 @@ async function handleSwitchGame(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     
     const game = await switchGameCommand(serverId);
+
+    const userData = await loadUserData(serverId);
+    for (let command of getCommands(userData.game)) {
+        interaction.client.application?.commands.create(command, serverId);
+    }
     
     await interaction.reply(`Switched to drafting for ${game}.`);
 }

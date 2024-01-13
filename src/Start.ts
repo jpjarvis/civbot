@@ -12,7 +12,7 @@ async function start() {
     client.once("ready", async () => {
         logInfo("CivBot is alive!");
     });
-
+    
     client.on("interactionCreate", async (interaction) => {
         if (!interaction.isChatInputCommand()) return;
 
