@@ -1,6 +1,6 @@
 ﻿import Messages from "../../Messages";
 import { Draft, DraftEntry, DraftError } from "./DraftTypes";
-import {CivGroup, displayName} from "../../Civs/CivGroups";
+import {Expansion, displayName} from "../../Civs/Expansions";
 import { Result } from "../../Functional/Result";
 
 function getPlayerDraftString(draftEntry: DraftEntry): string {
@@ -12,7 +12,7 @@ function getPlayerDraftString(draftEntry: DraftEntry): string {
     return response;
 }
 
-export function generateDraftCommandOutputMessage(civGroupsUsed: CivGroup[], draftResult: Result<Draft, DraftError>) {
+export function generateDraftCommandOutputMessage(expansionsUsed: Expansion[], draftResult: Result<Draft, DraftError>) {
     let message = "";
     const sendMessage = (m: string) => {
         message += m + "\n";
@@ -30,7 +30,7 @@ export function generateDraftCommandOutputMessage(civGroupsUsed: CivGroup[], dra
         if (draftString === "") {
             sendMessage(Messages.NoPlayers);
         } else {
-            sendMessage(`Drafting for ${civGroupsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ")}`);
+            sendMessage(`Drafting for ${expansionsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ")}`);
             sendMessage("```" + draftString + "```");
         }
     }

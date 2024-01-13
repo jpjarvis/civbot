@@ -6,7 +6,7 @@ function extractDraftMessageLines(draftMessage: string) {
     const lines = draftMessage.split("\n").filter((x) => x !== "");
 
     return {
-        civGroupsLine: lines[0],
+        expansionsLine: lines[0],
         draftLines: lines
             .splice(1)
             .map((x) => x.replace(/`/g, ""))
@@ -28,7 +28,7 @@ describe("draftCommand", () => {
         const draftArgs: DraftArguments = {
             numberOfAi: 0,
             numberOfCivs: 3,
-            civGroups: ["civ5-vanilla"],
+            expansions: ["civ5-vanilla"],
         };
 
         const result = draftCommand(draftArgs, [], emptyUserSettings);
@@ -40,7 +40,7 @@ describe("draftCommand", () => {
         const draftArgs: DraftArguments = {
             numberOfAi: 0,
             numberOfCivs: 100,
-            civGroups: ["civ5-vanilla"],
+            expansions: ["civ5-vanilla"],
         };
 
         const result = draftCommand(draftArgs, ["player1"], emptyUserSettings);
@@ -51,18 +51,18 @@ describe("draftCommand", () => {
     it("should fall back to default arguments if none are provided in arguments or user data", () => {
         const result = draftCommand({}, ["player1"], emptyUserSettings);
 
-        const { civGroupsLine, draftLines } = extractDraftMessageLines(result);
+        const { expansionsLine, draftLines } = extractDraftMessageLines(result);
 
         expect(draftLines).toHaveLength(1);
         expect(draftLines[0].fullText).toStartWith("player1");
-        expect(civGroupsLine).toContain("Base game + DLC");
+        expect(expansionsLine).toContain("Base game + DLC");
     });
 
     it("should fall back to user data arguments if none provided in arguments", () => {
         const userSettings: UserSettings = {
             defaultDraftSettings: {
                 numberOfAi: 1,
-                civGroups: ["civ6-vanilla"],
+                expansions: ["civ6-vanilla"],
                 numberOfCivs: 5,
             },
             customCivs: [],
@@ -70,10 +70,10 @@ describe("draftCommand", () => {
         };
 
         const result = draftCommand({}, ["player1"], userSettings);
-        const { civGroupsLine, draftLines } = extractDraftMessageLines(result);
+        const { expansionsLine, draftLines } = extractDraftMessageLines(result);
 
         expect(draftLines).toHaveLength(2);
         expect(draftLines[0].civsCount).toBe(5);
-        expect(civGroupsLine).toStrictEqual("Drafting for `Base game`");
+        expect(expansionsLine).toStrictEqual("Drafting for `Base game`");
     });
 });

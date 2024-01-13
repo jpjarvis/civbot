@@ -1,5 +1,5 @@
 import { ApplicationCommandData, ApplicationCommandOptionType } from "discord.js";
-import {CivGroups, civGroupsInGame, displayName} from "../../Civs/CivGroups";
+import {Expansions, expansionsInGame, displayName} from "../../Civs/Expansions";
 import {CivGame} from "../../Civs/CivGames";
 
 export function getCommands(game: CivGame) {
@@ -19,27 +19,27 @@ export function getCommands(game: CivGame) {
             },
             {
                 type: ApplicationCommandOptionType.String,
-                name: "civ-groups",
-                description: "Space-separated list of civ groups to include",
+                name: "expansions",
+                description: "Space-separated list of expansions to include",
             },
         ],
     };
 
-    const civGroupsCommand: ApplicationCommandData = {
-        name: "civ-groups",
-        description: "Manage civ groups",
+    const expansionsCommand: ApplicationCommandData = {
+        name: "expansions",
+        description: "Manage which expansions are used in the draft",
         options: [
             {
                 type: ApplicationCommandOptionType.Subcommand,
                 name: "enable",
-                description: "Add a civ group to your drafts",
+                description: "Add an expansion to your drafts",
                 options: [
                     {
                         type: ApplicationCommandOptionType.String,
-                        name: "civ-group",
-                        description: "The civ group to add",
+                        name: "expansion",
+                        description: "The expansion to add",
                         required: true,
-                        choices: civGroupsInGame(game).map((cg) => {
+                        choices: expansionsInGame(game).map((cg) => {
                             return {
                                 name: displayName(cg),
                                 value: cg,
@@ -51,14 +51,14 @@ export function getCommands(game: CivGame) {
             {
                 type: ApplicationCommandOptionType.Subcommand,
                 name: "disable",
-                description: "Remove a civ group from your drafts",
+                description: "Remove an expansion from your drafts",
                 options: [
                     {
                         type: ApplicationCommandOptionType.String,
-                        name: "civ-group",
-                        description: "The civ group to remove",
+                        name: "expansion",
+                        description: "The expansion to remove",
                         required: true,
-                        choices: civGroupsInGame(game).map((cg) => {
+                        choices: expansionsInGame(game).map((cg) => {
                             return {
                                 name: displayName(cg),
                                 value: cg,
@@ -146,5 +146,5 @@ export function getCommands(game: CivGame) {
         options: []
     };
 
-    return [draftCommand, civGroupsCommand, civsCommand, configCommand, banCommand, unbanCommand, switchGameCommand];
+    return [draftCommand, expansionsCommand, civsCommand, configCommand, banCommand, unbanCommand, switchGameCommand];
 }

@@ -12,14 +12,14 @@ export function createDefaultUserData(): UserData {
         userSettings: {
             "Civ 5": {
                 defaultDraftSettings: {
-                    civGroups: ["civ5-vanilla"]
+                    expansions: ["civ5-vanilla"]
                 },
                 customCivs: [],
                 bannedCivs: []
             },
             "Civ 6": {
                 defaultDraftSettings: {
-                    civGroups: ["civ6-vanilla", "civ6-rnf", "civ6-gs", "civ6-extra", "civ6-frontier", "civ6-leaderpass", "civ6-personas"]
+                    expansions: ["civ6-vanilla", "civ6-rnf", "civ6-gs", "civ6-extra", "civ6-frontier", "civ6-leaderpass", "civ6-personas"]
                 },
                 customCivs: [],
                 bannedCivs: []

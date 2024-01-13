@@ -1,10 +1,10 @@
 import {Civs} from "./Civs";
 import {CivGame} from "./CivGames";
 
-export type CivGroup = keyof typeof Civs | "custom";
-export const CivGroups = Object.keys(Civs).concat("custom") as CivGroup[];
+export type Expansion = keyof typeof Civs | "custom";
+export const Expansions = Object.keys(Civs).concat("custom") as Expansion[];
 
-const CivGroupMetadata: { [a in CivGroup]: { displayName: string; game: CivGame | "All" } } = {
+const ExpansionMetadata: { [a in Expansion]: { displayName: string; game: CivGame | "All" } } = {
     "civ5-vanilla": {displayName: "Base game + DLC", game: "Civ 5"},
     "lekmod": {displayName: "LEKMOD", game: "Civ 5"},
 
@@ -19,14 +19,14 @@ const CivGroupMetadata: { [a in CivGroup]: { displayName: string; game: CivGame 
     "custom": {displayName: "Custom civs", game: "All"},
 }
 
-export function civGroupsInGame(game: CivGame) {
-    return CivGroups.filter(x => CivGroupMetadata[x].game === game || CivGroupMetadata[x].game === "All")
+export function expansionsInGame(game: CivGame) {
+    return Expansions.filter(x => ExpansionMetadata[x].game === game || ExpansionMetadata[x].game === "All")
 }
 
-export function displayName(civGroup: CivGroup) {
-    return CivGroupMetadata[civGroup].displayName;
+export function displayName(expansion: Expansion) {
+    return ExpansionMetadata[expansion].displayName;
 }
 
-export function stringToCivGroup(string: string): CivGroup | undefined {
-    return CivGroups.find((cg) => cg === string);
+export function stringToExpansion(string: string): Expansion | undefined {
+    return Expansions.find((ex) => ex === string);
 }

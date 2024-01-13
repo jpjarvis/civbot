@@ -1,16 +1,16 @@
-import { CivGroup } from "../../../Civs/CivGroups";
+import { Expansion } from "../../../Civs/Expansions";
 import { selectCivs } from "../SelectCivs";
 import { Civs } from "../../../Civs/Civs";
 
 const customCivs = ["custom1"];
 
 describe("selectCivs", () => {
-    it("should return no civs if no civ groups are given", () => {
-        const civs = selectCivs(new Set<CivGroup>(), customCivs, []);
+    it("should return no civs if no expansions are given", () => {
+        const civs = selectCivs(new Set<Expansion>(), customCivs, []);
         expect(civs).toHaveLength(0);
     });
 
-    it("should return the civs of one civ group when specified", () => {
+    it("should return the civs of one expansion when specified", () => {
         const civs = selectCivs(new Set(["civ5-vanilla"]), customCivs, []);
         expect(civs).toIncludeSameMembers(Civs["civ5-vanilla"]);
     });
@@ -20,12 +20,12 @@ describe("selectCivs", () => {
         expect(civs).toIncludeSameMembers(["custom1"]);
     });
 
-    it("should return the civs of multiple groups when specified", () => {
+    it("should return the civs of multiple expansions when specified", () => {
         const civs = selectCivs(new Set(["civ5-vanilla", "lekmod"]), customCivs, []);
         expect(civs).toIncludeSameMembers(Civs["civ5-vanilla"].concat(Civs["lekmod"]));
     });
 
-    it("should include custom civs with normal groups when specified", () => {
+    it("should include custom civs with normal expansions when specified", () => {
         const civs = selectCivs(new Set(["civ5-vanilla", "lekmod", "custom"]), customCivs, []);
         expect(civs).toIncludeSameMembers(Civs["civ5-vanilla"].concat(Civs["lekmod"]).concat(customCivs));
     });
