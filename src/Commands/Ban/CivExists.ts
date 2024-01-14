@@ -1,7 +1,8 @@
-import { Expansions } from "../../Civs/Expansions";
+import {expansionsInGame} from "../../Civs/Expansions";
 import { Civs } from "../../Civs/Civs";
+import {CivGame} from "../../Civs/CivGames";
 
-export function civExists(civToBan: string) {
-    const allCivs = Expansions.reduce((acc, value) => acc.concat(Civs[value]), new Array<string>());
-    return allCivs.includes(civToBan);
+export function civExists(civToBan: string, civGame: CivGame) {
+    const allCivsInGame = expansionsInGame(civGame).reduce((acc, value) => acc.concat(Civs[value]), new Array<string>());
+    return allCivsInGame.includes(civToBan);
 }

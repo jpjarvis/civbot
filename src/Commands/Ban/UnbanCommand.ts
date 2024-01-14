@@ -2,11 +2,11 @@ import { loadUserData, saveUserData } from "../../UserDataStore";
 import { civExists } from "./CivExists";
 
 export async function unbanCommand(tenantId: string, civToUnban: string) {
-    if (!civExists(civToUnban)) {
-        return `No civ called ${civToUnban} exists.`;
-    }
-
     const userData = await loadUserData(tenantId);
+
+    if (!civExists(civToUnban, userData.game)) {
+        return `No civ called ${civToUnban} exists in ${userData.game}.`;
+    }
 
     if (!userData.userSettings[userData.game].bannedCivs.includes(civToUnban)) {
         return `${civToUnban} is not banned, so it cannot be unbanned.`;
