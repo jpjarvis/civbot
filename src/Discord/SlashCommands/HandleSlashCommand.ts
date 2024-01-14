@@ -43,7 +43,7 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
         }
     }
 
-    if (interaction.commandName === "civs") {
+    if (interaction.commandName === "custom-civs") {
         await handleCustomCivs(interaction);
         return;
     }
