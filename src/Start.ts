@@ -7,6 +7,7 @@ import {
     updateSlashCommandsForAllServers,
     updateSlashCommandsForServer
 } from "./Discord/SlashCommands/UpdateSlashCommands";
+import {handleModalSubmit} from "./Discord/Modals/HandleModalSubmit";
 
 async function start() {
     const client = new Client({
@@ -27,15 +28,26 @@ async function start() {
     });
     
     client.on("interactionCreate", async (interaction) => {
-        if (!interaction.isChatInputCommand()) return;
-
-        try {
-            await handleSlashCommand(interaction);
-        } catch (e) {
-            if (e instanceof Error) {
-                logException(e);
+        if (interaction.isChatInputCommand()) {
+            try {
+                await handleSlashCommand(interaction);
+            } catch (e) {
+                if (e instanceof Error) {
+                    logException(e);
+                }
+                await interaction.reply(Messages.GenericError);
             }
-            await interaction.reply(Messages.GenericError);
+        }
+        
+        if (interaction.isModalSubmit()) {
+            try {
+                await handleModalSubmit(interaction);
+            } catch (e) {
+                if (e instanceof Error) {
+                    logException(e);
+                }
+                await interaction.reply(Messages.GenericError);
+            }
         }
     });
 

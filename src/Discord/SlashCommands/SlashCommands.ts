@@ -1,5 +1,5 @@
 import { ApplicationCommandData, ApplicationCommandOptionType } from "discord.js";
-import {Expansions, expansionsInGame, displayName} from "../../Civs/Expansions";
+import {expansionsInGame, displayName} from "../../Civs/Expansions";
 import {CivGame} from "../../Civs/CivGames";
 
 export function getCommands(game: CivGame) {
@@ -70,43 +70,9 @@ export function getCommands(game: CivGame) {
         ],
     };
 
-    const civsCommand: ApplicationCommandData = {
+    const customCivsCommand: ApplicationCommandData = {
         name: "civs",
-        description: "Manage custom civs",
-        options: [
-            {
-                type: ApplicationCommandOptionType.Subcommand,
-                name: "add",
-                description: "Add custom civs",
-                options: [
-                    {
-                        type: ApplicationCommandOptionType.String,
-                        name: "civs",
-                        description: "Comma-separated list of civs to add",
-                        required: true,
-                    },
-                ],
-            },
-            {
-                type: ApplicationCommandOptionType.Subcommand,
-                name: "remove",
-                description: "Remove custom civs",
-                options: [
-                    {
-                        type: ApplicationCommandOptionType.String,
-                        name: "civs",
-                        description: "Comma-separated list of civs to remove",
-                        required: true,
-                    },
-                ],
-            },
-            {
-                type: ApplicationCommandOptionType.Subcommand,
-                name: "clear",
-                description: "Remove all custom civs",
-                options: [],
-            },
-        ],
+        description: "Add custom civs to your draft"
     };
 
     const configCommand: ApplicationCommandData = {
@@ -146,5 +112,5 @@ export function getCommands(game: CivGame) {
         options: []
     };
 
-    return [draftCommand, expansionsCommand, civsCommand, configCommand, banCommand, unbanCommand, switchGameCommand];
+    return [draftCommand, expansionsCommand, customCivsCommand, configCommand, banCommand, unbanCommand, switchGameCommand];
 }
