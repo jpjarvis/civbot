@@ -1,8 +1,8 @@
 ﻿import { Expansion } from "../../Civs/Expansions";
 import { Civs } from "../../Civs/Civs";
 
-export function selectCivs(expansions: Set<Expansion>, customCivs: string[], bannedCivs: string[]): string[] {
-    return Array.from(expansions)
+export function selectCivs(expansions: Expansion[], customCivs: string[], bannedCivs: string[]): string[] {
+    return Array.from(new Set(expansions))
         .map((expansion) => {
             if (expansion === "custom") {
                 return customCivs;
