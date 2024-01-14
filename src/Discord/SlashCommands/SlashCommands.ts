@@ -71,7 +71,7 @@ export function getCommands(game: CivGame) {
     };
 
     const customCivsCommand: ApplicationCommandData = {
-        name: "civs",
+        name: "custom-civs",
         description: "Add custom civs to your draft"
     };
 
