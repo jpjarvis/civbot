@@ -1,24 +1,24 @@
-import {ChatInputCommandInteraction} from "discord.js";
-import { Expansion, stringToExpansion } from "../../Civs/Expansions";
-import { getVoiceChannelMembers } from "../VoiceChannels";
-import { DraftArguments, draftCommand } from "../../Commands/Draft/DraftCommand";
-import { Result } from "../../Functional/Result";
-import { showConfigCommand } from "../../Commands/Config/ShowConfigCommand";
-import { enableExpansionCommand } from "../../Commands/Expansions/EnableExpansionCommand";
-import { disableExpansionCommand } from "../../Commands/Expansions/DisableExpansionCommand";
-import { addCustomCivsCommand } from "../../Commands/CustomCivs/AddCustomCivsCommand";
-import { removeCustomCivsCommand } from "../../Commands/CustomCivs/RemoveCustomCivsCommand";
-import { clearCustomCivsCommand } from "../../Commands/CustomCivs/ClearCustomCivsCommand";
-import { loadUserData } from "../../UserDataStore";
-import { banCommand } from "../../Commands/Ban/BanCommand";
-import { unbanCommand } from "../../Commands/Ban/UnbanCommand";
+import {
+    ChatInputCommandInteraction
+} from "discord.js";
+import {Expansion, stringToExpansion} from "../../Civs/Expansions";
+import {getVoiceChannelMembers} from "../VoiceChannels";
+import {DraftArguments, draftCommand} from "../../Commands/Draft/DraftCommand";
+import {Result} from "../../Functional/Result";
+import {showConfigCommand} from "../../Commands/Config/ShowConfigCommand";
+import {enableExpansionCommand} from "../../Commands/Expansions/EnableExpansionCommand";
+import {disableExpansionCommand} from "../../Commands/Expansions/DisableExpansionCommand";
+import {loadUserData} from "../../UserDataStore";
+import {banCommand} from "../../Commands/Ban/BanCommand";
+import {unbanCommand} from "../../Commands/Ban/UnbanCommand";
 import {logError, logInfo} from "../../Log";
 import {switchGameCommand} from "../../Commands/SwitchGame/SwitchGameCommand";
 import {updateSlashCommandsForServer} from "./UpdateSlashCommands";
+import {customCivsModal} from "../Modals/CustomCivsModal";
 
 export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     logInfo(`Received interaction "${interaction.commandName}" with parameters { ${interaction.options.data.map(x => `${x.name}: ${x.value}`).join(", ")} }`);
-    
+
     if (interaction.commandName === "draft") {
         await handleDraft(interaction);
         return;
@@ -44,22 +44,8 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
     }
 
     if (interaction.commandName === "civs") {
-        const subcommand = interaction.options.getSubcommand();
-
-        if (subcommand === "add") {
-            await handleAddCustomCivs(interaction);
-            return;
-        }
-
-        if (subcommand === "remove") {
-            await handleRemoveCustomCivs(interaction);
-            return;
-        }
-
-        if (subcommand === "clear") {
-            await handleClearCustomCivs(interaction);
-            return;
-        }
+        await handleCustomCivs(interaction);
+        return;
     }
 
     if (interaction.commandName === "ban") {
@@ -71,12 +57,12 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
         await handleUnban(interaction);
         return;
     }
-    
+
     if (interaction.commandName === "switch-game") {
         await handleSwitchGame(interaction);
         return;
     }
-    
+
     logError(`Unrecognised slash command ${interaction.commandName}.`);
     await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
 }
@@ -192,27 +178,11 @@ async function handleDisableExpansion(interaction: ChatInputCommandInteraction) 
     await interaction.reply(message);
 }
 
-async function handleAddCustomCivs(interaction: ChatInputCommandInteraction) {
+async function handleCustomCivs(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
-    const civs = extractCustomCivsArgument(interaction);
+    const userData = await loadUserData(serverId);
 
-    const message = await addCustomCivsCommand(serverId, civs);
-    await interaction.reply(message);
-}
-
-async function handleRemoveCustomCivs(interaction: ChatInputCommandInteraction) {
-    const serverId = interaction.guildId!;
-    const civs = extractCustomCivsArgument(interaction);
-
-    const message = await removeCustomCivsCommand(serverId, civs);
-    await interaction.reply(message);
-}
-
-async function handleClearCustomCivs(interaction: ChatInputCommandInteraction) {
-    const serverId = interaction.guildId!;
-
-    const message = await clearCustomCivsCommand(serverId);
-    await interaction.reply(message);
+    await interaction.showModal(customCivsModal(userData.userSettings[userData.game].customCivs));
 }
 
 async function handleBan(interaction: ChatInputCommandInteraction) {
@@ -235,10 +205,10 @@ async function handleUnban(interaction: ChatInputCommandInteraction) {
 
 async function handleSwitchGame(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
-    
+
     const game = await switchGameCommand(serverId);
 
     await updateSlashCommandsForServer(interaction.client, serverId);
-    
+
     await interaction.reply(`Switched to drafting for ${game}.`);
 }
