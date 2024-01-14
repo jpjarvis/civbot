@@ -1,6 +1,4 @@
-import {
-    ChatInputCommandInteraction
-} from "discord.js";
+import {ChatInputCommandInteraction} from "discord.js";
 import {Expansion, stringToExpansion} from "../../Civs/Expansions";
 import {getVoiceChannelMembers} from "../VoiceChannels";
 import {DraftArguments, draftCommand} from "../../Commands/Draft/DraftCommand";
@@ -155,10 +153,7 @@ async function handleDraft(interaction: ChatInputCommandInteraction) {
 
 async function handleShowConfig(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
-    const userData = await loadUserData(serverId);
-    const userSettings = userData.userSettings[userData.game];
-
-    let response = showConfigCommand(userSettings);
+    let response = showConfigCommand(await loadUserData(serverId));
     await interaction.reply(response);
 }
 
