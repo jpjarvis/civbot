@@ -1,7 +1,7 @@
 ﻿import { Expansion } from "../../Civs/Expansions";
-import { Civs } from "../../Civs/Civs";
+import {Civ, Civs} from "../../Civs/Civs";
 
-export function selectCivs(expansions: Expansion[], customCivs: string[], bannedCivs: string[]): string[] {
+export function selectCivs(expansions: Expansion[], customCivs: string[], bannedCivs: Civ[]): Civ[] {
     return Array.from(new Set(expansions))
         .map((expansion) => {
             if (expansion === "custom") {
@@ -9,6 +9,6 @@ export function selectCivs(expansions: Expansion[], customCivs: string[], banned
             }
             return Civs[expansion];
         })
-        .reduce((prev: string[], current: string[]) => current.concat(prev), [])
+        .reduce((prev: Civ[], current: Civ[]) => current.concat(prev), [])
         .filter(x => !bannedCivs.includes(x));
 }

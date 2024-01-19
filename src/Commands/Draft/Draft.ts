@@ -1,8 +1,9 @@
 import { Draft, DraftError } from "./DraftTypes";
 import * as shuffle from "shuffle-array";
 import { Result } from "../../Functional/Result";
+import {Civ} from "../../Civs/Civs";
 
-function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): Draft {
+function assignCivs(players: string[], civsPerPlayer: number, civs: Civ[]): Draft {
     shuffle(civs);
 
     return players.map((player, index) => {
@@ -10,7 +11,7 @@ function assignCivs(players: string[], civsPerPlayer: number, civs: string[]): D
     });
 }
 
-export function draft(players: string[], civsPerPlayer: number, civs: string[]): Result<Draft, DraftError> {
+export function draft(players: string[], civsPerPlayer: number, civs: Civ[]): Result<Draft, DraftError> {
     if (players.length == 0) {
         return { isError: true, error: "no-players" };
     }
