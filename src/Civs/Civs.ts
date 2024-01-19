@@ -2,6 +2,10 @@ import {Expansion} from "./Expansions";
 
 export type Civ = string | { leader: string, civ: string }
 
+export function hasLeader(civ: Civ): civ is {leader: string, civ: string} {
+    return !(typeof civ === 'string');
+}
+
 export const Civs : { [ex in Exclude<Expansion, "custom">]: Civ[] } = {
     "civ5-vanilla": [
         "America",
