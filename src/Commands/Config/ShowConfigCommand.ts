@@ -1,5 +1,6 @@
 import {displayName} from "../../Civs/Expansions";
 import {UserData} from "../../UserData/UserData";
+import {Civ} from "../../Civs/Civs";
 
 export function showConfigCommand(userData: UserData): string {
     const activeSettings = userData.userSettings[userData.game];
@@ -26,6 +27,14 @@ function customCivsLine(customCivs: string[]) {
     }
 }
 
-function bannedCivsLine(bannedCivs: string[]) {
-    return `Banned civs:\`\`\`\n${bannedCivs.sort().join("\n")}\`\`\``;
+function bannedCivsLine(bannedCivs: Civ[]) {
+    return `Banned civs:\`\`\`\n${bannedCivs.sort().map(renderCiv).join("\n")}\`\`\``;
+}
+
+function renderCiv(civ: Civ) {
+    if (typeof civ === "string") {
+        return civ;
+    }
+    
+    return civ.leader;
 }
