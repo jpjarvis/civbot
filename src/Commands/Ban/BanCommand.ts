@@ -34,7 +34,7 @@ export async function handleBan(interaction: ChatInputCommandInteraction) {
         logInfo("Matched multiple civs. Waiting for user reaction...");
         const userReactions = await message.awaitReactions({
             filter: (reaction, user) => numberEmojis.concat(allEmoji).includes(reaction.emoji.name ?? "") && user.id === interaction.user.id,
-            time: 10_000,
+            time: 60_000,
             max: 1
         });
 
