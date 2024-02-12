@@ -17,7 +17,7 @@ export async function handleBan(interaction: ChatInputCommandInteraction) {
         await interaction.reply(`No civ called ${civToBan} exists in ${userData.game}.`);
         return;
     }
-    else if (matchedCivs.length > 5) {
+    else if (matchedCivs.length > numberEmojis.length) {
         await interaction.reply(`"${civToBan}" matches ${matchedCivs.length} civs. Please me more specific.`);
     }
     else if (matchedCivs.length > 1) {
