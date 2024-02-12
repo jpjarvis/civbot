@@ -45,18 +45,18 @@ export async function handleBan(interaction: ChatInputCommandInteraction) {
         }
         if (reaction.emoji.name === allEmoji) {
             await banCivs(serverId, userData, matchedCivs);
-            await message.edit(`Banned ${matchedCivs.length} civs.`);
+            await message.edit(banMessage(matchedCivs));
             return;
         } else if (numberEmojis.includes(reaction.emoji.name!)) {
             const chosenCiv = matchedCivs[numberEmojis.indexOf(reaction.emoji.name!)];
             await banCivs(serverId, userData, [chosenCiv]);
-            await message.edit(banMessage(chosenCiv));
+            await message.edit(banMessage([chosenCiv]));
             return;
         }
     }
 
     await banCivs(serverId, userData, matchedCivs);
-    const message = banMessage(matchedCivs[0]);
+    const message = banMessage(matchedCivs);
 
     await interaction.reply(message);
 }
@@ -66,8 +66,12 @@ async function banCivs(serverId: string, userData: UserData, civsToBan: Civ[]) {
     await saveUserData(serverId, userData);
 }
 
-function banMessage(bannedCiv: Civ) {
-    return `\`${renderCiv(bannedCiv)}\` has been banned. It will no longer appear in your drafts.`
+function banMessage(bannedCivs: Civ[]) {
+    if (bannedCivs.length == 1) {
+        return `\`${renderCiv(bannedCivs[0])}\` has been banned. It will no longer appear in your drafts.`;
+    }
+    
+    return `${bannedCivs.map(x => `\`${x}\``).join(", ")} have been banned. They will no longer appear in your drafts.`;
 }
 
 function renderCivSelectionMessage(civToBan: Civ, matchedCivs: Civ[]) {
