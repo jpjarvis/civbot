@@ -4,13 +4,22 @@ const numberEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
 const allEmoji = '💥'
 export const MAX_OPTIONS = numberEmojis.length;
 
-export async function multipleChoice(interaction: CommandInteraction, options: string[], messages: {question: string, timeout: string, selected: (selectedOptions: string[]) => string}): Promise<string[] | undefined>{
+export async function multipleChoice<TOption>(
+    interaction: CommandInteraction,
+    options: TOption[],
+    renderOption: (option: TOption) => string,
+    messages: {
+        question: string,
+        timeout: string,
+        selected: (selectedOptions: TOption[]) => string
+    }
+): Promise<TOption[] | undefined> {
     const reply = await interaction.reply({
         content: `${messages.question}
-${renderOptionsMessage(options)}`,
+${renderOptionsMessage(options.map(renderOption))}`,
         fetchReply: true
     });
-    
+
     await addReactions(reply, options.length);
     const reactionEmoji = await waitForUserReaction(reply, interaction.user.id);
 

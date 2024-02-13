@@ -20,8 +20,3 @@ export function matchCivs(civString: string, civGame: CivGame): Civ[] {
         return false;
     });
 }
-
-export function civExists(civToBan: string, civGame: CivGame) {
-    const allCivsInGame = expansionsInGame(civGame).reduce((acc, value) => acc.concat(Civs[value]), new Array<string>());
-    return allCivsInGame.includes(civToBan);
-}

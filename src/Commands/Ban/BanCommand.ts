@@ -1,9 +1,9 @@
-import {loadUserData, saveUserData} from "../../UserDataStore";
-import {matchCivs} from "./CivExists";
-import {Civ, civsEqual, renderCiv} from "../../Civs/Civs";
+import {loadUserData} from "../../UserDataStore";
+import {matchCivs} from "./MatchCivs";
+import {Civ, renderCiv} from "../../Civs/Civs";
 import {ChatInputCommandInteraction} from "discord.js";
-import {UserData} from "../../UserData/UserData";
 import {MAX_OPTIONS, multipleChoice} from "./MultipleChoice";
+import {banCivs, isBanned} from "./Ban";
 
 export async function handleBan(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
@@ -27,28 +27,24 @@ export async function handleBan(interaction: ChatInputCommandInteraction) {
         await interaction.reply(`"${searchString}" matches ${availableMatchedCivs.length} civs that aren't already banned. Please me more specific.`);
         return;
     } else if (availableMatchedCivs.length > 1) {
-        const chosenCivs = await multipleChoice(interaction, availableMatchedCivs.map(renderCiv), {
-            question: `"${searchString}" matches ${availableMatchedCivs.length} civs that aren't already banned. Please click one of the reacts to select which one to ban:`,
-            selected: banMessage,
-            timeout: "Request to ban civ timed out."
-        });
+        const chosenCivs = await multipleChoice(
+            interaction,
+            availableMatchedCivs,
+            renderCiv,
+            {
+                question: `"${searchString}" matches ${availableMatchedCivs.length} civs that aren't already banned. Please click one of the reacts to select which one to ban:`,
+                selected: banMessage,
+                timeout: "Request to ban civ timed out."
+            });
 
         if (chosenCivs) {
             await banCivs(serverId, userData, chosenCivs)
+            return;
         }
     }
 
     await banCivs(serverId, userData, availableMatchedCivs);
     await interaction.reply(banMessage(availableMatchedCivs));
-}
-
-async function banCivs(serverId: string, userData: UserData, civsToBan: Civ[]) {
-    userData.userSettings[userData.game].bannedCivs = userData.userSettings[userData.game].bannedCivs.concat(civsToBan);
-    await saveUserData(serverId, userData);
-}
-
-function isBanned(civ: Civ, userData: UserData) {
-    return userData.userSettings[userData.game].bannedCivs.some(x => civsEqual(x, civ));
 }
 
 function banMessage(bannedCivs: Civ[]) {
