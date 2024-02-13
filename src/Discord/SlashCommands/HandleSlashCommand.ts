@@ -93,14 +93,6 @@ function parseExpansions(expansionsString: string): Result<Expansion[], { invali
         value: expansions,
     };
 }
-
-function extractCustomCivsArgument(interaction: ChatInputCommandInteraction): string[] {
-    return interaction.options
-        .getString("civs")!
-        .split(",")
-        .map((s) => s.trim());
-}
-
 function extractDraftArguments(interaction: ChatInputCommandInteraction): Result<Partial<DraftArguments>, string> {
     const ai = interaction.options.getInteger("ai") ?? undefined;
     const civs = interaction.options.getInteger("civs") ?? undefined;
