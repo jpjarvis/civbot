@@ -1,13 +1,13 @@
 import {ChatInputCommandInteraction} from "discord.js";
-import {draftCommand} from "../../Commands/Draft/DraftCommand";
-import {enableExpansionCommand} from "../../Commands/Expansions/EnableExpansion";
-import {banCommand} from "../../Commands/Ban/BanCommand";
-import {unbanCommand} from "../../Commands/Ban/UnbanCommand";
-import {switchGameCommand} from "../../Commands/SwitchGame/SwitchGameCommand";
-import {disableExpansionCommand} from "../../Commands/Expansions/DisableExpansionCommand";
-import {showConfigCommand} from "../../Commands/Config/ShowConfigCommand";
-import {customCivsCommand} from "../../Commands/CustomCivs/CustomCivsCommand";
-import {logError, logInfo} from "../../Log";
+import {draftCommand} from "../Commands/Draft/DraftCommand";
+import {enableExpansionCommand} from "../Commands/Expansions/EnableExpansion";
+import {banCommand} from "../Commands/Ban/BanCommand";
+import {unbanCommand} from "../Commands/Ban/UnbanCommand";
+import {switchGameCommand} from "../Commands/SwitchGame/SwitchGameCommand";
+import {disableExpansionCommand} from "../Commands/Expansions/DisableExpansionCommand";
+import {showConfigCommand} from "../Commands/Config/ShowConfigCommand";
+import {customCivsCommand} from "../Commands/CustomCivs/CustomCivsCommand";
+import {logError, logInfo} from "../Log";
 
 export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     logInfo(`Received interaction "${interaction.commandName}" with parameters { ${interaction.options.data.map(x => `${x.name}: ${x.value}`).join(", ")} }`);

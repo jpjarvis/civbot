@@ -1,5 +1,5 @@
 import {ModalSubmitInteraction} from "discord.js";
-import {loadUserData, saveUserData} from "../../UserDataStore";
+import {loadUserData, saveUserData} from "../UserDataStore";
 
 export async function handleModalSubmit(interaction: ModalSubmitInteraction) {
     if (interaction.customId === "customCivs") {

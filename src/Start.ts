@@ -1,13 +1,13 @@
 import {Client, GatewayIntentBits} from "discord.js";
 import Messages from "./Messages";
 import {getToken} from "./Auth";
-import {handleSlashCommand} from "./Discord/SlashCommands/HandleSlashCommand";
+import {handleSlashCommand} from "./SlashCommands/HandleSlashCommand";
 import {logException, logInfo} from "./Log";
 import {
     updateSlashCommandsForAllServers,
     updateSlashCommandsForServer
-} from "./Discord/SlashCommands/UpdateSlashCommands";
-import {handleModalSubmit} from "./Discord/Modals/HandleModalSubmit";
+} from "./SlashCommands/UpdateSlashCommands";
+import {handleModalSubmit} from "./Modals/HandleModalSubmit";
 
 async function start() {
     const client = new Client({

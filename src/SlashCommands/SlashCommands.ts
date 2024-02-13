@@ -1,6 +1,6 @@
 import { ApplicationCommandData, ApplicationCommandOptionType } from "discord.js";
-import {expansionsInGame, displayName} from "../../Civs/Expansions";
-import {CivGame} from "../../Civs/CivGames";
+import {expansionsInGame, displayName} from "../Civs/Expansions";
+import {CivGame} from "../Civs/CivGames";
 
 export function getCommands(game: CivGame) {
     const draftCommand: ApplicationCommandData = {
