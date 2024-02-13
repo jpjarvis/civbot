@@ -1,6 +1,6 @@
 import {loadUserData, saveUserData} from "../../UserDataStore";
 import {matchCivs} from "./CivExists";
-import {Civ, civsEqual, hasLeader} from "../../Civs/Civs";
+import {Civ, civsEqual, renderCiv} from "../../Civs/Civs";
 import {ChatInputCommandInteraction} from "discord.js";
 import {UserData} from "../../UserData/UserData";
 import {MAX_OPTIONS, multipleChoice} from "./MultipleChoice";
@@ -57,12 +57,4 @@ function banMessage(bannedCivs: Civ[]) {
     }
 
     return `The following civs have been banned: \`\`\`${bannedCivs.map(x => renderCiv(x)).join("\n")}\`\`\` They will no longer appear in your drafts.`;
-}
-
-function renderCiv(civ: Civ): string {
-    if (!hasLeader(civ)) {
-        return civ;
-    }
-
-    return `${civ.leader} - ${civ.civ}`;
 }

@@ -2,15 +2,7 @@
 import { Draft, DraftEntry, DraftError } from "./DraftTypes";
 import {Expansion, displayName} from "../../Civs/Expansions";
 import { Result } from "../../Functional/Result";
-import {Civ} from "../../Civs/Civs";
-
-function renderCiv(civ: Civ): string {
-    if (typeof civ === "string") {
-        return civ;
-    }
-    
-    return `${civ.leader} (${civ.civ})`;
-}
+import {renderCiv} from "../../Civs/Civs";
 
 function getPlayerDraftString(draftEntry: DraftEntry): string {
     let response = `${draftEntry.player} `.padEnd(20, " ");

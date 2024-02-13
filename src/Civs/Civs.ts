@@ -14,6 +14,14 @@ export function civsEqual(a: Civ, b: Civ) {
     return a.leader === b.leader && a.civ === b.civ;
 }
 
+export function renderCiv(civ: Civ): string {
+    if (!hasLeader(civ)) {
+        return civ;
+    }
+
+    return `${civ.leader} - ${civ.civ}`;
+}
+
 export const Civs : { [ex in Exclude<Expansion, "custom">]: Civ[] } = {
     "civ5-vanilla": [
         "America",
