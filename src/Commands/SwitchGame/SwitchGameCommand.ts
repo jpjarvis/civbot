@@ -1,7 +1,7 @@
 import {loadUserData, saveUserData} from "../../UserDataStore";
 import {CivGame} from "../../Civs/CivGames";
 import {ChatInputCommandInteraction} from "discord.js";
-import {updateSlashCommandsForServer} from "../../Discord/SlashCommands/UpdateSlashCommands";
+import {updateSlashCommandsForServer} from "../../SlashCommands/UpdateSlashCommands";
 
 export async function switchGameCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
