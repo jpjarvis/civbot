@@ -6,6 +6,14 @@ export function hasLeader(civ: Civ): civ is {leader: string, civ: string} {
     return !(typeof civ === 'string');
 }
 
+export function civsEqual(a: Civ, b: Civ) {
+    if (!hasLeader(a) || !hasLeader(b)) {
+        return a === b;
+    }
+    
+    return a.leader === b.leader && a.civ === b.civ;
+}
+
 export const Civs : { [ex in Exclude<Expansion, "custom">]: Civ[] } = {
     "civ5-vanilla": [
         "America",

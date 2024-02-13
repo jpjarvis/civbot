@@ -1,6 +1,6 @@
 import {loadUserData, saveUserData} from "../../UserDataStore";
 import {matchCivs} from "./CivExists";
-import {Civ, hasLeader} from "../../Civs/Civs";
+import {Civ, civsEqual, hasLeader} from "../../Civs/Civs";
 import {ChatInputCommandInteraction, Message} from "discord.js";
 import {UserData} from "../../UserData/UserData";
 import {logInfo} from "../../Log";
@@ -8,25 +8,33 @@ import {logInfo} from "../../Log";
 export async function handleBan(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
-    const civToBan = interaction.options.getString("civ")!;
+    const searchString = interaction.options.getString("civ")!;
     const userData = await loadUserData(serverId);
 
-    const matchedCivs = matchCivs(civToBan, userData.game);
-
-    if (matchedCivs.length === 0) {
-        await interaction.reply(`No civ called ${civToBan} exists in ${userData.game}.`);
+    const allMatchedCivs = matchCivs(searchString, userData.game);
+    const alreadyBannedCivs = allMatchedCivs.filter(x => isBanned(x, userData))
+    const availableMatchedCivs = allMatchedCivs.filter(x => !isBanned(x, userData))
+    
+    if (availableMatchedCivs.length === 0) {
+        if (alreadyBannedCivs.length == 1) {
+            await interaction.reply(`\`${renderCiv(alreadyBannedCivs[0])}\` is already banned.`);
+        }
+        else if (alreadyBannedCivs.length > 1) {
+            await interaction.reply(`"${searchString}" matches ${alreadyBannedCivs.length} civs, but they are all already banned.`);
+        }
+        await interaction.reply(`No civ called "${searchString}" exists in ${userData.game}.`);
         return;
-    } else if (matchedCivs.length > numberEmojis.length) {
-        await interaction.reply(`"${civToBan}" matches ${matchedCivs.length} civs. Please me more specific.`);
+    } else if (availableMatchedCivs.length > numberEmojis.length) {
+        await interaction.reply(`"${searchString}" matches ${availableMatchedCivs.length} civs that aren't already banned. Please me more specific.`);
         return;
-    } else if (matchedCivs.length > 1) {
+    } else if (availableMatchedCivs.length > 1) {
         const message = await interaction.reply({
-            content: renderCivSelectionMessage(civToBan, matchedCivs),
+            content: renderCivSelectionMessage(searchString, availableMatchedCivs),
             fetchReply: true
         });
 
         logInfo("Matched multiple civs. Waiting for user reaction...");
-        await addReactions(message, matchedCivs.length);
+        await addReactions(message, availableMatchedCivs.length);
         const reactionEmoji = await waitForUserReaction(message, interaction.user.id);
 
         if (reactionEmoji === undefined) {
@@ -34,24 +42,28 @@ export async function handleBan(interaction: ChatInputCommandInteraction) {
             return;
         }
         if (reactionEmoji === allEmoji) {
-            await banCivs(serverId, userData, matchedCivs);
-            await message.edit(banMessage(matchedCivs));
+            await banCivs(serverId, userData, availableMatchedCivs);
+            await message.edit(banMessage(availableMatchedCivs));
             return;
         } else if (numberEmojis.includes(reactionEmoji)) {
-            const chosenCiv = matchedCivs[numberEmojis.indexOf(reactionEmoji)];
+            const chosenCiv = availableMatchedCivs[numberEmojis.indexOf(reactionEmoji)];
             await banCivs(serverId, userData, [chosenCiv]);
             await message.edit(banMessage([chosenCiv]));
             return;
         }
     }
 
-    await banCivs(serverId, userData, matchedCivs);
-    await interaction.reply(banMessage(matchedCivs));
+    await banCivs(serverId, userData, availableMatchedCivs);
+    await interaction.reply(banMessage(availableMatchedCivs));
 }
 
 async function banCivs(serverId: string, userData: UserData, civsToBan: Civ[]) {
     userData.userSettings[userData.game].bannedCivs = userData.userSettings[userData.game].bannedCivs.concat(civsToBan);
     await saveUserData(serverId, userData);
+}
+
+function isBanned(civ: Civ, userData: UserData) {
+    return userData.userSettings[userData.game].bannedCivs.some(x => civsEqual(x, civ));
 }
 
 function banMessage(bannedCivs: Civ[]) {
@@ -80,7 +92,7 @@ async function waitForUserReaction(message: Message, userId: string) {
 }
 
 function renderCivSelectionMessage(civToBan: Civ, matchedCivs: Civ[]) {
-    return `"${civToBan}" matches ${matchedCivs.length} civs. Please click one of the reacts to select which one to ban:
+    return `"${civToBan}" matches ${matchedCivs.length} civs that aren't already banned. Please click one of the reacts to select which one to ban:
 ${matchedCivs.map((x, i) => `${numberEmojis[i]}: ${renderCiv(x)}`).join("\n")}
 ${allEmoji}: All`
 }
