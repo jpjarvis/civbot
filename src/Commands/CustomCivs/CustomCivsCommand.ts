@@ -1,9 +1,18 @@
 import {
     ActionRowBuilder,
+    ChatInputCommandInteraction,
     ModalActionRowComponentBuilder,
     ModalBuilder,
     TextInputBuilder
 } from "discord.js";
+import {loadUserData} from "../../UserDataStore";
+
+export async function handleCustomCivs(interaction: ChatInputCommandInteraction) {
+    const serverId = interaction.guildId!;
+    const userData = await loadUserData(serverId);
+
+    await interaction.showModal(customCivsModal(userData.userSettings[userData.game].customCivs));
+}
 
 export function customCivsModal(customCivs: string[]) {
     const modal = new ModalBuilder()
@@ -21,8 +30,6 @@ export function customCivsModal(customCivs: string[]) {
     const actionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(customCivsInput);
 
     modal.addComponents(actionRow);
-    
+
     return modal;
 }
-
-
