@@ -52,5 +52,5 @@ function banMessage(bannedCivs: Civ[]) {
         return `\`${renderCiv(bannedCivs[0])}\` has been banned. It will no longer appear in your drafts.`;
     }
 
-    return `The following civs have been banned: \`\`\`${bannedCivs.map(x => renderCiv(x)).join("\n")}\`\`\` They will no longer appear in your drafts.`;
+    return `The following civs have been banned: \`\`\`\n${bannedCivs.map(x => renderCiv(x)).join("\n")}\`\`\` They will no longer appear in your drafts.`;
 }

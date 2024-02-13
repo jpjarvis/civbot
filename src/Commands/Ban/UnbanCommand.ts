@@ -54,5 +54,5 @@ function unbanMessage(unbannedCivs: Civ[]) {
         return `\`${renderCiv(unbannedCivs[0])}\` has been unbanned. It will once again appear in your drafts.`;
     }
 
-    return `The following civs have been unbanned: \`\`\`${unbannedCivs.map(x => renderCiv(x)).join("\n")}\`\`\` They will once again appear in your drafts.`;
+    return `The following civs have been unbanned: \`\`\`\n${unbannedCivs.map(x => renderCiv(x)).join("\n")}\`\`\` They will once again appear in your drafts.`;
 }
