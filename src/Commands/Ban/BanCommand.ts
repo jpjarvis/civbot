@@ -5,7 +5,7 @@ import {ChatInputCommandInteraction} from "discord.js";
 import {MAX_OPTIONS, multipleChoice} from "./MultipleChoice";
 import {banCivs, isBanned} from "./Ban";
 
-export async function handleBan(interaction: ChatInputCommandInteraction) {
+export async function banCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const searchString = interaction.options.getString("civ")!;

@@ -14,7 +14,7 @@ export type DraftArguments = {
     expansions: Expansion[];
 };
 
-export async function handleDraft(interaction: ChatInputCommandInteraction) {
+export async function draftCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const draftArgumentsOrError = extractDraftArguments(interaction);

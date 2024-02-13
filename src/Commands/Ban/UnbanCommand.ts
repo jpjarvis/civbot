@@ -5,7 +5,7 @@ import {Civ, renderCiv} from "../../Civs/Civs";
 import {MAX_OPTIONS, multipleChoice} from "./MultipleChoice";
 import {isBanned, unbanCivs} from "./Ban";
 
-export async function handleUnban(interaction: ChatInputCommandInteraction) {
+export async function unbanCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const searchString = interaction.options.getString("civ")!;

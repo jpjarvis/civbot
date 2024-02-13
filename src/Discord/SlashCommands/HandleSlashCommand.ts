@@ -1,24 +1,24 @@
 import {ChatInputCommandInteraction} from "discord.js";
-import {handleDraft} from "../../Commands/Draft/DraftCommand";
-import {handleEnableExpansion} from "../../Commands/Expansions/EnableExpansion";
-import {handleBan} from "../../Commands/Ban/BanCommand";
-import {handleUnban} from "../../Commands/Ban/UnbanCommand";
-import {handleSwitchGame} from "../../Commands/SwitchGame/SwitchGameCommand";
-import {handleDisableExpansion} from "../../Commands/Expansions/DisableExpansionCommand";
-import {handleShowConfig} from "../../Commands/Config/ShowConfigCommand";
-import {handleCustomCivs} from "../../Commands/CustomCivs/CustomCivsCommand";
+import {draftCommand} from "../../Commands/Draft/DraftCommand";
+import {enableExpansionCommand} from "../../Commands/Expansions/EnableExpansion";
+import {banCommand} from "../../Commands/Ban/BanCommand";
+import {unbanCommand} from "../../Commands/Ban/UnbanCommand";
+import {switchGameCommand} from "../../Commands/SwitchGame/SwitchGameCommand";
+import {disableExpansionCommand} from "../../Commands/Expansions/DisableExpansionCommand";
+import {showConfigCommand} from "../../Commands/Config/ShowConfigCommand";
+import {customCivsCommand} from "../../Commands/CustomCivs/CustomCivsCommand";
 import {logError, logInfo} from "../../Log";
 
 export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     logInfo(`Received interaction "${interaction.commandName}" with parameters { ${interaction.options.data.map(x => `${x.name}: ${x.value}`).join(", ")} }`);
 
     if (interaction.commandName === "draft") {
-        await handleDraft(interaction);
+        await draftCommand(interaction);
         return;
     }
 
     if (interaction.commandName === "config") {
-        await handleShowConfig(interaction);
+        await showConfigCommand(interaction);
         return;
     }
 
@@ -26,33 +26,33 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
         const subcommand = interaction.options.getSubcommand();
 
         if (subcommand === "enable") {
-            await handleEnableExpansion(interaction);
+            await enableExpansionCommand(interaction);
             return;
         }
 
         if (subcommand === "disable") {
-            await handleDisableExpansion(interaction);
+            await disableExpansionCommand(interaction);
             return;
         }
     }
 
     if (interaction.commandName === "custom-civs") {
-        await handleCustomCivs(interaction);
+        await customCivsCommand(interaction);
         return;
     }
 
     if (interaction.commandName === "ban") {
-        await handleBan(interaction);
+        await banCommand(interaction);
         return;
     }
 
     if (interaction.commandName === "unban") {
-        await handleUnban(interaction);
+        await unbanCommand(interaction);
         return;
     }
 
     if (interaction.commandName === "switch-game") {
-        await handleSwitchGame(interaction);
+        await switchGameCommand(interaction);
         return;
     }
 

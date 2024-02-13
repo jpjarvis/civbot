@@ -2,7 +2,7 @@ import {Expansion, displayName, stringToExpansion} from "../../Civs/Expansions";
 import { loadUserData, saveUserData } from "../../UserDataStore";
 import {ChatInputCommandInteraction, User} from "discord.js";
 
-export async function handleEnableExpansion(interaction: ChatInputCommandInteraction) {
+export async function enableExpansionCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const expansion = stringToExpansion(interaction.options.getString("expansion")!)!;
 

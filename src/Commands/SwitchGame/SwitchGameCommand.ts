@@ -3,7 +3,7 @@ import {CivGame} from "../../Civs/CivGames";
 import {ChatInputCommandInteraction} from "discord.js";
 import {updateSlashCommandsForServer} from "../../Discord/SlashCommands/UpdateSlashCommands";
 
-export async function handleSwitchGame(interaction: ChatInputCommandInteraction) {
+export async function switchGameCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
 
     const game = await switchGame(serverId);

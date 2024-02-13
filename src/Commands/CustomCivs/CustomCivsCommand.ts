@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import {loadUserData} from "../../UserDataStore";
 
-export async function handleCustomCivs(interaction: ChatInputCommandInteraction) {
+export async function customCivsCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const userData = await loadUserData(serverId);
 
