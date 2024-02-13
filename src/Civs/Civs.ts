@@ -1,4 +1,45 @@
-export const Civs = {
+import {Expansion, Expansions} from "./Expansions";
+
+export type Civ = string | { leader: string, civ: string }
+
+export function hasLeader(civ: Civ): civ is { leader: string, civ: string } {
+    return !(typeof civ === 'string');
+}
+
+export function civsEqual(a: Civ, b: Civ) {
+    if (!hasLeader(a) || !hasLeader(b)) {
+        return a === b;
+    }
+
+    return a.leader === b.leader && a.civ === b.civ;
+}
+
+export function renderCiv(civ: Civ): string {
+    if (!hasLeader(civ)) {
+        return civ;
+    }
+
+    return `${civ.leader} - ${civ.civ}`;
+}
+
+export function renderCivShort(civ: Civ): string {
+    if (!hasLeader(civ)) {
+        return civ;
+    }
+
+    if (leaderHasMultipleCivs(civ.leader)) {
+        return `${civ.leader} (${civ.civ})`;
+    }
+
+    return civ.leader;
+}
+
+function leaderHasMultipleCivs(leader: string) {
+    const flattenedCivs = (Expansions.filter(x => x != "custom") as Exclude<Expansion, "custom">[]).map(x => Civs[x]).flat();
+    return flattenedCivs.filter(civ => hasLeader(civ) && civ.leader === leader).length > 1;
+}
+
+export const Civs: { [ex in Exclude<Expansion, "custom">]: Civ[] } = {
     "civ5-vanilla": [
         "America",
         "Arabia",
@@ -117,100 +158,331 @@ export const Civs = {
     ],
 
     "civ6-vanilla": [
-        'Catherine de Medici',
-        'Cleopatra',
-        'Frederick Barbarossa',
-        'Gandhi',
-        'Gilgamesh',
-        'Gorgo',
-        'Harald Hardrada',
-        'Hojo Tokimune',
-        'Julius Caesar',
-        'Montezuma',
-        'Mvemba a Nzinga',
-        'Pedro II',
-        'Pericles',
-        'Peter',
-        'Philip II',
-        'Qin Shi Huang',
-        'Saladin',
-        'Teddy Roosevelt',
-        'Tomyris',
-        'Trajan',
-        'Victoria'
+        {
+            leader: "Catherine de Medici",
+            civ: "France"
+        },
+        {
+            leader: "Cleopatra",
+            civ: "Egypt"
+        },
+        {
+            leader: "Frederick Barbarossa",
+            civ: "Germany"
+        },
+        {
+            leader: "Gandhi",
+            civ: "India"
+        },
+        {
+            leader: "Gilgamesh",
+            civ: "Sumeria"
+        },
+        {
+            leader: "Gorgo",
+            civ: "Greece"
+        },
+        {
+            leader: "Harald Hardrada",
+            civ: "Norway"
+        },
+        {
+            leader: "Hojo Tokimune",
+            civ: "Japan"
+        },
+        {
+            leader: "Julius Caesar",
+            civ: "Rome"
+        },
+        {
+            leader: "Montezuma",
+            civ: "Aztec"
+        },
+        {
+            leader: "Mvemba a Nzinga",
+            civ: "Kongo"
+        },
+        {
+            leader: "Pedro II",
+            civ: "Brazil"
+        },
+        {
+            leader: "Pericles",
+            civ: "Greece"
+        },
+        {
+            leader: "Peter",
+            civ: "Russia"
+        },
+        {
+            leader: "Philip II",
+            civ: "Spain"
+        },
+        {
+            leader: "Qin Shi Huang",
+            civ: "China"
+        },
+        {
+            leader: "Saladin",
+            civ: "Arabia"
+        },
+        {
+            leader: "Teddy Roosevelt",
+            civ: "America"
+        },
+        {
+            leader: "Tomyris",
+            civ: "Scythia"
+        },
+        {
+            leader: "Trajan",
+            civ: "Rome"
+        },
+        {
+            leader: "Victoria",
+            civ: "England"
+        },
     ],
 
     "civ6-rnf": [
-        'Chandragupta',
-        'Genghis Khan',
-        'Lautaro',
-        'Poundmaker',
-        'Robert the Bruce',
-        'Seondeok',
-        'Shaka',
-        'Tamar',
-        'Wilhelmina'
+        {
+            leader: "Chandragupta",
+            civ: "India"
+        },
+        {
+            leader: "Genghis Khan",
+            civ: "Mongolia"
+        },
+        {
+            leader: "Lautaro",
+            civ: "Mapuche"
+        },
+        {
+            leader: "Poundmaker",
+            civ: "Cree"
+        },
+        {
+            leader: "Robert the Bruce",
+            civ: "Scotland"
+        },
+        {
+            leader: "Seondeok",
+            civ: "Korea"
+        },
+        {
+            leader: "Shaka",
+            civ: "Zulu"
+        },
+        {
+            leader: "Tamar",
+            civ: "Georgia"
+        },
+        {
+            leader: "Wilhelmina",
+            civ: "The Netherlands"
+        }
     ],
 
     "civ6-gs": [
-        'Dido',
-        'Eleanor of Aquitaine (England)',
-        'Eleanor of Aquitaine (France)',
-        'Kristina',
-        'Kupe',
-        'Mansa Musa',
-        'Matthias Corvinus',
-        'Pachacuti',
-        'Suleiman',
-        'Wilfred Laurier'
+        {
+            leader: "Dido",
+            civ: "Carthage"
+        },
+        {
+            leader: "Eleanor of Aquitaine",
+            civ: "England"
+        },
+        {
+            leader: "Eleanor of Aquitaine",
+            civ: "France"
+        },
+        {
+            leader: "Kristina",
+            civ: "Sweden"
+        },
+        {
+            leader: "Kupe",
+            civ: "The Maori"
+        },
+        {
+            leader: "Mansa Musa",
+            civ: "Mali"
+        },
+        {
+            leader: "Matthias Corvinus",
+            civ: "Hungary"
+        },
+        {
+            leader: "Pachacuti",
+            civ: "The Inca"
+        },
+        {
+            leader: "Suleiman",
+            civ: "The Ottomans"
+        },
+        {
+            leader: "Wilfred Laurier",
+            civ: "Canada"
+        }
     ],
 
     "civ6-frontier": [
-        'Ambiorix',
-        'Basil II',
-        'Bà Triệu',
-        'Hammurabi',
-        'João III',
-        'Kublai Khan (China)',
-        'Kublai Khan (Mongolia)',
-        'Lady Six Sky',
-        'Menelik II',
-        'Simón Bolívar'
+        {
+            leader: "Ambiorix",
+            civ: "Gaul"
+        },
+        {
+            leader: "Basil II",
+            civ: "Byzantium"
+        },
+        {
+            leader: "Bà Triệu",
+            civ: "Vietnam"
+        },
+        {
+            leader: "Hammurabi",
+            civ: "Babylon"
+        },
+        {
+            leader: "João III",
+            civ: "Portugal"
+        },
+        {
+            leader: "Kublai Khan",
+            civ: "China"
+        },
+        {
+            leader: "Kublai Khan",
+            civ: "Mongolia"
+        },
+        {
+            leader: "Lady Six Sky",
+            civ: "Maya"
+        },
+        {
+            leader: "Menelik II",
+            civ: "Ethiopia"
+        },
+        {
+            leader: "Simón Bolívar",
+            civ: "Gran Colombia"
+        }
     ],
 
     "civ6-leaderpass": [
-        'Abraham Lincoln',
-        'Cleopatra (Ptolemaic)',
-        'Elizabeth I',
-        'Harald Hardrada (Varangian)',
-        'Ludwig II',
-        'Nader Shah',
-        'Nzinga Mbande',
-        'Qin Shi Huang (Unifier)',
-        'Ramses II',
-        'Saladin (Sultan)',
-        'Sejong',
-        'Suleiman (Muhtesem)',
-        'Sundiata Keita',
-        'Theodora',
-        'Tokugawa',
-        'Victoria (Age of Steam)',
-        'Wu Zetian',
-        'Yongle'
+        {
+            leader: "Abraham Lincoln",
+            civ: "America"
+        },
+        {
+            leader: "Cleopatra (Ptolemaic)",
+            civ: "Egypt"
+        },
+        {
+            leader: "Elizabeth I",
+            civ: "England"
+        },
+        {
+            leader: "Harald Hardrada (Varangian)",
+            civ: "Norway"
+        },
+        {
+            leader: "Ludwig II",
+            civ: "Germany"
+        },
+        {
+            leader: "Nader Shah",
+            civ: "Persia"
+        },
+        {
+            leader: "Nzinga Mbande",
+            civ: "Kongo"
+        },
+        {
+            leader: "Qin Shi Huang (Unifier)",
+            civ: "China"
+        },
+        {
+            leader: "Ramses II",
+            civ: "Egypt"
+        },
+        {
+            leader: "Saladin (Sultan)",
+            civ: "Arabia"
+        },
+        {
+            leader: "Sejong",
+            civ: "Korea"
+        },
+        {
+            leader: "Suleiman (Muhtesem)",
+            civ: "The Ottomans"
+        },
+        {
+            leader: "Sundiata Keita",
+            civ: "Mali"
+        },
+        {
+            leader: "Theodora",
+            civ: "Byzantium"
+        },
+        {
+            leader: "Tokugawa",
+            civ: "Japan"
+        },
+        {
+            leader: "Victoria (Age of Steam)",
+            civ: "England"
+        },
+        {
+            leader: "Wu Zetian",
+            civ: "China"
+        },
+        {
+            leader: "Yongle",
+            civ: "China"
+        }
     ],
 
     "civ6-extra": [
-        'Alexander',
-        'Amanitore',
-        'Cyrus',
-        'Gitarja',
-        'Jadwiga',
-        'Jayavarman VII',
-        'John Curtin'
+        {
+            leader: "Alexander",
+            civ: "Macedon"
+        },
+        {
+            leader: "Amanitore",
+            civ: "Nubia"
+        },
+        {
+            leader: "Cyrus",
+            civ: "Persia"
+        },
+        {
+            leader: "Gitarja",
+            civ: "Indonesia"
+        },
+        {
+            leader: "Jadwiga",
+            civ: "Poland"
+        },
+        {
+            leader: "Jayavarman VII",
+            civ: "Khmer"
+        },
+        {
+            leader: "John Curtin",
+            civ: "Australia"
+        },
     ],
 
     "civ6-personas": [
-        "Catherine de Medici (Magnificence)",
-        "Teddy Roosevelt (Rough Rider)"
+        {
+            leader: "Catherine de Medici (Magnificence)",
+            civ: "France"
+        },
+        {
+            leader: "Teddy Roosevelt (Rough Rider)",
+            civ: "America"
+        }
     ]
 };

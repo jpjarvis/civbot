@@ -7,8 +7,8 @@ import {showConfigCommand} from "../../Commands/Config/ShowConfigCommand";
 import {enableExpansionCommand} from "../../Commands/Expansions/EnableExpansionCommand";
 import {disableExpansionCommand} from "../../Commands/Expansions/DisableExpansionCommand";
 import {loadUserData} from "../../UserDataStore";
-import {banCommand} from "../../Commands/Ban/BanCommand";
-import {unbanCommand} from "../../Commands/Ban/UnbanCommand";
+import {handleBan} from "../../Commands/Ban/BanCommand";
+import {handleUnban} from "../../Commands/Ban/UnbanCommand";
 import {logError, logInfo} from "../../Log";
 import {switchGameCommand} from "../../Commands/SwitchGame/SwitchGameCommand";
 import {updateSlashCommandsForServer} from "./UpdateSlashCommands";
@@ -178,24 +178,6 @@ async function handleCustomCivs(interaction: ChatInputCommandInteraction) {
     const userData = await loadUserData(serverId);
 
     await interaction.showModal(customCivsModal(userData.userSettings[userData.game].customCivs));
-}
-
-async function handleBan(interaction: ChatInputCommandInteraction) {
-    const serverId = interaction.guildId!;
-
-    const civToBan = interaction.options.getString("civ")!;
-    const message = await banCommand(serverId, civToBan);
-
-    await interaction.reply(message);
-}
-
-async function handleUnban(interaction: ChatInputCommandInteraction) {
-    const serverId = interaction.guildId!;
-
-    const civToUnban = interaction.options.getString("civ")!;
-    const message = await unbanCommand(serverId, civToUnban);
-
-    await interaction.reply(message);
 }
 
 async function handleSwitchGame(interaction: ChatInputCommandInteraction) {

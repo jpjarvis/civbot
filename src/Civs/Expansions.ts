@@ -1,8 +1,19 @@
-import {Civs} from "./Civs";
 import {CivGame} from "./CivGames";
 
-export type Expansion = keyof typeof Civs | "custom";
-export const Expansions = Object.keys(Civs).concat("custom") as Expansion[];
+export const Expansions = [
+    "civ5-vanilla", 
+    "lekmod", 
+    "civ6-vanilla", 
+    "civ6-rnf",
+    "civ6-gs",
+    "civ6-frontier",
+    "civ6-leaderpass",
+    "civ6-extra",
+    "civ6-personas",
+    "custom"
+] as const;
+
+export type Expansion = typeof Expansions[number];
 
 const ExpansionMetadata: { [a in Expansion]: { displayName: string; game: CivGame | "All" } } = {
     "civ5-vanilla": {displayName: "Base game + DLC", game: "Civ 5"},
