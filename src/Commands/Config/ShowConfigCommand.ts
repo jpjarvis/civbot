@@ -1,8 +1,16 @@
 import {displayName} from "../../Civs/Expansions";
 import {UserData} from "../../UserData/UserData";
 import {Civ, renderCiv} from "../../Civs/Civs";
+import {ChatInputCommandInteraction} from "discord.js";
+import {loadUserData} from "../../UserDataStore";
 
-export function showConfigCommand(userData: UserData): string {
+export async function showConfigCommand(interaction: ChatInputCommandInteraction) {
+    const serverId = interaction.guildId!;
+    let response = renderConfig(await loadUserData(serverId));
+    await interaction.reply(response);
+}
+
+function renderConfig(userData: UserData): string {
     const activeSettings = userData.userSettings[userData.game];
     const customCivsEnabled = activeSettings.defaultDraftSettings.expansions?.includes("custom");
     const anyBannedCivs = activeSettings.bannedCivs.length > 0;
