@@ -20,7 +20,7 @@
     },
     "devDependencies": {
         "@tsconfig/node14": "^14.1.0",
-        "@types/jest": "^29.5.11",
+        "@types/jest": "^29.5.12",
         "@types/node": "^20.11.17",
         "@types/node-fetch": "^2.6.11",
         "@types/pg": "^8.11.0",
