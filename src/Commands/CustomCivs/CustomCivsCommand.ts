@@ -3,9 +3,9 @@ import {
     ChatInputCommandInteraction,
     ModalActionRowComponentBuilder,
     ModalBuilder,
-    TextInputBuilder
+    TextInputBuilder,
 } from "discord.js";
-import {loadUserData} from "../../UserDataStore";
+import { loadUserData } from "../../UserDataStore";
 
 export async function customCivsCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
@@ -15,9 +15,7 @@ export async function customCivsCommand(interaction: ChatInputCommandInteraction
 }
 
 export function customCivsModal(customCivs: string[]) {
-    const modal = new ModalBuilder()
-        .setCustomId("customCivs")
-        .setTitle("Custom civs")
+    const modal = new ModalBuilder().setCustomId("customCivs").setTitle("Custom civs");
 
     const customCivsInput = new TextInputBuilder()
         .setCustomId("customCivsInput")
@@ -25,7 +23,7 @@ export function customCivsModal(customCivs: string[]) {
         .setStyle(2)
         .setMinLength(0)
         .setRequired(false)
-        .setValue(customCivs.join("\n"))
+        .setValue(customCivs.join("\n"));
 
     const actionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(customCivsInput);
 

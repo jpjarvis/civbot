@@ -1,6 +1,6 @@
 import { ApplicationCommandData, ApplicationCommandOptionType } from "discord.js";
-import {expansionsInGame, displayName} from "../Civs/Expansions";
-import {CivGame} from "../Civs/CivGames";
+import { expansionsInGame, displayName } from "../Civs/Expansions";
+import { CivGame } from "../Civs/CivGames";
 
 export function getCommands(game: CivGame) {
     const draftCommand: ApplicationCommandData = {
@@ -72,7 +72,7 @@ export function getCommands(game: CivGame) {
 
     const customCivsCommand: ApplicationCommandData = {
         name: "custom-civs",
-        description: "Add custom civs to your draft"
+        description: "Add custom civs to your draft",
     };
 
     const configCommand: ApplicationCommandData = {
@@ -87,9 +87,8 @@ export function getCommands(game: CivGame) {
             {
                 type: ApplicationCommandOptionType.String,
                 name: "civ",
-                description:
-                    "Name of the civ to ban",
-            }
+                description: "Name of the civ to ban",
+            },
         ],
     };
 
@@ -100,17 +99,24 @@ export function getCommands(game: CivGame) {
             {
                 type: ApplicationCommandOptionType.String,
                 name: "civ",
-                description:
-                    "Name of the banned civ to unban",
-            }
+                description: "Name of the banned civ to unban",
+            },
         ],
     };
 
-    const switchGameCommand : ApplicationCommandData = {
+    const switchGameCommand: ApplicationCommandData = {
         name: "switch-game",
         description: `Switch to drafting for ${game === "Civ 5" ? "Civ 6" : "Civ 5"}`,
-        options: []
+        options: [],
     };
 
-    return [draftCommand, expansionsCommand, customCivsCommand, configCommand, banCommand, unbanCommand, switchGameCommand];
+    return [
+        draftCommand,
+        expansionsCommand,
+        customCivsCommand,
+        configCommand,
+        banCommand,
+        unbanCommand,
+        switchGameCommand,
+    ];
 }

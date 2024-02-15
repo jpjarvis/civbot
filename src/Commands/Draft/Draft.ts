@@ -1,7 +1,7 @@
 import { Draft, DraftError } from "./DraftTypes";
 import * as shuffle from "shuffle-array";
 import { Result } from "../../Functional/Result";
-import {Civ} from "../../Civs/Civs";
+import { Civ } from "../../Civs/Civs";
 
 function assignCivs(players: string[], civsPerPlayer: number, civs: Civ[]): Draft {
     shuffle(civs);

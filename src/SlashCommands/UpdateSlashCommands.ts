@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
-import {getCommands} from "./SlashCommands";
-import {loadUserData} from "../UserDataStore";
-import {logInfo} from "../Log";
+import { getCommands } from "./SlashCommands";
+import { loadUserData } from "../UserDataStore";
+import { logInfo } from "../Log";
 
 export async function updateSlashCommandsForAllServers(client: Client) {
     const guilds = client.guilds.valueOf().keys();

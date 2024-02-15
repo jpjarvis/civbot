@@ -1,6 +1,6 @@
-import {Expansion, displayName, stringToExpansion} from "../../Civs/Expansions";
+import { Expansion, displayName, stringToExpansion } from "../../Civs/Expansions";
 import { loadUserData, saveUserData } from "../../UserDataStore";
-import {ChatInputCommandInteraction, User} from "discord.js";
+import { ChatInputCommandInteraction, User } from "discord.js";
 
 export async function enableExpansionCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
@@ -14,7 +14,7 @@ async function enableExpansion(tenantId: string, expansion: Expansion): Promise<
     const userData = await loadUserData(tenantId);
 
     const defaultDraftSettings = userData.userSettings[userData.game].defaultDraftSettings;
-    
+
     if (!defaultDraftSettings.expansions) {
         defaultDraftSettings.expansions = [];
     }
@@ -25,7 +25,7 @@ async function enableExpansion(tenantId: string, expansion: Expansion): Promise<
     defaultDraftSettings.expansions.push(expansion);
 
     userData.userSettings[userData.game].defaultDraftSettings = defaultDraftSettings;
-    
+
     await saveUserData(tenantId, userData);
     return `\`${displayName(expansion)}\` will now be used in your drafts.`;
 }

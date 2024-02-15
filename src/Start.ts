@@ -1,17 +1,19 @@
-import {Client, GatewayIntentBits} from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import Messages from "./Messages";
-import {getToken} from "./Auth";
-import {handleSlashCommand} from "./SlashCommands/HandleSlashCommand";
-import {logException, logInfo} from "./Log";
-import {
-    updateSlashCommandsForAllServers,
-    updateSlashCommandsForServer
-} from "./SlashCommands/UpdateSlashCommands";
-import {handleModalSubmit} from "./Modals/HandleModalSubmit";
+import { getToken } from "./Auth";
+import { handleSlashCommand } from "./SlashCommands/HandleSlashCommand";
+import { logException, logInfo } from "./Log";
+import { updateSlashCommandsForAllServers, updateSlashCommandsForServer } from "./SlashCommands/UpdateSlashCommands";
+import { handleModalSubmit } from "./Modals/HandleModalSubmit";
 
 async function start() {
     const client = new Client({
-        intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessageReactions],
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.GuildVoiceStates,
+            GatewayIntentBits.GuildMessageReactions,
+        ],
     });
 
     client.once("ready", async () => {

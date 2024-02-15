@@ -1,7 +1,7 @@
-import {CommandInteraction, Message} from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 
-const numberEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
-const allEmoji = '💥'
+const numberEmojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
+const allEmoji = "💥";
 export const MAX_OPTIONS = numberEmojis.length;
 
 export async function multipleChoice<TOption>(
@@ -9,15 +9,15 @@ export async function multipleChoice<TOption>(
     options: TOption[],
     renderOption: (option: TOption) => string,
     messages: {
-        question: string,
-        timeout: string,
-        selected: (selectedOptions: TOption[]) => string
-    }
+        question: string;
+        timeout: string;
+        selected: (selectedOptions: TOption[]) => string;
+    },
 ): Promise<TOption[] | undefined> {
     const reply = await interaction.reply({
         content: `${messages.question}
 ${renderOptionsMessage(options.map(renderOption))}`,
-        fetchReply: true
+        fetchReply: true,
     });
 
     await addReactions(reply, options.length);
@@ -38,7 +38,7 @@ ${renderOptionsMessage(options.map(renderOption))}`,
 }
 
 async function addReactions(message: Message, numChoices: number) {
-    await message.react(allEmoji)
+    await message.react(allEmoji);
     for (const emoji of numberEmojis.slice(0, numChoices)) {
         await message.react(emoji);
     }
@@ -46,9 +46,10 @@ async function addReactions(message: Message, numChoices: number) {
 
 async function waitForUserReaction(message: Message, userId: string) {
     const userReactions = await message.awaitReactions({
-        filter: (reaction, user) => numberEmojis.concat(allEmoji).includes(reaction.emoji.name ?? "") && user.id === userId,
+        filter: (reaction, user) =>
+            numberEmojis.concat(allEmoji).includes(reaction.emoji.name ?? "") && user.id === userId,
         time: 60_000,
-        max: 1
+        max: 1,
     });
 
     return userReactions.first()?.emoji?.name ?? undefined;
@@ -56,5 +57,5 @@ async function waitForUserReaction(message: Message, userId: string) {
 
 function renderOptionsMessage(options: string[]) {
     return `${options.map((x, i) => `${numberEmojis[i]}: ${x}`).join("\n")}
-${allEmoji}: All`
+${allEmoji}: All`;
 }

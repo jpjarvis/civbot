@@ -1,12 +1,12 @@
-import {Expansion, stringToExpansion} from "../../Civs/Expansions";
+import { Expansion, stringToExpansion } from "../../Civs/Expansions";
 import { draft } from "./Draft";
 import { selectCivs } from "./SelectCivs";
 import { UserSettings } from "../../UserData/UserSettings";
 import { generateDraftCommandOutputMessage } from "./DraftCommandMessages";
-import {Result} from "../../Functional/Result";
-import {ChatInputCommandInteraction} from "discord.js";
-import {getVoiceChannelMembers} from "../../Discord/VoiceChannels";
-import {loadUserData} from "../../UserDataStore";
+import { Result } from "../../Functional/Result";
+import { ChatInputCommandInteraction } from "discord.js";
+import { getVoiceChannelMembers } from "../../Discord/VoiceChannels";
+import { loadUserData } from "../../UserDataStore";
 
 export type DraftArguments = {
     numberOfAi: number;
@@ -26,7 +26,7 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
 
     const voiceChannelMembers = await getVoiceChannelMembers(interaction);
 
-    const userData = await loadUserData(serverId)
+    const userData = await loadUserData(serverId);
     const userSettings = userData.userSettings[userData.game];
     const draftArgs = fillDefaultArguments(draftArgumentsOrError.value, userSettings);
 

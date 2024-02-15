@@ -1,8 +1,8 @@
 ﻿import Messages from "../../Messages";
 import { Draft, DraftEntry, DraftError } from "./DraftTypes";
-import {Expansion, displayName} from "../../Civs/Expansions";
+import { Expansion, displayName } from "../../Civs/Expansions";
 import { Result } from "../../Functional/Result";
-import {renderCivShort} from "../../Civs/Civs";
+import { renderCivShort } from "../../Civs/Civs";
 
 function getPlayerDraftString(draftEntry: DraftEntry): string {
     let response = `${draftEntry.player} `.padEnd(20, " ");

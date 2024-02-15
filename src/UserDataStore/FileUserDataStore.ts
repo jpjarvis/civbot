@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { createDefaultUserData, UserData } from "../UserData/UserData";
 import { UserDataStore } from "./UserDataStore";
-import {logInfo} from "../Log";
+import { logInfo } from "../Log";
 
 function getUserDataPath(tenantId: string) {
     return `./userdata/${tenantId}.json`;

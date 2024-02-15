@@ -1,4 +1,4 @@
-﻿import {Civ} from "../../Civs/Civs";
+﻿import { Civ } from "../../Civs/Civs";
 
 export type Draft = DraftEntry[];
 
