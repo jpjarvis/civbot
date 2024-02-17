@@ -1,19 +1,20 @@
 import { AutocompleteInteraction } from "discord.js";
 import { loadUserData } from "../../UserDataStore";
 import { selectCivs } from "../Draft/SelectCivs";
-import { renderCiv } from "../../Civs/Civs";
+import { Civ, renderCiv } from "../../Civs/Civs";
 
 export async function banCommandAutocomplete(interaction: AutocompleteInteraction) {
     const queryString = interaction.options.getFocused();
 
     const userData = await loadUserData(interaction.guildId!);
     const userSettings = userData.userSettings[userData.game];
-    const choices = selectCivs(userSettings.defaultDraftSettings.expansions ?? [], userSettings.bannedCivs)
-        .map(renderCiv)
-        .filter((x) => x.includes(queryString))
-        .slice(0,25);
 
-    await interaction.respond(choices.map(choice => ({name: choice, value: choice})));
+    await interaction.respond(
+        autocompleteOptions(
+            queryString,
+            selectCivs(userSettings.defaultDraftSettings.expansions ?? [], userSettings.bannedCivs),
+        ),
+    );
 }
 
 export async function unbanCommandAutocomplete(interaction: AutocompleteInteraction) {
@@ -21,10 +22,14 @@ export async function unbanCommandAutocomplete(interaction: AutocompleteInteract
 
     const userData = await loadUserData(interaction.guildId!);
     const userSettings = userData.userSettings[userData.game];
-    const choices = userSettings.bannedCivs
+
+    await interaction.respond(autocompleteOptions(queryString, userSettings.bannedCivs));
+}
+
+function autocompleteOptions(queryString: string, civs: Civ[]) {
+    return civs
         .map(renderCiv)
         .filter((x) => x.includes(queryString))
-        .slice(0,25);
-
-    await interaction.respond(choices.map(choice => ({name: choice, value: choice})));
+        .slice(0, 25)
+        .map((choice) => ({ name: choice, value: choice }));
 }
