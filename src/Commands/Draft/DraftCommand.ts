@@ -35,7 +35,7 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
-    await interaction.reply(generateDraftCommandOutputMessage(userData.game, draftArgs.expansions, draftResult));
+    await interaction.reply(generateDraftCommandOutputMessage(userData.game, draftArgs.expansions, userSettings.customCivs.length, draftResult));
 }
 
 function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {

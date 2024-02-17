@@ -21,8 +21,7 @@ CivBot is drafting for **${userData.game}**.
 
 Enabled expansions: \`\`\`${activeSettings.defaultDraftSettings?.expansions?.map(displayName).join("\n")}\`\`\`
 ${anyCustomCivs ? customCivsLine(activeSettings.customCivs) : ""}
-${anyBannedCivs ? bannedCivsLine(activeSettings.bannedCivs) : ""}
-    `.trim();
+${anyBannedCivs ? bannedCivsLine(activeSettings.bannedCivs) : ""}`.trim();
 }
 
 function customCivsLine(customCivs: string[]) {

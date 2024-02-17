@@ -8,6 +8,7 @@ import { CivGame } from "../../Civs/CivGames";
 export function generateDraftCommandOutputMessage(
     game: CivGame,
     expansionsUsed: Expansion[],
+    numberOfCustomCivs: number,
     draftResult: Result<Draft, DraftError>,
 ) {
     let message = "";
@@ -25,12 +26,18 @@ export function generateDraftCommandOutputMessage(
         if (renderDraft(draftResult.value) === "") {
             sendMessage(Messages.NoPlayers);
         } else {
-            sendMessage(`Drafting for ${game} with ${expansionsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ")}`);
+            sendMessage(renderDraftDescription(game, expansionsUsed, numberOfCustomCivs));
             sendMessage(renderDraft(draftResult.value));
         }
     }
 
     return message;
+}
+
+function renderDraftDescription(game: "Civ 5" | "Civ 6", expansionsUsed: Expansion[], numberOfCustomCivs: number) {
+    const expansions = expansionsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ");
+    const customCivs = numberOfCustomCivs > 0 ? ` and ${numberOfCustomCivs} custom civs` : "";
+    return `Drafting for ${game} with ${expansions}${customCivs}`;
 }
 
 function renderDraft(draft: Draft) {
