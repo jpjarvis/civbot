@@ -3,9 +3,13 @@ import { Draft, DraftEntry, DraftError } from "./DraftTypes";
 import { displayName, Expansion } from "../../Civs/Expansions";
 import { Result } from "../../Functional/Result";
 import { renderCivShort } from "../../Civs/Civs";
-import {CivGame} from "../../Civs/CivGames";
+import { CivGame } from "../../Civs/CivGames";
 
-export function generateDraftCommandOutputMessage(game: CivGame, expansionsUsed: Expansion[], draftResult: Result<Draft, DraftError>) {
+export function generateDraftCommandOutputMessage(
+    game: CivGame,
+    expansionsUsed: Expansion[],
+    draftResult: Result<Draft, DraftError>,
+) {
     let message = "";
     const sendMessage = (m: string) => {
         message += m + "\n";

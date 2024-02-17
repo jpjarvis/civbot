@@ -12,7 +12,7 @@ export async function showConfigCommand(interaction: ChatInputCommandInteraction
 
 function renderConfig(userData: UserData): string {
     const activeSettings = userData.userSettings[userData.game];
-    const customCivsEnabled = activeSettings.defaultDraftSettings.expansions?.includes("custom");
+    const customCivsEnabled = true;
     const anyBannedCivs = activeSettings.bannedCivs.length > 0;
 
     return `

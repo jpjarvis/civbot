@@ -31,7 +31,7 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
     const draftArgs = fillDefaultArguments(draftArgumentsOrError.value, userSettings);
 
     const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
-    const civs = selectCivs(draftArgs.expansions, userSettings.customCivs, userSettings.bannedCivs);
+    const civs = selectCivs(draftArgs.expansions, userSettings.bannedCivs);
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
