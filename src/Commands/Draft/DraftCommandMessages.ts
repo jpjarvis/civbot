@@ -10,6 +10,7 @@ export function generateDraftCommandOutputMessage(
     expansionsUsed: Expansion[],
     numberOfCustomCivs: number,
     draftResult: Result<Draft, DraftError>,
+    canReroll: boolean,
 ) {
     let message = "";
     const sendMessage = (m: string) => {
@@ -28,6 +29,15 @@ export function generateDraftCommandOutputMessage(
         } else {
             sendMessage(renderDraftDescription(game, expansionsUsed, numberOfCustomCivs));
             sendMessage(renderDraft(draftResult.value));
+
+            if (canReroll) {
+                sendMessage(
+                    `React with 🔁 to request a re-roll. If all players request it, the draft will be re-rolled.`,
+                );
+            }
+            else {
+                sendMessage("Re-rolling is currently disabled since the bot does not have ManageMessages permissions.")
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import { generateDraftCommandOutputMessage } from "./DraftCommandMessages";
 import { ChatInputCommandInteraction } from "discord.js";
 import { getVoiceChannelMembers } from "../../Discord/VoiceChannels";
 import { loadUserData } from "../../UserDataStore";
+import {UserData} from "../../UserData/UserData";
 
 export type DraftArguments = {
     numberOfAi: number;
@@ -29,7 +30,48 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
-    await interaction.reply(generateDraftCommandOutputMessage(userData.game, draftArgs.expansions, userSettings.customCivs.length, draftResult));
+    const canReroll = interaction.guild?.members.me?.permissions.has("ManageMessages") ?? false;
+    
+    const message = await interaction.reply({
+        content: generateDraftCommandOutputMessage(
+            userData.game,
+            draftArgs.expansions,
+            userSettings.customCivs.length,
+            draftResult,
+            canReroll
+        ),
+        fetchReply: true,
+    });
+    
+    if (!draftResult.isError && canReroll) {
+        let timedOut = false;
+        const reactionsNeeded = voiceChannelMembers.length > 0 ? voiceChannelMembers.length : 1;
+        while (!timedOut) {
+            await message.react("🔁");
+            const reactions = await message.awaitReactions({
+                max: reactionsNeeded,
+                filter: (reaction, user) =>
+                    reaction.emoji.name === "🔁" &&
+                    (voiceChannelMembers.includes(user.username) || user.id === interaction.user.id),
+                time: 60_000
+            });
+
+            if (reactions.first()?.count ?? 0 >= reactionsNeeded) {
+                const draftResult = draft(players, draftArgs.numberOfCivs, civs);
+                await message.edit(generateDraftCommandOutputMessage(
+                    userData.game,
+                    draftArgs.expansions,
+                    userSettings.customCivs.length,
+                    draftResult,
+                    true
+                ));
+                await message.reactions.removeAll();
+            }
+            else {
+                timedOut = true;
+            }
+        }
+    }
 }
 
 function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {
