@@ -23,5 +23,5 @@ jobs:
                   # Push is a shorthand for --output=type=registry
                   push: true
                   # List of tags
-                  tags: ghcr.io/jpjarvis/civbot:${CIVBOT_VERSION}
+                  tags: ghcr.io/jpjarvis/civbot:${{env.CIVBOT_VERSION}}
                   target: production
