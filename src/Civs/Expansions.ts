@@ -9,13 +9,12 @@ export const Expansions = [
     "civ6-frontier",
     "civ6-leaderpass",
     "civ6-extra",
-    "civ6-personas",
-    "custom",
+    "civ6-personas"
 ] as const;
 
 export type Expansion = (typeof Expansions)[number];
 
-const ExpansionMetadata: { [a in Expansion]: { displayName: string; game: CivGame | "All" } } = {
+const ExpansionMetadata: { [a in Expansion]: { displayName: string; game: CivGame} } = {
     "civ5-vanilla": { displayName: "Base game + DLC", game: "Civ 5" },
     lekmod: { displayName: "LEKMOD", game: "Civ 5" },
 
@@ -25,13 +24,11 @@ const ExpansionMetadata: { [a in Expansion]: { displayName: string; game: CivGam
     "civ6-frontier": { displayName: "New Frontier Pass", game: "Civ 6" },
     "civ6-leaderpass": { displayName: "Leader Pass", game: "Civ 6" },
     "civ6-extra": { displayName: "Standalone DLC Civs", game: "Civ 6" },
-    "civ6-personas": { displayName: "Persona packs", game: "Civ 6" },
-
-    custom: { displayName: "Custom civs", game: "All" },
+    "civ6-personas": { displayName: "Persona packs", game: "Civ 6" }
 };
 
 export function expansionsInGame(game: CivGame) {
-    return Expansions.filter((x) => ExpansionMetadata[x].game === game || ExpansionMetadata[x].game === "All");
+    return Expansions.filter((x) => ExpansionMetadata[x].game === game);
 }
 
 export function displayName(expansion: Expansion) {

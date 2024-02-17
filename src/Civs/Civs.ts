@@ -35,13 +35,11 @@ export function renderCivShort(civ: Civ): string {
 }
 
 function leaderHasMultipleCivs(leader: string) {
-    const flattenedCivs = (Expansions.filter((x) => x != "custom") as Exclude<Expansion, "custom">[])
-        .map((x) => Civs[x])
-        .flat();
+    const flattenedCivs = Expansions.map((x) => Civs[x]).flat();
     return flattenedCivs.filter((civ) => hasLeader(civ) && civ.leader === leader).length > 1;
 }
 
-export const Civs: { [ex in Exclude<Expansion, "custom">]: Civ[] } = {
+export const Civs: { [ex in Expansion]: Civ[] } = {
     "civ5-vanilla": [
         "America",
         "Arabia",

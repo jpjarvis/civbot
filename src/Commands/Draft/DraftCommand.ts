@@ -31,11 +31,11 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
     const draftArgs = fillDefaultArguments(draftArgumentsOrError.value, userSettings);
 
     const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
-    const civs = selectCivs(draftArgs.expansions, userSettings.customCivs, userSettings.bannedCivs);
+    const civs = selectCivs(draftArgs.expansions, userSettings.bannedCivs).concat(userSettings.customCivs);
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
-    await interaction.reply(generateDraftCommandOutputMessage(userData.game, draftArgs.expansions, draftResult));
+    await interaction.reply(generateDraftCommandOutputMessage(userData.game, draftArgs.expansions, userSettings.customCivs.length, draftResult));
 }
 
 function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {

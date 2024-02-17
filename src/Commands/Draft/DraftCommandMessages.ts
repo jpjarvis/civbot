@@ -3,9 +3,14 @@ import { Draft, DraftEntry, DraftError } from "./DraftTypes";
 import { displayName, Expansion } from "../../Civs/Expansions";
 import { Result } from "../../Functional/Result";
 import { renderCivShort } from "../../Civs/Civs";
-import {CivGame} from "../../Civs/CivGames";
+import { CivGame } from "../../Civs/CivGames";
 
-export function generateDraftCommandOutputMessage(game: CivGame, expansionsUsed: Expansion[], draftResult: Result<Draft, DraftError>) {
+export function generateDraftCommandOutputMessage(
+    game: CivGame,
+    expansionsUsed: Expansion[],
+    numberOfCustomCivs: number,
+    draftResult: Result<Draft, DraftError>,
+) {
     let message = "";
     const sendMessage = (m: string) => {
         message += m + "\n";
@@ -21,12 +26,18 @@ export function generateDraftCommandOutputMessage(game: CivGame, expansionsUsed:
         if (renderDraft(draftResult.value) === "") {
             sendMessage(Messages.NoPlayers);
         } else {
-            sendMessage(`Drafting for ${game} with ${expansionsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ")}`);
+            sendMessage(renderDraftDescription(game, expansionsUsed, numberOfCustomCivs));
             sendMessage(renderDraft(draftResult.value));
         }
     }
 
     return message;
+}
+
+function renderDraftDescription(game: "Civ 5" | "Civ 6", expansionsUsed: Expansion[], numberOfCustomCivs: number) {
+    const expansions = expansionsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ");
+    const customCivs = numberOfCustomCivs > 0 ? ` and ${numberOfCustomCivs} custom civs` : "";
+    return `Drafting for ${game} with ${expansions}${customCivs}`;
 }
 
 function renderDraft(draft: Draft) {
