@@ -16,12 +16,7 @@ export function getCommands(game: CivGame) {
                 type: ApplicationCommandOptionType.Integer,
                 name: "civs",
                 description: "Number of civs to draft for each player (Default is 3)",
-            },
-            {
-                type: ApplicationCommandOptionType.String,
-                name: "expansions",
-                description: "Space-separated list of expansions to include",
-            },
+            }
         ],
     };
 
