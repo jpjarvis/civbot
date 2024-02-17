@@ -4,19 +4,6 @@ import { displayName, Expansion } from "../../Civs/Expansions";
 import { Result } from "../../Functional/Result";
 import { renderCivShort } from "../../Civs/Civs";
 
-function renderDraftEntry(draftEntry: DraftEntry): string {
-    let response = `${draftEntry.player} `.padEnd(20, " ");
-    for (let j = 0; j < draftEntry.civs.length - 1; j++) {
-        response += `${renderCivShort(draftEntry.civs[j])} / `;
-    }
-    response += `${renderCivShort(draftEntry.civs[draftEntry.civs.length - 1])}`;
-    return response;
-}
-
-function renderDraft(draft: Draft) {
-    return `\`\`\`${draft.map(renderDraftEntry).join("\n")}\`\`\``;
-}
-
 export function generateDraftCommandOutputMessage(expansionsUsed: Expansion[], draftResult: Result<Draft, DraftError>) {
     let message = "";
     const sendMessage = (m: string) => {
@@ -39,4 +26,12 @@ export function generateDraftCommandOutputMessage(expansionsUsed: Expansion[], d
     }
 
     return message;
+}
+
+function renderDraft(draft: Draft) {
+    return `\`\`\`${draft.map(renderDraftEntry).join("\n")}\`\`\``;
+}
+
+function renderDraftEntry(draftEntry: DraftEntry): string {
+    return `${`${draftEntry.player}`.padEnd(20, " ")} ${draftEntry.civs.map(renderCivShort).join(" / ")}`;
 }
