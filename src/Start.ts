@@ -5,6 +5,7 @@ import { handleSlashCommand } from "./SlashCommands/HandleSlashCommand";
 import { logException, logInfo } from "./Log";
 import { updateSlashCommandsForAllServers, updateSlashCommandsForServer } from "./SlashCommands/UpdateSlashCommands";
 import { handleModalSubmit } from "./Modals/HandleModalSubmit";
+import { banCommandAutocomplete, unbanCommandAutocomplete } from "./Commands/Ban/Autocomplete";
 
 async function start() {
     const client = new Client({
@@ -52,6 +53,14 @@ async function start() {
                     logException(e);
                 }
                 await interaction.reply(Messages.GenericError);
+            }
+        }
+
+        if (interaction.isAutocomplete()) {
+            if (interaction.commandName === "ban") {
+                await banCommandAutocomplete(interaction);
+            } else if (interaction.commandName === "unban") {
+                await unbanCommandAutocomplete(interaction);
             }
         }
     });

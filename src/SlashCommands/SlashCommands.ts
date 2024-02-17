@@ -16,7 +16,7 @@ export function getCommands(game: CivGame) {
                 type: ApplicationCommandOptionType.Integer,
                 name: "civs",
                 description: "Number of civs to draft for each player (Default is 3)",
-            }
+            },
         ],
     };
 
@@ -83,6 +83,7 @@ export function getCommands(game: CivGame) {
                 type: ApplicationCommandOptionType.String,
                 name: "civ",
                 description: "Name of the civ to ban",
+                autocomplete: true,
             },
         ],
     };
@@ -95,6 +96,7 @@ export function getCommands(game: CivGame) {
                 type: ApplicationCommandOptionType.String,
                 name: "civ",
                 description: "Name of the banned civ to unban",
+                autocomplete: true,
             },
         ],
     };
