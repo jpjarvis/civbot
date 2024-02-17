@@ -1,5 +1,5 @@
 import { selectCivs } from "../SelectCivs";
-import { Civs } from "../../../Civs/Civs";
+import { Civs } from "../Civs";
 
 describe("selectCivs", () => {
     it("should return no civs if no expansions are given", () => {

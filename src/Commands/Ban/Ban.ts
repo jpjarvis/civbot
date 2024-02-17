@@ -13,7 +13,3 @@ export async function unbanCivs(serverId: string, userData: UserData, civsToBan:
     );
     await saveUserData(serverId, userData);
 }
-
-export function isBanned(civ: Civ, userData: UserData) {
-    return userData.userSettings[userData.game].bannedCivs.some((x) => civsEqual(x, civ));
-}

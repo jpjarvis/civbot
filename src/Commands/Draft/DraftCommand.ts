@@ -1,9 +1,8 @@
-import { Expansion, stringToExpansion } from "../../Civs/Expansions";
+import { Expansion } from "../../Civs/Expansions";
 import { draft } from "./Draft";
-import { selectCivs } from "./SelectCivs";
+import { selectCivs } from "../../Civs/SelectCivs";
 import { UserSettings } from "../../UserData/UserSettings";
 import { generateDraftCommandOutputMessage } from "./DraftCommandMessages";
-import { Result } from "../../Functional/Result";
 import { ChatInputCommandInteraction } from "discord.js";
 import { getVoiceChannelMembers } from "../../Discord/VoiceChannels";
 import { loadUserData } from "../../UserDataStore";
