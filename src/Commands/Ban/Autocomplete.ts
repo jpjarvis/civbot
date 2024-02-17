@@ -1,6 +1,6 @@
 import { AutocompleteInteraction } from "discord.js";
 import { loadUserData } from "../../UserDataStore";
-import { selectCivs } from "../Draft/SelectCivs";
+import { selectCivs } from "../../Civs/SelectCivs";
 import { Civ, renderCiv } from "../../Civs/Civs";
 
 export async function banCommandAutocomplete(interaction: AutocompleteInteraction) {

@@ -2,7 +2,7 @@ import { loadUserData } from "../../UserDataStore";
 import { Civ, renderCiv } from "../../Civs/Civs";
 import { ChatInputCommandInteraction } from "discord.js";
 import { banCivs } from "./Ban";
-import { selectCivs } from "../Draft/SelectCivs";
+import { selectCivs } from "../../Civs/SelectCivs";
 
 export async function banCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
