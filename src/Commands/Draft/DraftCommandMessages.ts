@@ -1,16 +1,20 @@
 ﻿import Messages from "../../Messages";
 import { Draft, DraftEntry, DraftError } from "./DraftTypes";
-import { Expansion, displayName } from "../../Civs/Expansions";
+import { displayName, Expansion } from "../../Civs/Expansions";
 import { Result } from "../../Functional/Result";
 import { renderCivShort } from "../../Civs/Civs";
 
-function getPlayerDraftString(draftEntry: DraftEntry): string {
+function renderDraftEntry(draftEntry: DraftEntry): string {
     let response = `${draftEntry.player} `.padEnd(20, " ");
     for (let j = 0; j < draftEntry.civs.length - 1; j++) {
         response += `${renderCivShort(draftEntry.civs[j])} / `;
     }
     response += `${renderCivShort(draftEntry.civs[draftEntry.civs.length - 1])}`;
     return response;
+}
+
+function renderDraft(draft: Draft) {
+    return `\`\`\`${draft.map(renderDraftEntry).join("\n")}\`\`\``;
 }
 
 export function generateDraftCommandOutputMessage(expansionsUsed: Expansion[], draftResult: Result<Draft, DraftError>) {
@@ -26,13 +30,11 @@ export function generateDraftCommandOutputMessage(expansionsUsed: Expansion[], d
             sendMessage(Messages.NotEnoughCivs);
         }
     } else {
-        let draftString = draftResult.value.map((x) => getPlayerDraftString(x)).join("\n");
-
-        if (draftString === "") {
+        if (renderDraft(draftResult.value) === "") {
             sendMessage(Messages.NoPlayers);
         } else {
             sendMessage(`Drafting for ${expansionsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ")}`);
-            sendMessage("```" + draftString + "```");
+            sendMessage(renderDraft(draftResult.value));
         }
     }
 
