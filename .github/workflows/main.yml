@@ -7,9 +7,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
+            - name: Set up Git
+              run: |
+                git config --global user.email "actions@github.com"
+                git config --global user.name "GitHub Actions"
             - name: Get version number from package.json 
               id: version
-              run:  echo "version=$(cat package.json | jq -r '.version')" >> $GITHUB_OUTPUT
+              run:  echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
             - name: Login to GitHub Container Registry
               uses: docker/login-action@v2
               with:
@@ -26,3 +30,15 @@ jobs:
                   # List of tags
                   tags: ghcr.io/jpjarvis/civbot:${{steps.version.outputs.version}}
                   target: production
+            - name: Tag the new version
+              run: |
+                TAG=v${{steps.version.outputs.version}}
+                git tag $TAG
+                git push origin $TAG
+            - name: Increment version
+              run: ./increment-version.sh
+            - name: Commit and push version bump
+              run: |
+                git add -A
+                git commit -m "Increment version number"
+                git push
