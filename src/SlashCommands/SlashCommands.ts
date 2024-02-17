@@ -22,12 +22,12 @@ export function getCommands(game: CivGame) {
 
     const expansionsCommand: ApplicationCommandData = {
         name: "expansions",
-        description: "Manage which expansions are used in the draft",
+        description: `Manage which ${game} expansions are used in the draft`,
         options: [
             {
                 type: ApplicationCommandOptionType.Subcommand,
                 name: "enable",
-                description: "Add an expansion to your drafts",
+                description: `Add a ${game} expansion to your drafts`,
                 options: [
                     {
                         type: ApplicationCommandOptionType.String,
@@ -46,7 +46,7 @@ export function getCommands(game: CivGame) {
             {
                 type: ApplicationCommandOptionType.Subcommand,
                 name: "disable",
-                description: "Remove an expansion from your drafts",
+                description: `Remove a ${game} expansion from your drafts`,
                 options: [
                     {
                         type: ApplicationCommandOptionType.String,
