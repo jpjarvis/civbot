@@ -79,7 +79,7 @@ function addRerollMessage(draftMessage: string, canReroll: boolean) {
     return `${draftMessage}${
         canReroll
             ? `React with 🔁 to request a re-roll. If all players request it, the draft will be re-rolled.`
-            : `Re-rolling is currently disabled since the bot does not have ManageMessages permissions.`
+            : `Re-rolling is currently disabled since the bot does not have Manage Messages permissions.`
     }`;
 }
 
