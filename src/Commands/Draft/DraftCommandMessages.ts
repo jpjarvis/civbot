@@ -5,11 +5,11 @@ import { Result } from "../../Functional/Result";
 import { renderCivShort } from "../../Civs/Civs";
 import { CivGame } from "../../Civs/CivGames";
 
-export function generateDraftCommandOutputMessage(
+export function generateDraftMessage(
     game: CivGame,
     expansionsUsed: Expansion[],
     numberOfCustomCivs: number,
-    draftResult: Result<Draft, DraftError>,
+    draftResult: Result<Draft, DraftError>
 ) {
     let message = "";
     const sendMessage = (m: string) => {
