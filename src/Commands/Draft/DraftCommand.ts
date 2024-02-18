@@ -2,11 +2,10 @@ import { Expansion } from "../../Civs/Expansions";
 import { draft } from "./Draft";
 import { selectCivs } from "../../Civs/SelectCivs";
 import { UserSettings } from "../../UserData/UserSettings";
-import { generateDraftCommandOutputMessage } from "./DraftCommandMessages";
+import { generateDraftMessage } from "./DraftCommandMessages";
 import { ChatInputCommandInteraction } from "discord.js";
 import { getVoiceChannelMembers } from "../../Discord/VoiceChannels";
 import { loadUserData } from "../../UserDataStore";
-import {UserData} from "../../UserData/UserData";
 
 export type DraftArguments = {
     numberOfAi: number;
@@ -31,18 +30,19 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
     const canReroll = interaction.guild?.members.me?.permissions.has("ManageMessages") ?? false;
-    
+
+    let currentDraftMessage = generateDraftMessage(
+        userData.game,
+        draftArgs.expansions,
+        userSettings.customCivs.length,
+        draftResult,
+    );
+
     const message = await interaction.reply({
-        content: generateDraftCommandOutputMessage(
-            userData.game,
-            draftArgs.expansions,
-            userSettings.customCivs.length,
-            draftResult,
-            canReroll
-        ),
+        content: addRerollMessage(currentDraftMessage, canReroll),
         fetchReply: true,
     });
-    
+
     if (!draftResult.isError && canReroll) {
         let timedOut = false;
         const reactionsNeeded = voiceChannelMembers.length > 0 ? voiceChannelMembers.length : 1;
@@ -53,25 +53,34 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
                 filter: (reaction, user) =>
                     reaction.emoji.name === "🔁" &&
                     (voiceChannelMembers.includes(user.username) || user.id === interaction.user.id),
-                time: 60_000
+                time: 120_000,
             });
 
             if (reactions.first()?.count ?? 0 >= reactionsNeeded) {
                 const draftResult = draft(players, draftArgs.numberOfCivs, civs);
-                await message.edit(generateDraftCommandOutputMessage(
+                currentDraftMessage = generateDraftMessage(
                     userData.game,
                     draftArgs.expansions,
                     userSettings.customCivs.length,
                     draftResult,
-                    true
-                ));
+                );
+                await message.edit(addRerollMessage(currentDraftMessage, true));
                 await message.reactions.removeAll();
-            }
-            else {
+            } else {
+                await message.edit(currentDraftMessage);
+                await message.reactions.removeAll();
                 timedOut = true;
             }
         }
     }
+}
+
+function addRerollMessage(draftMessage: string, canReroll: boolean) {
+    return `${draftMessage}${
+        canReroll
+            ? `React with 🔁 to request a re-roll. If all players request it, the draft will be re-rolled.`
+            : `Re-rolling is currently disabled since the bot does not have ManageMessages permissions.`
+    }`;
 }
 
 function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {
