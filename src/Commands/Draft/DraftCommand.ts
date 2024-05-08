@@ -36,15 +36,10 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
 
     const rerollEnabled = isFeatureEnabled(userData, "AllowReroll");
     const canReroll = rerollEnabled && (interaction.guild?.members.me?.permissions.has("ManageMessages") ?? false);
-    const showRerollPermissionsMessage = rerollEnabled && !canReroll && !draftResult.isError;
+    const showRerollMessage = rerollEnabled && !draftResult.isError;
 
     const message = await interaction.reply({
-        content: showRerollPermissionsMessage
-            ? addMessage(
-                  draftMessage,
-                  `Re-rolling is currently disabled since the bot does not have Manage Messages permissions.`,
-              )
-            : draftMessage,
+        content: showRerollMessage ? addRerollMessage(draftMessage, canReroll) : draftMessage,
         fetchReply: true,
     });
 
@@ -84,7 +79,7 @@ async function handleReroll(
 
         if (reactions.first()?.count ?? 0 >= reactionsNeeded) {
             currentDraftMessage = generateNewMessage();
-            await message.edit(addRerollMessage(currentDraftMessage));
+            await message.edit(addRerollMessage(currentDraftMessage, true));
             await message.reactions.removeAll();
         } else {
             await message.edit(currentDraftMessage);
@@ -98,10 +93,12 @@ function addMessage(mainText: string, message: string) {
     return `${mainText}${message}`;
 }
 
-function addRerollMessage(draftMessage: string) {
+function addRerollMessage(draftMessage: string, canReroll: boolean) {
     return addMessage(
         draftMessage,
-        `React with 🔁 to request a re-roll. If all players request it, the draft will be re-rolled.`,
+        canReroll
+            ? `React with 🔁 to request a re-roll. If all players request it, the draft will be re-rolled.`
+            : `Re-rolling is currently disabled since the bot does not have Manage Messages permissions.`,
     );
 }
 
