@@ -3,9 +3,10 @@ import { draft } from "./Draft";
 import { selectCivs } from "../../Civs/SelectCivs";
 import { UserSettings } from "../../UserData/UserSettings";
 import { generateDraftMessage } from "./DraftCommandMessages";
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, CommandInteraction, Message } from "discord.js";
 import { getVoiceChannelMembers } from "../../Discord/VoiceChannels";
 import { loadUserData } from "../../UserDataStore";
+import { isFeatureEnabled } from "../../UserData/FeatureFlags";
 
 export type DraftArguments = {
     numberOfAi: number;
@@ -18,69 +19,90 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
 
     const providedArgs = extractDraftArguments(interaction);
 
-    const voiceChannelMembers = await getVoiceChannelMembers(interaction);
-
     const userData = await loadUserData(serverId);
     const userSettings = userData.userSettings[userData.game];
     const draftArgs = fillDefaultArguments(providedArgs, userSettings);
 
-    const players = voiceChannelMembers.concat(generateAiPlayers(draftArgs.numberOfAi));
+    const players = (await getVoiceChannelMembers(interaction)).concat(generateAiPlayers(draftArgs.numberOfAi));
     const civs = selectCivs(draftArgs.expansions, userSettings.bannedCivs).concat(userSettings.customCivs);
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
-
-    const canReroll = interaction.guild?.members.me?.permissions.has("ManageMessages") ?? false;
-
-    let currentDraftMessage = generateDraftMessage(
+    let draftMessage = generateDraftMessage(
         userData.game,
         draftArgs.expansions,
         userSettings.customCivs.length,
         draftResult,
     );
 
+    const rerollEnabled = isFeatureEnabled(userData, "AllowReroll");
+    const canReroll = rerollEnabled && (interaction.guild?.members.me?.permissions.has("ManageMessages") ?? false);
+    const showRerollPermissionsMessage = rerollEnabled && !canReroll && !draftResult.isError;
+
     const message = await interaction.reply({
-        content: addRerollMessage(currentDraftMessage, canReroll),
+        content: showRerollPermissionsMessage
+            ? addMessage(
+                  draftMessage,
+                  `Re-rolling is currently disabled since the bot does not have Manage Messages permissions.`,
+              )
+            : draftMessage,
         fetchReply: true,
     });
 
-    if (!draftResult.isError && canReroll) {
-        let timedOut = false;
-        const reactionsNeeded = voiceChannelMembers.length > 0 ? voiceChannelMembers.length : 1;
-        while (!timedOut) {
-            await message.react("🔁");
-            const reactions = await message.awaitReactions({
-                max: reactionsNeeded,
-                filter: (reaction, user) =>
-                    reaction.emoji.name === "🔁" &&
-                    (voiceChannelMembers.includes(user.username) || user.id === interaction.user.id),
-                time: 120_000,
-            });
+    if (canReroll && !draftResult.isError) {
+        await handleReroll(message, interaction, draftMessage, () => {
+            return generateDraftMessage(
+                userData.game,
+                draftArgs.expansions,
+                userSettings.customCivs.length,
+                draft(players, draftArgs.numberOfCivs, civs),
+            );
+        });
+    }
+}
 
-            if (reactions.first()?.count ?? 0 >= reactionsNeeded) {
-                const draftResult = draft(players, draftArgs.numberOfCivs, civs);
-                currentDraftMessage = generateDraftMessage(
-                    userData.game,
-                    draftArgs.expansions,
-                    userSettings.customCivs.length,
-                    draftResult,
-                );
-                await message.edit(addRerollMessage(currentDraftMessage, true));
-                await message.reactions.removeAll();
-            } else {
-                await message.edit(currentDraftMessage);
-                await message.reactions.removeAll();
-                timedOut = true;
-            }
+async function handleReroll(
+    message: Message,
+    interaction: CommandInteraction,
+    initialDraftMessage: string,
+    generateNewMessage: () => string,
+) {
+    let currentDraftMessage = initialDraftMessage;
+
+    const voiceChannelMembers = await getVoiceChannelMembers(interaction);
+
+    let timedOut = false;
+    const reactionsNeeded = voiceChannelMembers.length > 0 ? voiceChannelMembers.length : 1;
+    while (!timedOut) {
+        await message.react("🔁");
+        const reactions = await message.awaitReactions({
+            max: reactionsNeeded,
+            filter: (reaction, user) =>
+                reaction.emoji.name === "🔁" &&
+                (voiceChannelMembers.includes(user.username) || user.id === interaction.user.id),
+            time: 120_000,
+        });
+
+        if (reactions.first()?.count ?? 0 >= reactionsNeeded) {
+            currentDraftMessage = generateNewMessage();
+            await message.edit(addRerollMessage(currentDraftMessage));
+            await message.reactions.removeAll();
+        } else {
+            await message.edit(currentDraftMessage);
+            await message.reactions.removeAll();
+            timedOut = true;
         }
     }
 }
 
-function addRerollMessage(draftMessage: string, canReroll: boolean) {
-    return `${draftMessage}${
-        canReroll
-            ? `React with 🔁 to request a re-roll. If all players request it, the draft will be re-rolled.`
-            : `Re-rolling is currently disabled since the bot does not have Manage Messages permissions.`
-    }`;
+function addMessage(mainText: string, message: string) {
+    return `${mainText}${message}`;
+}
+
+function addRerollMessage(draftMessage: string) {
+    return addMessage(
+        draftMessage,
+        `React with 🔁 to request a re-roll. If all players request it, the draft will be re-rolled.`,
+    );
 }
 
 function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {
