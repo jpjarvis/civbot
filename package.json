@@ -12,7 +12,7 @@
     "printWidth": 120
   },
   "dependencies": {
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.15.2",
     "eslint": "^9.2.0",
     "fetch": "^1.1.0",
     "pg": "^8.11.5",
