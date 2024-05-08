@@ -6,6 +6,7 @@ import { generateDraftMessage } from "./DraftCommandMessages";
 import { ChatInputCommandInteraction } from "discord.js";
 import { getVoiceChannelMembers } from "../../Discord/VoiceChannels";
 import { loadUserData } from "../../UserDataStore";
+import { isFeatureEnabled } from "../../UserData/FeatureFlags";
 
 export type DraftArguments = {
     numberOfAi: number;
@@ -29,20 +30,27 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
 
     const draftResult = draft(players, draftArgs.numberOfCivs, civs);
 
-    const canReroll = interaction.guild?.members.me?.permissions.has("ManageMessages") ?? false;
-
     let currentDraftMessage = generateDraftMessage(
         userData.game,
         draftArgs.expansions,
         userSettings.customCivs.length,
         draftResult,
     );
-
+    
+    const rerollEnabled = isFeatureEnabled(userData, "AllowReroll");
+    const canReroll =
+        rerollEnabled &&
+        (interaction.guild?.members.me?.permissions.has("ManageMessages") ?? false);
+    
+    if (rerollEnabled && !draftResult.isError) {
+        currentDraftMessage = addRerollMessage(currentDraftMessage, canReroll)
+    }
+    
     const message = await interaction.reply({
-        content: addRerollMessage(currentDraftMessage, canReroll),
+        content: currentDraftMessage,
         fetchReply: true,
     });
-
+    
     if (!draftResult.isError && canReroll) {
         let timedOut = false;
         const reactionsNeeded = voiceChannelMembers.length > 0 ? voiceChannelMembers.length : 1;
