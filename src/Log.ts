@@ -11,5 +11,7 @@ export function logException(error: Error) {
 }
 
 function logMessage(level: string, message: string) {
-    console.error(`[${new Date(Date.now()).toISOString()}] ${level}: ${message}`);
+    let fullMessage = `[${new Date(Date.now()).toISOString()}] ${level}: ${message}`;
+    
+    level === "ERROR" ? console.log(message) : console.log(fullMessage);
 }
