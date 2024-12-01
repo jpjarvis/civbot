@@ -29,8 +29,14 @@ export class TestInteraction {
         this.output = [...this.output, message];
     }
 
-    public static createEmpty() {
+    public static empty() {
         return new TestInteraction(() => {
         });
+    }
+    
+    public static ban(civ: string) {
+        return new TestInteraction(options => {
+            when(options.getString("civ")).thenReturn(civ);
+        })
     }
 }

@@ -1,6 +1,5 @@
 import {clearTestUserData, getTestUserData} from "../../../TestUtilities/TestUserData";
 import {TestInteraction} from "../../../TestUtilities/TestInteraction";
-import {when} from "@typestrong/ts-mockito";
 import {banCommand} from "../BanCommand";
 import {switchGameCommand} from "../../SwitchGame/SwitchGameCommand";
 
@@ -10,9 +9,7 @@ describe("BanCommand", () => {
     })
 
     it("should ban the specified civ", async () => {
-        const interaction = new TestInteraction((options) => {
-            when(options.getString("civ")).thenReturn("Russia")
-        });
+        const interaction = TestInteraction.ban("Russia");
 
         await banCommand(interaction.value);
         
@@ -23,11 +20,9 @@ describe("BanCommand", () => {
     });
 
     it("should ban based on civ name for Civ 6", async () => {
-        await switchGameCommand(TestInteraction.createEmpty().value);
-        
-        const interaction = new TestInteraction((options) => {
-            when(options.getString("civ")).thenReturn("Russia")
-        });
+        await switchGameCommand(TestInteraction.empty().value);
+
+        const interaction = TestInteraction.ban("Russia");
 
         await banCommand(interaction.value);
         
@@ -38,11 +33,9 @@ describe("BanCommand", () => {
     });
 
     it("should ban based on leader name for Civ 6", async () => {
-        await switchGameCommand(TestInteraction.createEmpty().value);
+        await switchGameCommand(TestInteraction.empty().value);
 
-        const interaction = new TestInteraction((options) => {
-            when(options.getString("civ")).thenReturn("Trajan")
-        });
+        const interaction = TestInteraction.ban("Trajan");
 
         await banCommand(interaction.value);
 
