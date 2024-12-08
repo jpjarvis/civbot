@@ -8,7 +8,7 @@ describe("switch game", () => {
     })
 
     it("should switch to Civ 6 when in Civ 5 mode", async () => {
-        const testInteraction = new TestInteraction(() => {});
+        const testInteraction = TestInteraction.empty();
         await switchGameCommand(testInteraction.value);
 
         const userData = await getTestUserData();
@@ -18,9 +18,9 @@ describe("switch game", () => {
     });
 
     it("should switch to Civ 5 when in Civ 6 mode", async () => {
-        await switchGameCommand(new TestInteraction(() => {}).value);
+        await switchGameCommand(TestInteraction.empty().value);
 
-        const testInteraction = new TestInteraction(() => {});
+        const testInteraction = TestInteraction.empty();
         await switchGameCommand(testInteraction.value);
 
         const userData = await getTestUserData();
