@@ -16,7 +16,7 @@ export class TestInteraction {
 
         const mockedOptions = mock(CommandInteractionOptionResolver);
         applyOptions(mockedOptions);
-        when(mockedInteraction.options).thenReturn(instance(mockedOptions));
+        when(mockedInteraction.options).thenReturn(instance(mockedOptions) as Omit<CommandInteractionOptionResolver, 'getMessage' | 'getFocused'>);
 
         let mockedClient = mock(Client);
         when(mockedClient.application).thenReturn(null);
@@ -33,7 +33,7 @@ export class TestInteraction {
         return new TestInteraction(() => {
         });
     }
-    
+
     public static ban(civ: string) {
         return new TestInteraction(options => {
             when(options.getString("civ")).thenReturn(civ);
