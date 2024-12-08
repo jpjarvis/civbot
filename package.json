@@ -37,7 +37,7 @@
   },
   "scripts": {
     "dev": "ts-node src/Start.ts",
-    "test": "jest",
+    "test": "jest --runInBand",
     "build": "tsc",
     "start": "node build/Start.js"
   }
