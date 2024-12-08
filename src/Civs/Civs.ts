@@ -159,11 +159,11 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
 
     "civ6-vanilla": [
         {
-            leader: "Catherine de Medici",
+            leader: "Catherine de Medici (Black Queen)",
             civ: "France",
         },
         {
-            leader: "Cleopatra",
+            leader: "Cleopatra (Egyptian)",
             civ: "Egypt",
         },
         {
@@ -183,7 +183,7 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
             civ: "Greece",
         },
         {
-            leader: "Harald Hardrada",
+            leader: "Harald Hardrada (Konge)",
             civ: "Norway",
         },
         {
@@ -219,15 +219,15 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
             civ: "Spain",
         },
         {
-            leader: "Qin Shi Huang",
+            leader: "Qin Shi Huang (Mandate of Heaven)",
             civ: "China",
         },
         {
-            leader: "Saladin",
+            leader: "Saladin (Vizier)",
             civ: "Arabia",
         },
         {
-            leader: "Teddy Roosevelt",
+            leader: "Teddy Roosevelt (Bull Moose)",
             civ: "America",
         },
         {
@@ -239,7 +239,7 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
             civ: "Rome",
         },
         {
-            leader: "Victoria",
+            leader: "Victoria (Age of Empire)",
             civ: "England",
         },
     ],
@@ -317,7 +317,7 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
             civ: "The Inca",
         },
         {
-            leader: "Suleiman",
+            leader: "Suleiman (Kanuni)",
             civ: "The Ottomans",
         },
         {
