@@ -16,7 +16,7 @@ export async function getVoiceChannelMembers(interaction: CommandInteraction): P
     if (member instanceof GuildMember) {
         voiceChannel = await getVoiceChannel(interaction.client, member);
         if (voiceChannel) {
-            return voiceChannel.members.map((m) => m.user.username);
+            return voiceChannel.members.map((m) => m.displayName);
         }
     }
 
