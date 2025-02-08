@@ -82,7 +82,6 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
         "Songhai",
         "Spain",
         "Sweden",
-        "Mali",
         "The Zulu",
     ],
 
