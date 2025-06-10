@@ -22,7 +22,7 @@
   "devDependencies": {
     "@tsconfig/node14": "^14.1.2",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.13.9",
+    "@types/node": "^24.0.0",
     "@types/node-fetch": "^2.6.12",
     "@types/pg": "^8.11.6",
     "@types/shuffle-array": "^1.0.5",
