@@ -20,7 +20,7 @@
     "shuffle-array": "^1.0.1"
   },
   "devDependencies": {
-    "@tsconfig/node14": "^14.1.2",
+    "@tsconfig/node14": "^14.1.4",
     "@types/jest": "^29.5.14",
     "@types/node": "^24.0.10",
     "@types/node-fetch": "^2.6.12",
