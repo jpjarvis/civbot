@@ -1,8 +1,9 @@
-import { displayName } from "../../Civs/Expansions";
-import { UserData } from "../../UserData/UserData";
-import { Civ, renderCiv } from "../../Civs/Civs";
-import { ChatInputCommandInteraction } from "discord.js";
-import { loadUserData } from "../../UserDataStore";
+import {displayName} from "../../Civs/Expansions";
+import {UserData} from "../../UserData/UserData";
+import {CivId, getCiv, renderCiv} from "../../Civs/Civs";
+import {ChatInputCommandInteraction} from "discord.js";
+import {loadUserData} from "../../UserDataStore";
+import {CivGame} from "../../Civs/CivGames";
 
 export async function showConfigCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
@@ -21,7 +22,7 @@ CivBot is drafting for **${userData.game}**.
 
 Enabled expansions: \`\`\`${activeSettings.defaultDraftSettings?.expansions?.map(displayName).join("\n")}\`\`\`
 ${anyCustomCivs ? customCivsLine(activeSettings.customCivs) : ""}
-${anyBannedCivs ? bannedCivsLine(activeSettings.bannedCivs) : ""}`.trim();
+${anyBannedCivs ? bannedCivsLine(activeSettings.bannedCivs, userData.game) : ""}`.trim();
 }
 
 function customCivsLine(customCivs: string[]) {
@@ -32,6 +33,6 @@ function customCivsLine(customCivs: string[]) {
     }
 }
 
-function bannedCivsLine(bannedCivs: Civ[]) {
-    return `Banned civs:\`\`\`\n${bannedCivs.sort().map(renderCiv).join("\n")}\`\`\``;
+function bannedCivsLine(bannedCivs: CivId[], game: CivGame) {
+    return `Banned civs:\`\`\`\n${bannedCivs.sort().map(x => renderCiv(getCiv(x), game)).join("\n")}\`\`\``;
 }

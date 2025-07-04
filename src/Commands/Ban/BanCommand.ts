@@ -1,8 +1,9 @@
 import { loadUserData } from "../../UserDataStore";
-import { Civ, renderCiv } from "../../Civs/Civs";
+import {Civ, CivId, getCiv, renderCiv} from "../../Civs/Civs";
 import { ChatInputCommandInteraction } from "discord.js";
 import { banCivs } from "./Ban";
-import { selectCivs } from "../../Civs/SelectCivs";
+import { selectCivIds } from "../../Civs/SelectCivIds";
+import {CivGame} from "../../Civs/CivGames";
 
 export async function banCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
@@ -11,10 +12,10 @@ export async function banCommand(interaction: ChatInputCommandInteraction) {
     const userData = await loadUserData(serverId);
     const userSettings = userData.userSettings[userData.game];
 
-    const allMatchedCivs = selectCivs(
+    const allMatchedCivs = selectCivIds(
         userSettings.defaultDraftSettings.expansions ?? [],
         userSettings.bannedCivs,
-    ).filter((civ) => renderCiv(civ).toLowerCase().includes(searchString));
+    ).filter((civ) => renderCiv(getCiv(civ), userData.game).toLowerCase().includes(searchString));
 
     if (allMatchedCivs.length == 0) {
         await interaction.reply(`"${searchString}" didn't match any civs currently included in your draft.`);
@@ -28,11 +29,11 @@ export async function banCommand(interaction: ChatInputCommandInteraction) {
     } else {
         const chosenCiv = allMatchedCivs[0];
         await banCivs(serverId, userData, [chosenCiv]);
-        await interaction.reply(banMessage(chosenCiv));
+        await interaction.reply(banMessage(chosenCiv, userData.game));
         return;
     }
 }
 
-function banMessage(bannedCiv: Civ) {
-    return `\`${renderCiv(bannedCiv)}\` has been banned. It will no longer appear in your drafts.`;
+function banMessage(bannedCiv: CivId, civGame: CivGame) {
+    return `\`${renderCiv(getCiv(bannedCiv), civGame)}\` has been banned. It will no longer appear in your drafts.`;
 }

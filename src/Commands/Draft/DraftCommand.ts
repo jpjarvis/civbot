@@ -1,12 +1,14 @@
-import { Expansion } from "../../Civs/Expansions";
-import { draft } from "./Draft";
-import { selectCivs } from "../../Civs/SelectCivs";
-import { UserSettings } from "../../UserData/UserSettings";
-import { generateDraftMessage } from "./DraftCommandMessages";
-import { ChatInputCommandInteraction, CommandInteraction, Message } from "discord.js";
-import { getVoiceChannelMembers } from "../../Discord/VoiceChannels";
-import { loadUserData } from "../../UserDataStore";
-import { isFeatureEnabled } from "../../UserData/FeatureFlags";
+import {Expansion} from "../../Civs/Expansions";
+import {draft} from "./Draft";
+import {selectCivIds} from "../../Civs/SelectCivIds";
+import {UserSettings} from "../../UserData/UserSettings";
+import {generateDraftMessage} from "./DraftCommandMessages";
+import {ChatInputCommandInteraction, CommandInteraction, Message} from "discord.js";
+import {getVoiceChannelMembers} from "../../Discord/VoiceChannels";
+import {loadUserData} from "../../UserDataStore";
+import {isFeatureEnabled} from "../../UserData/FeatureFlags";
+import {Civ, CivId, getCiv} from "../../Civs/Civs";
+import {DraftedCiv} from "./DraftTypes";
 
 export type DraftArguments = {
     numberOfAi: number;
@@ -24,9 +26,12 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
     const draftArgs = fillDefaultArguments(providedArgs, userSettings);
 
     const players = (await getVoiceChannelMembers(interaction)).concat(generateAiPlayers(draftArgs.numberOfAi));
-    const civs = selectCivs(draftArgs.expansions, userSettings.bannedCivs).concat(userSettings.customCivs);
+    const civs: DraftedCiv[] = selectCivIds(draftArgs.expansions, userSettings.bannedCivs)
+        .map(x => ({custom: false, id: x}));
 
-    const draftResult = draft(players, draftArgs.numberOfCivs, civs);
+    const civsIncludingCustom = civs.concat(userSettings.customCivs.map(x => ({custom: true, name: x})));
+
+    const draftResult = draft(players, draftArgs.numberOfCivs, civsIncludingCustom);
     let draftMessage = generateDraftMessage(
         userData.game,
         draftArgs.expansions,

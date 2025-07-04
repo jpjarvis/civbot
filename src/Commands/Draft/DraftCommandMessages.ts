@@ -2,7 +2,7 @@
 import { Draft, DraftEntry, DraftError } from "./DraftTypes";
 import { displayName, Expansion } from "../../Civs/Expansions";
 import { Result } from "../../Functional/Result";
-import { renderCivShort } from "../../Civs/Civs";
+import {getCiv, renderCivShort} from "../../Civs/Civs";
 import { CivGame } from "../../Civs/CivGames";
 
 export function generateDraftMessage(
@@ -23,11 +23,11 @@ export function generateDraftMessage(
             sendMessage(Messages.NotEnoughCivs);
         }
     } else {
-        if (renderDraft(draftResult.value) === "") {
+        if (renderDraft(draftResult.value, game) === "") {
             sendMessage(Messages.NoPlayers);
         } else {
             sendMessage(renderDraftDescription(game, expansionsUsed, numberOfCustomCivs));
-            sendMessage(renderDraft(draftResult.value));
+            sendMessage(renderDraft(draftResult.value, game));
         }
     }
 
@@ -40,10 +40,17 @@ function renderDraftDescription(game: "Civ 5" | "Civ 6", expansionsUsed: Expansi
     return `Drafting for ${game} with ${expansions}${customCivs}`;
 }
 
-function renderDraft(draft: Draft) {
-    return `\`\`\`${draft.map(renderDraftEntry).join("\n")}\`\`\``;
+function renderDraft(draft: Draft, game: CivGame) {
+    return `\`\`\`${draft.map(x => renderDraftEntry(x, game)).join("\n")}\`\`\``;
 }
 
-function renderDraftEntry(draftEntry: DraftEntry): string {
-    return `${`${draftEntry.player}`.padEnd(20, " ")} ${draftEntry.civs.map(renderCivShort).join(" / ")}`;
+function renderDraftEntry(draftEntry: DraftEntry, game: CivGame): string {
+    return `${`${draftEntry.player}`.padEnd(20, " ")} ${draftEntry.civs.map(x => {
+        if (x.custom) {
+            return x.name
+        }
+        else {
+            return renderCivShort(getCiv(x.id), game)
+        }
+    }).join(" / ")}`;
 }
