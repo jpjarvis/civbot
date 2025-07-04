@@ -1,56 +1,57 @@
-import { Expansion, Expansions } from "./Expansions";
+import {Expansion, Expansions, gameOfExpansion} from "./Expansions";
+import {CivGame} from "./CivGames";
 
-export type Civ = string | { leader: string; civ: string };
+export type CivIdFrom<E extends Expansion> = typeof Civs[E][number]
+export type CivId = CivIdFrom<Expansion>
 
-export function hasLeader(civ: Civ): civ is { leader: string; civ: string } {
-    return !(typeof civ === "string");
+export type Civ = {
+    civ: string;
+    leader: string;
+    coastal: boolean;
 }
 
-export function civsEqual(a: Civ, b: Civ) {
-    if (!hasLeader(a) || !hasLeader(b)) {
-        return a === b;
-    }
-
-    return a.leader === b.leader && a.civ === b.civ;
+export function getCiv(id: CivId) {
+    return CivData[id];
 }
 
-export function renderCiv(civ: Civ): string {
-    if (!hasLeader(civ)) {
-        return civ;
+export function renderCiv(civ: Civ, civGame: CivGame): string {
+    if (civGame === "Civ 5") {
+        return civ.civ;
     }
 
     return `${civ.leader} - ${civ.civ}`;
 }
 
-export function renderCivShort(civ: Civ): string {
-    if (!hasLeader(civ)) {
-        return civ;
+export function renderCivShort(civ: Civ, civGame: CivGame): string {
+    if (civGame === "Civ 5") {
+        return civ.civ;
     }
 
-    if (leaderHasMultipleCivs(civ.leader)) {
+    if (civ6LeaderHasMultipleCivs(civ.leader)) {
         return `${civ.leader} (${civ.civ})`;
     }
 
     return civ.leader;
 }
 
-function leaderHasMultipleCivs(leader: string) {
-    const flattenedCivs = Expansions.map((x) => Civs[x]).flat();
-    return flattenedCivs.filter((civ) => hasLeader(civ) && civ.leader === leader).length > 1;
+function civ6LeaderHasMultipleCivs(leader: string) {
+    const flattenedCivs = Expansions.filter(x => gameOfExpansion(x) === "Civ 6")
+        .map((x) => Civs[x]).flat().map(x => CivData[x]);
+    return flattenedCivs.filter((civ) => civ.leader === leader).length > 1;
 }
 
-export const Civs: { [ex in Expansion]: Civ[] } = {
+export const Civs = {
     "civ5-vanilla": [
         "America",
         "Arabia",
         "Assyria",
         "Austria",
-        "The Aztecs",
+        "Aztecs",
         "Babylon",
         "Brazil",
         "Byzantium",
         "Carthage",
-        "The Celts",
+        "Celts",
         "China",
         "Denmark",
         "Netherlands",
@@ -60,29 +61,29 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
         "France",
         "Germany",
         "Greece",
-        "The Huns",
-        "The Inca",
+        "Huns",
+        "Inca",
         "India",
         "Indonesia",
-        "The Iroquois",
+        "Iroquois",
         "Japan",
         "Korea",
-        "The Maya",
+        "Maya",
         "Mongolia",
         "Morocco",
-        "The Ottomans",
+        "Ottomans",
         "Persia",
         "Poland",
         "Polynesia",
         "Portugal",
         "Rome",
         "Russia",
-        "The Shoshone",
+        "Shoshone",
         "Siam",
         "Songhai",
         "Spain",
         "Sweden",
-        "The Zulu",
+        "Zulu",
     ],
 
     lekmod: [
@@ -121,7 +122,7 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
         "Macedonia",
         "Madagascar",
         "Manchuria",
-        "The Maori",
+        "Maori",
         "Maurya",
         "Mexico",
         "Moors",
@@ -134,7 +135,7 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
         "Oman",
         "Palmyra",
         "Papal State",
-        "Pheonicia",
+        "Phoenicia",
         "Philippines",
         "Prussia",
         "Romania",
@@ -148,7 +149,6 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
         "Turkey",
         "U.A.E",
         "Ukraine",
-        "Vatican",
         "Venice",
         "Vietnam",
         "Wales",
@@ -157,331 +157,295 @@ export const Civs: { [ex in Expansion]: Civ[] } = {
     ],
 
     "civ6-vanilla": [
-        {
-            leader: "Catherine de Medici (Black Queen)",
-            civ: "France",
-        },
-        {
-            leader: "Cleopatra (Egyptian)",
-            civ: "Egypt",
-        },
-        {
-            leader: "Frederick Barbarossa",
-            civ: "Germany",
-        },
-        {
-            leader: "Gandhi",
-            civ: "India",
-        },
-        {
-            leader: "Gilgamesh",
-            civ: "Sumeria",
-        },
-        {
-            leader: "Gorgo",
-            civ: "Greece",
-        },
-        {
-            leader: "Harald Hardrada (Konge)",
-            civ: "Norway",
-        },
-        {
-            leader: "Hojo Tokimune",
-            civ: "Japan",
-        },
-        {
-            leader: "Julius Caesar",
-            civ: "Rome",
-        },
-        {
-            leader: "Montezuma",
-            civ: "Aztec",
-        },
-        {
-            leader: "Mvemba a Nzinga",
-            civ: "Kongo",
-        },
-        {
-            leader: "Pedro II",
-            civ: "Brazil",
-        },
-        {
-            leader: "Pericles",
-            civ: "Greece",
-        },
-        {
-            leader: "Peter",
-            civ: "Russia",
-        },
-        {
-            leader: "Philip II",
-            civ: "Spain",
-        },
-        {
-            leader: "Qin Shi Huang (Mandate of Heaven)",
-            civ: "China",
-        },
-        {
-            leader: "Saladin (Vizier)",
-            civ: "Arabia",
-        },
-        {
-            leader: "Teddy Roosevelt (Bull Moose)",
-            civ: "America",
-        },
-        {
-            leader: "Tomyris",
-            civ: "Scythia",
-        },
-        {
-            leader: "Trajan",
-            civ: "Rome",
-        },
-        {
-            leader: "Victoria (Age of Empire)",
-            civ: "England",
-        },
+        "CatherineDeMediciBlackQueen",
+        "CleopatraEgyptian",
+        "FrederickBarbarossa",
+        "Gandhi",
+        "Gilgamesh",
+        "Gorgo",
+        "HaraldHardradaKonge",
+        "HojoTokimune",
+        "JuliusCaesar",
+        "Monetuzuma",
+        "MvembaANzinga",
+        "PedroII",
+        "Pericles",
+        "Peter",
+        "PhilipII",
+        "QinShiHuangMandate",
+        "SaladinVizier",
+        "TeddyBullMoose",
+        "Tomyris",
+        "Trajan",
+        "VictoriaEmpire",
     ],
 
     "civ6-rnf": [
-        {
-            leader: "Chandragupta",
-            civ: "India",
-        },
-        {
-            leader: "Genghis Khan",
-            civ: "Mongolia",
-        },
-        {
-            leader: "Lautaro",
-            civ: "Mapuche",
-        },
-        {
-            leader: "Poundmaker",
-            civ: "Cree",
-        },
-        {
-            leader: "Robert the Bruce",
-            civ: "Scotland",
-        },
-        {
-            leader: "Seondeok",
-            civ: "Korea",
-        },
-        {
-            leader: "Shaka",
-            civ: "Zulu",
-        },
-        {
-            leader: "Tamar",
-            civ: "Georgia",
-        },
-        {
-            leader: "Wilhelmina",
-            civ: "The Netherlands",
-        },
+        "Chandragupta",
+        "GenghisKhan",
+        "Lautaro",
+        "Poundmaker",
+        "RobertTheBruce",
+        "Seondeok",
+        "Shaka",
+        "Tamar",
+        "Wilhelmina",
     ],
 
     "civ6-gs": [
-        {
-            leader: "Dido",
-            civ: "Carthage",
-        },
-        {
-            leader: "Eleanor of Aquitaine",
-            civ: "England",
-        },
-        {
-            leader: "Eleanor of Aquitaine",
-            civ: "France",
-        },
-        {
-            leader: "Kristina",
-            civ: "Sweden",
-        },
-        {
-            leader: "Kupe",
-            civ: "The Maori",
-        },
-        {
-            leader: "Mansa Musa",
-            civ: "Mali",
-        },
-        {
-            leader: "Matthias Corvinus",
-            civ: "Hungary",
-        },
-        {
-            leader: "Pachacuti",
-            civ: "The Inca",
-        },
-        {
-            leader: "Suleiman (Kanuni)",
-            civ: "The Ottomans",
-        },
-        {
-            leader: "Wilfred Laurier",
-            civ: "Canada",
-        },
+        "Dido",
+        "Eleanor_England",
+        "Eleanor_France",
+        "Kristina",
+        "Kupe",
+        "MansaMusa",
+        "MatthiasCorvinus",
+        "Pachacuti",
+        "SuleimanKanuni",
+        "WilfredLaurier",
     ],
 
     "civ6-frontier": [
-        {
-            leader: "Ambiorix",
-            civ: "Gaul",
-        },
-        {
-            leader: "Basil II",
-            civ: "Byzantium",
-        },
-        {
-            leader: "Bà Triệu",
-            civ: "Vietnam",
-        },
-        {
-            leader: "Hammurabi",
-            civ: "Babylon",
-        },
-        {
-            leader: "João III",
-            civ: "Portugal",
-        },
-        {
-            leader: "Kublai Khan",
-            civ: "China",
-        },
-        {
-            leader: "Kublai Khan",
-            civ: "Mongolia",
-        },
-        {
-            leader: "Lady Six Sky",
-            civ: "Maya",
-        },
-        {
-            leader: "Menelik II",
-            civ: "Ethiopia",
-        },
-        {
-            leader: "Simón Bolívar",
-            civ: "Gran Colombia",
-        },
+        "Ambiorix",
+        "BasilII",
+        "BaTrieu",
+        "Hammurabi",
+        "JoaoIII",
+        "KublaiKhan_China",
+        "KublaiKhan_Mongolia",
+        "LadySixSky",
+        "MenelikII",
+        "SimonBolivar",
     ],
 
     "civ6-leaderpass": [
-        {
-            leader: "Abraham Lincoln",
-            civ: "America",
-        },
-        {
-            leader: "Cleopatra (Ptolemaic)",
-            civ: "Egypt",
-        },
-        {
-            leader: "Elizabeth I",
-            civ: "England",
-        },
-        {
-            leader: "Harald Hardrada (Varangian)",
-            civ: "Norway",
-        },
-        {
-            leader: "Ludwig II",
-            civ: "Germany",
-        },
-        {
-            leader: "Nader Shah",
-            civ: "Persia",
-        },
-        {
-            leader: "Nzinga Mbande",
-            civ: "Kongo",
-        },
-        {
-            leader: "Qin Shi Huang (Unifier)",
-            civ: "China",
-        },
-        {
-            leader: "Ramses II",
-            civ: "Egypt",
-        },
-        {
-            leader: "Saladin (Sultan)",
-            civ: "Arabia",
-        },
-        {
-            leader: "Sejong",
-            civ: "Korea",
-        },
-        {
-            leader: "Suleiman (Muhtesem)",
-            civ: "The Ottomans",
-        },
-        {
-            leader: "Sundiata Keita",
-            civ: "Mali",
-        },
-        {
-            leader: "Theodora",
-            civ: "Byzantium",
-        },
-        {
-            leader: "Tokugawa",
-            civ: "Japan",
-        },
-        {
-            leader: "Victoria (Age of Steam)",
-            civ: "England",
-        },
-        {
-            leader: "Wu Zetian",
-            civ: "China",
-        },
-        {
-            leader: "Yongle",
-            civ: "China",
-        },
+        "AbrahamLincoln",
+        "CleopatraPtolemaic",
+        "ElizabethI",
+        "HaraldHardradaVarangian",
+        "LudwigII",
+        "NaderShah",
+        "NzingaMbande",
+        "QinShiHuangUnifier",
+        "RamsesII",
+        "SaladinSultan",
+        "Sejong",
+        "SuleimanMuhtesem",
+        "SundiataKeita",
+        "Theodora",
+        "Tokugawa",
+        "VictoriaSteam",
+        "WuZetian",
+        "Yongle",
+
     ],
 
     "civ6-extra": [
-        {
-            leader: "Alexander",
-            civ: "Macedon",
-        },
-        {
-            leader: "Amanitore",
-            civ: "Nubia",
-        },
-        {
-            leader: "Cyrus",
-            civ: "Persia",
-        },
-        {
-            leader: "Gitarja",
-            civ: "Indonesia",
-        },
-        {
-            leader: "Jadwiga",
-            civ: "Poland",
-        },
-        {
-            leader: "Jayavarman VII",
-            civ: "Khmer",
-        },
-        {
-            leader: "John Curtin",
-            civ: "Australia",
-        },
+        "Alexander",
+        "Amanitore",
+        "Cyrus",
+        "Gitarja",
+        "Jadwiga",
+        "JayavarmanVII",
+        "JohnCurtin",
+
     ],
 
     "civ6-personas": [
-        {
-            leader: "Catherine de Medici (Magnificence)",
-            civ: "France",
-        },
-        {
-            leader: "Teddy Roosevelt (Rough Rider)",
-            civ: "America",
-        },
+        "CatherineDeMediciMagnificence",
+        "TeddyRoughRider",
     ],
-};
+} as const satisfies { [ex in Expansion]: string[] };
+
+const CivData: { [civ in CivId]: Civ } = {
+
+    // Civ 5
+    "Akkad": {civ: "Akkad", leader: "Sargon", coastal: false},
+    "Akzum": {civ: "Akzum", leader: "Ezana", coastal: false},
+    "America": {civ: "America", leader: "Washington", coastal: false},
+    "Arabia": {civ: "Arabia", leader: "Harun al-Rashid", coastal: false},
+    "Argentina": {civ: "Argentina", leader: "Eva Perón", coastal: false},
+    "Armenia": {civ: "Armenia", leader: "Tiridates III", coastal: false},
+    "Assyria": {civ: "Assyria", leader: "Ashurbanipal", coastal: false},
+    "Australia": {civ: "Australia", leader: "Henry Parker", coastal: true},
+    "Austria": {civ: "Austria", leader: "Maria Theresa", coastal: false},
+    "Ayyubids": {civ: "Ayyubids", leader: "Saladin", coastal: false},
+    "Aztecs": {civ: "The Aztecs", leader: "Montezuma", coastal: false},
+    "Babylon": {civ: "Babylon", leader: "Nebuchadnezzar II", coastal: false},
+    "Belgium": {civ: "Belgium", leader: "", coastal: false},
+    "Boers": {civ: "Boers", leader: "Stephanus Johannes Paulus Kruger", coastal: false},
+    "Bolivia": {civ: "Bolivia", leader: "Tata Belzu", coastal: false},
+    "Brazil": {civ: "Brazil", leader: "Pedro II", coastal: false},
+    "Brunei": {civ: "Brunei", leader: "Bolkiah", coastal: true},
+    "Bulgaria": {civ: "Bulgaria", leader: "Asparukh Khan", coastal: false},
+    "Burma": {civ: "Burma", leader: "Anawrahta", coastal: false},
+    "Byzantium": {civ: "Byzantium", leader: "Theodora", coastal: false},
+    "Canada": {civ: "Canada", leader: "John A. MacDonald", coastal: false},
+    "Carthage": {civ: "Carthage", leader: "Dido", coastal: true},
+    "Celts": {civ: "The Celts", leader: "Boudicca", coastal: false},
+    "Chile": {civ: "Chile", leader: "Bernardo O’ Higgens", coastal: true},
+    "China": {civ: "China", leader: "Wu Zetian", coastal: false},
+    "Colombia": {civ: "Colombia", leader: "Simon Bolivar", coastal: false},
+    "Cuba": {civ: "Cuba", leader: "Fidel Castro", coastal: false},
+    "Denmark": {civ: "Denmark", leader: "Harald Bluetooth", coastal: true},
+    "Egypt": {civ: "Egypt", leader: "Ramesses II", coastal: false},
+    "England": {civ: "England", leader: "Elizabeth", coastal: true},
+    "Ethiopia": {civ: "Ethiopia", leader: "Haile Selassie", coastal: false},
+    "Finland": {civ: "Finland", leader: "Mannerheim", coastal: false},
+    "France": {civ: "France", leader: "Napoleon", coastal: false},
+    "Franks": {civ: "Franks", leader: "Charlemagne", coastal: false},
+    "Gauls": {civ: "Gaul", leader: "Vercingetorix", coastal: false},
+    "Georgia": {civ: "Georgia", leader: "Tamar", coastal: false},
+    "Germany": {civ: "Germany", leader: "Bismarck", coastal: false},
+    "Golden Horde": {civ: "Golden Horde", leader: "Batu Khan", coastal: false},
+    "Goths": {civ: "Goths", leader: "Alaric I", coastal: false},
+    "Greece": {civ: "Greece", leader: "Pericles", coastal: false},
+    "Hittites": {civ: "Hittites", leader: "Muwatallis", coastal: false},
+    "Hungary": {civ: "Hungary", leader: "András II", coastal: false},
+    "Huns": {civ: "The Huns", leader: "Attila", coastal: false},
+    "Inca": {civ: "The Inca", leader: "Pachacuti", coastal: false},
+    "India": {civ: "India", leader: "Gandhi", coastal: false},
+    "Indonesia": {civ: "Indonesia", leader: "Gajah Mada", coastal: true},
+    "Ireland": {civ: "Ireland", leader: "Michael Collins", coastal: false},
+    "Iroquois": {civ: "The Iroquois", leader: "Hiawatha", coastal: false},
+    "Israel": {civ: "Israel", leader: "David", coastal: false},
+    "Italy": {civ: "Italy", leader: "Vittorio Emanuele III", coastal: false},
+    "Japan": {civ: "Japan", leader: "Oda Nobunaga", coastal: true},
+    "Jerusalem": {civ: "Jerusalem", leader: "Fulk V", coastal: false},
+    "Khmer": {civ: "Khmer", leader: "Suryavarman II", coastal: false},
+    "Kilwa": {civ: "Kilwa", leader: "Ali ibn al-Hassan Shirazi", coastal: true},
+    "Kongo": {civ: "Kongo", leader: "Mvemba a Nzinga", coastal: false},
+    "Korea": {civ: "Korea", leader: "Sejong", coastal: true},
+    "Lithuania": {civ: "Lithuania", leader: "Vytautas", coastal: false},
+    "Macedonia": {civ: "Macedonia", leader: "Alexander", coastal: false},
+    "Madagascar": {civ: "Madagascar", leader: "Ralambo", coastal: false},
+    "Manchuria": {civ: "Manchuria", leader: "Nurhaci", coastal: false},
+    "Maori": {civ: "Maori", leader: "Te Rauparaha", coastal: false},
+    "Maurya": {civ: "Maurya", leader: "Ashoka", coastal: false},
+    "Maya": {civ: "The Maya", leader: "Pacal", coastal: false},
+    "Mexico": {civ: "Mexico", leader: "Benito Juarez", coastal: false},
+    "Mongolia": {civ: "Mongolia", leader: "Genghis Khan", coastal: false},
+    "Moors": {civ: "Moors", leader: "Abd-ar-Rahman III", coastal: false},
+    "Morocco": {civ: "Morocco", leader: "Ahmad al-Mansur", coastal: false},
+    "Mysore": {civ: "Mysore", leader: "Hyder Ali", coastal: false},
+    "Nabatea": {civ: "Nabatea", leader: "Aretas III", coastal: false},
+    "Netherlands": {civ: "Netherlands", leader: "William", coastal: true},
+    "New Zealand": {civ: "New Zealand", leader: "Michael Joseph Savage", coastal: true},
+    "Normandy": {civ: "Normandy", leader: "William the Conqueror", coastal: false},
+    "Norway": {civ: "Norway", leader: "Harald Hardrada", coastal: true},
+    "Nubia": {civ: "Nubia", leader: "Amanitore", coastal: false},
+    "Oman": {civ: "Oman", leader: "Saif bin Sultan", coastal: true},
+    "Ottomans": {civ: "The Ottomans", leader: "Suleiman", coastal: false},
+    "Palmyra": {civ: "Palmyra", leader: "Zenobia", coastal: false},
+    "Papal State": {civ: "Papal State", leader: "Urban II", coastal: false},
+    "Persia": {civ: "Persia", leader: "Darius I", coastal: false},
+    "Phoenicia": {civ: "Phoenicia", leader: "Hiram", coastal: true},
+    "Philippines": {civ: "Phillipines", leader: "Emilio Aguinaldo", coastal: true},
+    "Poland": {civ: "Poland", leader: "Casimir III", coastal: false},
+    "Polynesia": {civ: "Polynesia", leader: "Kamehameha", coastal: true},
+    "Portugal": {civ: "Portugal", leader: "Maria I", coastal: true},
+    "Prussia": {civ: "Prussia", leader: "Frederick", coastal: false},
+    "Romania": {civ: "Romania", leader: "Carol I", coastal: false},
+    "Rome": {civ: "Rome", leader: "Augustus Caesar", coastal: false},
+    "Russia": {civ: "Russia", leader: "Catherine", coastal: false},
+    "Scotland": {civ: "Scotland", leader: "Robert the Bruce", coastal: false},
+    "Shoshone": {civ: "The Shoshone", leader: "Pocatello", coastal: false},
+    "Siam": {civ: "Siam", leader: "Ramkhamhaeng", coastal: false},
+    "Sioux": {civ: "Sioux", leader: "Sitting Bull", coastal: false},
+    "Songhai": {civ: "Songhai", leader: "Askia", coastal: false},
+    "Spain": {civ: "Spain", leader: "Isabella", coastal: true},
+    "Sumeria": {civ: "Sumeria", leader: "Gilgamesh", coastal: false},
+    "Sweden": {civ: "Sweden", leader: "Gustavus Adolphus", coastal: false},
+    "Switzerland": {civ: "Switzerland", leader: "Jonas Furrer", coastal: false},
+    "Tibet": {civ: "Tibet", leader: "Ngawang Lobsang Gyatso", coastal: false},
+    "Timurids": {civ: "Timurids", leader: "Timur", coastal: false},
+    "Tonga": {civ: "Tonga", leader: "'Aho'eitu", coastal: true},
+    "Turkey": {civ: "Turkey", leader: "Ataturk", coastal: false},
+    "U.A.E": {civ: "U.A.E", leader: "Sheikh Zayed", coastal: true},
+    "Ukraine": {civ: "Ukraine", leader: "Yaroslav I", coastal: false},
+    "Venice": {civ: "Venice", leader: "Enrico Dandolo", coastal: true},
+    "Vietnam": {civ: "Vietnam", leader: "Hai Ba Trung", coastal: false},
+    "Wales": {civ: "Wales", leader: "Owain Glyndwr", coastal: false},
+    "Yugoslavia": {civ: "Yugoslavia", leader: "Aleksandar I", coastal: false},
+    "Zimbabwe": {civ: "Zimbabwe", leader: "Nyatsimba Mutota", coastal: false},
+    "Zulu": {civ: "The Zulu", leader: "Shaka", coastal: false},
+
+    // Civ 6
+    "AbrahamLincoln": {leader: "Abraham Lincoln", civ: "America", coastal: false,},
+    "Alexander": {leader: "Alexander", civ: "Macedon", coastal: false,},
+    "Amanitore": {leader: "Amanitore", civ: "Nubia", coastal: false,},
+    "Ambiorix": {leader: "Ambiorix", civ: "Gaul", coastal: false,},
+    "BasilII": {leader: "Basil II", civ: "Byzantium", coastal: false,},
+    "BaTrieu": {leader: "Bà Triệu", civ: "Vietnam", coastal: false,},
+    "CatherineDeMediciBlackQueen": {leader: "Catherine de Medici (Black Queen)", civ: "France", coastal: false,},
+    "CatherineDeMediciMagnificence": {leader: "Catherine de Medici (Magnificence)", civ: "France", coastal: false,},
+    "Chandragupta": {leader: "Chandragupta", civ: "India", coastal: false,},
+    "CleopatraEgyptian": {leader: "Cleopatra (Egyptian)", civ: "Egypt", coastal: false,},
+    "CleopatraPtolemaic": {leader: "Cleopatra (Ptolemaic)", civ: "Egypt", coastal: false,},
+    "Cyrus": {leader: "Cyrus", civ: "Persia", coastal: false,},
+    "Dido": {leader: "Dido", civ: "Phoenicia", coastal: true,},
+    "Eleanor_England": {leader: "Eleanor of Aquitaine", civ: "England", coastal: true,},
+    "Eleanor_France": {leader: "Eleanor of Aquitaine", civ: "France", coastal: false,},
+    "ElizabethI": {leader: "Elizabeth I", civ: "England", coastal: true,},
+    "FrederickBarbarossa": {leader: "Frederick Barbarossa", civ: "Germany", coastal: false,},
+    "Gandhi": {leader: "Gandhi", civ: "India", coastal: false,},
+    "GenghisKhan": {leader: "Genghis Khan", civ: "Mongolia", coastal: false,},
+    "Gilgamesh": {leader: "Gilgamesh", civ: "Sumeria", coastal: false,},
+    "Gitarja": {leader: "Gitarja", civ: "Indonesia", coastal: true,},
+    "Gorgo": {leader: "Gorgo", civ: "Greece", coastal: false,},
+    "Hammurabi": {leader: "Hammurabi", civ: "Babylon", coastal: false,},
+    "HaraldHardradaKonge": {leader: "Harald Hardrada (Konge)", civ: "Norway", coastal: true,},
+    "HaraldHardradaVarangian": {leader: "Harald Hardrada (Varangian)", civ: "Norway", coastal: true,},
+    "HojoTokimune": {leader: "Hojo Tokimune", civ: "Japan", coastal: true,},
+    "Jadwiga": {leader: "Jadwiga", civ: "Poland", coastal: false,},
+    "JayavarmanVII": {leader: "Jayavarman VII", civ: "Khmer", coastal: false,},
+    "JoaoIII": {leader: "João III", civ: "Portugal", coastal: true,},
+    "JohnCurtin": {leader: "John Curtin", civ: "Australia", coastal: true,},
+    "JuliusCaesar": {leader: "Julius Caesar", civ: "Rome", coastal: false,},
+    "Kristina": {leader: "Kristina", civ: "Sweden", coastal: false,},
+    "KublaiKhan_China": {leader: "Kublai Khan", civ: "China", coastal: false,},
+    "KublaiKhan_Mongolia": {leader: "Kublai Khan", civ: "Mongolia", coastal: false,},
+    "Kupe": {leader: "Kupe", civ: "The Maori", coastal: true,},
+    "LadySixSky": {leader: "Lady Six Sky", civ: "Maya", coastal: false,},
+    "Lautaro": {leader: "Lautaro", civ: "Mapuche", coastal: false,},
+    "LudwigII": {leader: "Ludwig II", civ: "Germany", coastal: false,},
+    "MansaMusa": {leader: "Mansa Musa", civ: "Mali", coastal: false,},
+    "MatthiasCorvinus": {leader: "Matthias Corvinus", civ: "Hungary", coastal: false,},
+    "MenelikII": {leader: "Menelik II", civ: "Ethiopia", coastal: false,},
+    "Monetuzuma": {leader: "Montezuma", civ: "Aztec", coastal: false,},
+    "MvembaANzinga": {leader: "Mvemba a Nzinga", civ: "Kongo", coastal: false,},
+    "NaderShah": {leader: "Nader Shah", civ: "Persia", coastal: false,},
+    "NzingaMbande": {leader: "Nzinga Mbande", civ: "Kongo", coastal: false,},
+    "Pachacuti": {leader: "Pachacuti", civ: "The Inca", coastal: false,},
+    "PedroII": {leader: "Pedro II", civ: "Brazil", coastal: false,},
+    "Pericles": {leader: "Pericles", civ: "Greece", coastal: false,},
+    "Peter": {leader: "Peter", civ: "Russia", coastal: false,},
+    "PhilipII": {leader: "Philip II", civ: "Spain", coastal: false,},
+    "Poundmaker": {leader: "Poundmaker", civ: "Cree", coastal: false,},
+    "QinShiHuangMandate": {leader: "Qin Shi Huang (Mandate of Heaven)", civ: "China", coastal: false,},
+    "QinShiHuangUnifier": {leader: "Qin Shi Huang (Unifier)", civ: "China", coastal: false,},
+    "RamsesII": {leader: "Ramses II", civ: "Egypt", coastal: false,},
+    "RobertTheBruce": {leader: "Robert the Bruce", civ: "Scotland", coastal: false,},
+    "SaladinSultan": {leader: "Saladin (Sultan)", civ: "Arabia", coastal: false,},
+    "SaladinVizier": {leader: "Saladin (Vizier)", civ: "Arabia", coastal: false,},
+    "Sejong": {leader: "Sejong", civ: "Korea", coastal: false,},
+    "Seondeok": {leader: "Seondeok", civ: "Korea", coastal: false,},
+    "Shaka": {leader: "Shaka", civ: "Zulu", coastal: false,},
+    "SimonBolivar": {leader: "Simón Bolívar", civ: "Gran Colombia", coastal: false,},
+    "SuleimanKanuni": {leader: "Suleiman (Kanuni)", civ: "The Ottomans", coastal: false,},
+    "SuleimanMuhtesem": {leader: "Suleiman (Muhtesem)", civ: "The Ottomans", coastal: false,},
+    "SundiataKeita": {leader: "Sundiata Keita", civ: "Mali", coastal: false,},
+    "Tamar": {leader: "Tamar", civ: "Georgia", coastal: false,},
+    "TeddyBullMoose": {leader: "Teddy Roosevelt (Bull Moose)", civ: "America", coastal: false,},
+    "TeddyRoughRider": {leader: "Teddy Roosevelt (Rough Rider)", civ: "America", coastal: false,},
+    "Theodora": {leader: "Theodora", civ: "Byzantium", coastal: false,},
+    "Tokugawa": {leader: "Tokugawa", civ: "Japan", coastal: true,},
+    "Tomyris": {leader: "Tomyris", civ: "Scythia", coastal: false,},
+    "Trajan": {leader: "Trajan", civ: "Rome", coastal: false,},
+    "VictoriaEmpire": {leader: "Victoria (Age of Empire)", civ: "England", coastal: false,},
+    "VictoriaSteam": {leader: "Victoria (Age of Steam)", civ: "England", coastal: false,},
+    "WilfredLaurier": {leader: "Wilfred Laurier", civ: "Canada", coastal: false,},
+    "Wilhelmina": {leader: "Wilhelmina", civ: "The Netherlands", coastal: true,},
+    "WuZetian": {leader: "Wu Zetian", civ: "China", coastal: false,},
+    "Yongle": {leader: "Yongle", civ: "China", coastal: false,},
+} 

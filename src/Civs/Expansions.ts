@@ -31,6 +31,10 @@ export function expansionsInGame(game: CivGame) {
     return Expansions.filter((x) => ExpansionMetadata[x].game === game);
 }
 
+export function gameOfExpansion(expansion: Expansion) {
+    return ExpansionMetadata[expansion].game;
+}
+
 export function displayName(expansion: Expansion) {
     return ExpansionMetadata[expansion].displayName;
 }

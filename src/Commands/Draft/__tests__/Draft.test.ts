@@ -1,8 +1,9 @@
 ﻿import { extractErrorAndAssertIsError, extractResultAndAssertIsNotError } from "../../../TestUtils";
 import { draft } from "../Draft";
+import { DraftedCiv } from "../DraftTypes";
 
 describe("draft", () => {
-    const civs = generateArray(20);
+    const civs: DraftedCiv[] = generateArray(20).map(toDraftedCiv);
 
     it("should succeed under normal circumstances", async () => {
         const draftResultOrError = draft(generateArray(3), 3, civs);
@@ -42,4 +43,8 @@ describe("draft", () => {
 
 function generateArray(count: number): string[] {
     return Array.from(Array(count)).map((_, i) => `item${i}`);
+}
+
+function toDraftedCiv(name: string): DraftedCiv { 
+    return {custom: true, name: name}
 }

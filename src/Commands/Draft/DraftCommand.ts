@@ -1,17 +1,20 @@
-import { Expansion } from "../../Civs/Expansions";
-import { draft } from "./Draft";
-import { selectCivs } from "../../Civs/SelectCivs";
-import { UserSettings } from "../../UserData/UserSettings";
-import { generateDraftMessage } from "./DraftCommandMessages";
-import { ChatInputCommandInteraction, CommandInteraction, Message } from "discord.js";
-import { getVoiceChannelMembers } from "../../Discord/VoiceChannels";
-import { loadUserData } from "../../UserDataStore";
-import { isFeatureEnabled } from "../../UserData/FeatureFlags";
+import {Expansion} from "../../Civs/Expansions";
+import {draft, draftWithGuaranteedCoastal} from "./Draft";
+import {selectCivIds} from "../../Civs/SelectCivIds";
+import {UserSettings} from "../../UserData/UserSettings";
+import {generateDraftMessage} from "./DraftCommandMessages";
+import {ChatInputCommandInteraction, CommandInteraction, Message} from "discord.js";
+import {getVoiceChannelMembers} from "../../Discord/VoiceChannels";
+import {loadUserData} from "../../UserDataStore";
+import {isFeatureEnabled} from "../../UserData/FeatureFlags";
+import {Civ, CivId, getCiv} from "../../Civs/Civs";
+import {DraftedCiv} from "./DraftTypes";
 
 export type DraftArguments = {
     numberOfAi: number;
     numberOfCivs: number;
     expansions: Expansion[];
+    guaranteeCoastal: boolean;
 };
 
 export async function draftCommand(interaction: ChatInputCommandInteraction) {
@@ -24,13 +27,20 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
     const draftArgs = fillDefaultArguments(providedArgs, userSettings);
 
     const players = (await getVoiceChannelMembers(interaction)).concat(generateAiPlayers(draftArgs.numberOfAi));
-    const civs = selectCivs(draftArgs.expansions, userSettings.bannedCivs).concat(userSettings.customCivs);
+    const civs: DraftedCiv[] = selectCivIds(draftArgs.expansions, userSettings.bannedCivs)
+        .map(x => ({custom: false, id: x}));
 
-    const draftResult = draft(players, draftArgs.numberOfCivs, civs);
+    const civsIncludingCustom = civs.concat(userSettings.customCivs.map(x => ({custom: true, name: x})));
+
+    const draftResult = draftArgs.guaranteeCoastal ? 
+        draftWithGuaranteedCoastal(players, draftArgs.numberOfCivs, civsIncludingCustom) : 
+        draft(players, draftArgs.numberOfCivs, civsIncludingCustom);
+    
     let draftMessage = generateDraftMessage(
         userData.game,
         draftArgs.expansions,
         userSettings.customCivs.length,
+        draftArgs.guaranteeCoastal,
         draftResult,
     );
 
@@ -49,7 +59,10 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
                 userData.game,
                 draftArgs.expansions,
                 userSettings.customCivs.length,
-                draft(players, draftArgs.numberOfCivs, civs),
+                draftArgs.guaranteeCoastal,
+                draftArgs.guaranteeCoastal ?
+                    draftWithGuaranteedCoastal(players, draftArgs.numberOfCivs, civsIncludingCustom) :
+                    draft(players, draftArgs.numberOfCivs, civsIncludingCustom)
             );
         });
     }
@@ -109,6 +122,7 @@ function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings
         numberOfAi: partialArgs.numberOfAi ?? defaultArgs.numberOfAi ?? 0,
         numberOfCivs: partialArgs.numberOfCivs ?? defaultArgs.numberOfCivs ?? 3,
         expansions: partialArgs.expansions ?? defaultArgs.expansions ?? ["civ5-vanilla"],
+        guaranteeCoastal: partialArgs.guaranteeCoastal ?? false,
     };
 }
 
@@ -123,9 +137,11 @@ function generateAiPlayers(numberOfAiPlayers: number) {
 function extractDraftArguments(interaction: ChatInputCommandInteraction): Partial<DraftArguments> {
     const ai = interaction.options.getInteger("ai") ?? undefined;
     const civs = interaction.options.getInteger("civs") ?? undefined;
+    const guaranteeCoastal = interaction.options.getBoolean("guarantee-coastal") ?? undefined;
 
     return {
         numberOfCivs: civs,
         numberOfAi: ai,
+        guaranteeCoastal: guaranteeCoastal
     };
 }
