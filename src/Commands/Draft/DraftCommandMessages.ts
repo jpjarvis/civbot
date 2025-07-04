@@ -9,6 +9,7 @@ export function generateDraftMessage(
     game: CivGame,
     expansionsUsed: Expansion[],
     numberOfCustomCivs: number,
+    guaranteeCoastal: boolean,
     draftResult: Result<Draft, DraftError>
 ) {
     let message = "";
@@ -28,7 +29,7 @@ export function generateDraftMessage(
         if (renderDraft(draftResult.value, game) === "") {
             sendMessage(Messages.NoPlayers);
         } else {
-            sendMessage(renderDraftDescription(game, expansionsUsed, numberOfCustomCivs));
+            sendMessage(renderDraftDescription(game, expansionsUsed, numberOfCustomCivs, guaranteeCoastal));
             sendMessage(renderDraft(draftResult.value, game));
         }
     }
@@ -36,10 +37,11 @@ export function generateDraftMessage(
     return message;
 }
 
-function renderDraftDescription(game: "Civ 5" | "Civ 6", expansionsUsed: Expansion[], numberOfCustomCivs: number) {
+function renderDraftDescription(game: "Civ 5" | "Civ 6", expansionsUsed: Expansion[], numberOfCustomCivs: number, guaranteeCoastal: boolean) {
     const expansions = expansionsUsed.map((cg) => `\`${displayName(cg)}\``).join(", ");
     const customCivs = numberOfCustomCivs > 0 ? ` and ${numberOfCustomCivs} custom civs` : "";
-    return `Drafting for ${game} with ${expansions}${customCivs}`;
+    const guaranteeCoastalText = guaranteeCoastal ? " with guaranteed coastal civs" : "";
+    return `Drafting for ${game} with ${expansions}${customCivs}${guaranteeCoastalText}`;
 }
 
 function renderDraft(draft: Draft, game: CivGame) {

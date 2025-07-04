@@ -40,6 +40,7 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
         userData.game,
         draftArgs.expansions,
         userSettings.customCivs.length,
+        draftArgs.guaranteeCoastal,
         draftResult,
     );
 
@@ -58,7 +59,10 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
                 userData.game,
                 draftArgs.expansions,
                 userSettings.customCivs.length,
-                draft(players, draftArgs.numberOfCivs, civs),
+                draftArgs.guaranteeCoastal,
+                draftArgs.guaranteeCoastal ?
+                    draftWithGuaranteedCoastal(players, draftArgs.numberOfCivs, civsIncludingCustom) :
+                    draft(players, draftArgs.numberOfCivs, civsIncludingCustom)
             );
         });
     }
