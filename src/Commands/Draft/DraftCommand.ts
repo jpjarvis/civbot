@@ -3,11 +3,9 @@ import {draft, draftWithGuaranteedCoastal} from "./Draft";
 import {selectCivIds} from "../../Civs/SelectCivIds";
 import {UserSettings} from "../../UserData/UserSettings";
 import {generateDraftMessage} from "./DraftCommandMessages";
-import {ChatInputCommandInteraction, CommandInteraction, Message} from "discord.js";
+import {ChatInputCommandInteraction} from "discord.js";
 import {getVoiceChannelMembers} from "../../Discord/VoiceChannels";
 import {loadUserData} from "../../UserDataStore";
-import {isFeatureEnabled} from "../../UserData/FeatureFlags";
-import {Civ, CivId, getCiv} from "../../Civs/Civs";
 import {DraftedCiv} from "./DraftTypes";
 
 export type DraftArguments = {
@@ -44,77 +42,8 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
         draftResult,
     );
 
-    const rerollEnabled = isFeatureEnabled(userData, "AllowReroll");
-    const canReroll = rerollEnabled && (interaction.guild?.members.me?.permissions.has("ManageMessages") ?? false);
-    const showRerollMessage = rerollEnabled && !draftResult.isError;
-
-    const message = await interaction.reply({
-        content: showRerollMessage ? addRerollMessage(draftMessage, canReroll) : draftMessage,
-        fetchReply: true,
-    });
-
-    if (canReroll && !draftResult.isError) {
-        await handleReroll(message, interaction, draftMessage, () => {
-            return generateDraftMessage(
-                userData.game,
-                draftArgs.expansions,
-                userSettings.customCivs.length,
-                draftArgs.guaranteeCoastal,
-                draftArgs.guaranteeCoastal ?
-                    draftWithGuaranteedCoastal(players, draftArgs.numberOfCivs, civsIncludingCustom) :
-                    draft(players, draftArgs.numberOfCivs, civsIncludingCustom)
-            );
-        });
-    }
+    await interaction.reply(draftMessage);
 }
-
-async function handleReroll(
-    message: Message,
-    interaction: CommandInteraction,
-    initialDraftMessage: string,
-    generateNewMessage: () => string,
-) {
-    let currentDraftMessage = initialDraftMessage;
-
-    const voiceChannelMembers = await getVoiceChannelMembers(interaction);
-
-    let timedOut = false;
-    const reactionsNeeded = voiceChannelMembers.length > 0 ? voiceChannelMembers.length : 1;
-    while (!timedOut) {
-        await message.react("🔁");
-        const reactions = await message.awaitReactions({
-            max: reactionsNeeded,
-            filter: (reaction, user) =>
-                reaction.emoji.name === "🔁" &&
-                (voiceChannelMembers.includes(user.username) || user.id === interaction.user.id),
-            time: 120_000,
-        });
-
-        if (reactions.first()?.count ?? 0 >= reactionsNeeded) {
-            currentDraftMessage = generateNewMessage();
-            await message.edit(addRerollMessage(currentDraftMessage, true));
-            await message.reactions.removeAll();
-        } else {
-            await message.edit(currentDraftMessage);
-            await message.reactions.removeAll();
-            timedOut = true;
-        }
-    }
-}
-
-function addMessage(mainText: string, message: string) {
-    return `${mainText}${message}`;
-}
-
-function addRerollMessage(draftMessage: string, canReroll: boolean) {
-    return addMessage(
-        draftMessage,
-        canReroll
-            ? `React with 🔁 to request a re-roll. If all players request it, the draft will be re-rolled.`
-            : `Re-rolling is currently disabled since the bot does not have Manage Messages permissions.`,
-    );
-}
-
 function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {
     const defaultArgs = userSettings.defaultDraftSettings;
 
