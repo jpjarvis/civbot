@@ -1,5 +1,6 @@
 import { ModalSubmitInteraction } from "discord.js";
 import { loadUserData, saveUserData } from "../UserDataStore";
+import {civBotReply} from "../Discord/CivBotReply";
 
 export async function handleModalSubmit(interaction: ModalSubmitInteraction) {
     if (interaction.customId === "customCivs") {
@@ -19,5 +20,5 @@ async function handleCustomCivsModal(interaction: ModalSubmitInteraction) {
 
     userData.userSettings[userData.game].customCivs = civs;
     await saveUserData(serverId, userData);
-    await interaction.reply(`Custom civs updated. You now have ${civs.length} custom civs.`);
+    await civBotReply(interaction, `Custom civs updated. You now have ${civs.length} custom civs.`);
 }

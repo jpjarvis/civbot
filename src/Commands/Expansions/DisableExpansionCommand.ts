@@ -1,13 +1,14 @@
 import { Expansion, displayName, stringToExpansion } from "../../Civs/Expansions";
 import { loadUserData, saveUserData } from "../../UserDataStore";
 import { ChatInputCommandInteraction } from "discord.js";
+import {civBotReply} from "../../Discord/CivBotReply";
 
 export async function disableExpansionCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     const expansion = stringToExpansion(interaction.options.getString("expansion")!)!;
 
     const message = await disableExpansion(serverId, expansion);
-    await interaction.reply(message);
+    await civBotReply(interaction, message);
 }
 
 async function disableExpansion(tenantId: string, expansion: Expansion): Promise<string> {

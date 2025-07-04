@@ -6,6 +6,7 @@ import { logException, logInfo } from "./Log";
 import { updateSlashCommandsForAllServers, updateSlashCommandsForServer } from "./SlashCommands/UpdateSlashCommands";
 import { handleModalSubmit } from "./Modals/HandleModalSubmit";
 import { banCommandAutocomplete, unbanCommandAutocomplete } from "./Commands/Ban/Autocomplete";
+import {civBotReply} from "./Discord/CivBotReply";
 
 async function start() {
     const client = new Client({
@@ -40,7 +41,7 @@ async function start() {
                 }
 
                 if (!interaction.replied) {
-                    await interaction.reply(Messages.GenericError);
+                    await civBotReply(interaction, Messages.GenericError);
                 }
             }
         }
@@ -52,7 +53,7 @@ async function start() {
                 if (e instanceof Error) {
                     logException(e);
                 }
-                await interaction.reply(Messages.GenericError);
+                await civBotReply(interaction, Messages.GenericError);
             }
         }
 
