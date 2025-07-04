@@ -17,6 +17,12 @@ export function getCommands(game: CivGame) {
                 name: "civs",
                 description: "Number of civs to draft for each player (Default is 3)",
             },
+            {
+                type: ApplicationCommandOptionType.Boolean,
+                name: "guarantee-coastal",
+                description: "Ensure that each player receives at least one civ with a coastal bias",
+                required: false,
+            }
         ],
     };
 

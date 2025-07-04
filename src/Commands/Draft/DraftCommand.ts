@@ -133,9 +133,11 @@ function generateAiPlayers(numberOfAiPlayers: number) {
 function extractDraftArguments(interaction: ChatInputCommandInteraction): Partial<DraftArguments> {
     const ai = interaction.options.getInteger("ai") ?? undefined;
     const civs = interaction.options.getInteger("civs") ?? undefined;
+    const guaranteeCoastal = interaction.options.getBoolean("guarantee-coastal") ?? undefined;
 
     return {
         numberOfCivs: civs,
         numberOfAi: ai,
+        guaranteeCoastal: guaranteeCoastal
     };
 }
