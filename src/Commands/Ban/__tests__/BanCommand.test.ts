@@ -56,7 +56,7 @@ describe("BanCommand", () => {
             const userData = await getTestUserData();
 
             expect(interaction.output).not.toBeEmpty();
-            expect(userData.userSettings["Civ 6"].bannedCivs).toEqual([{leader: "Peter", civ: "Russia"}]);
+            expect(userData.userSettings["Civ 6"].bannedCivs).toEqual(["Peter"]);
         });
 
         it("should ban based on leader name", async () => {
@@ -67,7 +67,7 @@ describe("BanCommand", () => {
             const userData = await getTestUserData();
 
             expect(interaction.output).not.toBeEmpty();
-            expect(userData.userSettings["Civ 6"].bannedCivs).toEqual([{leader: "Trajan", civ: "Rome"}]);
+            expect(userData.userSettings["Civ 6"].bannedCivs).toEqual(["Trajan"]);
         });
 
         it("should not ban the civ if the civ is already banned", async () => {
@@ -79,7 +79,7 @@ describe("BanCommand", () => {
             const userData = await getTestUserData();
 
             expect(interaction.output).not.toBeEmpty();
-            expect(userData.userSettings["Civ 6"].bannedCivs).toEqual([{leader: "Trajan", civ: "Rome"}]);
+            expect(userData.userSettings["Civ 6"].bannedCivs).toEqual(["Trajan"]);
         });
 
         it("should not ban the civ if it doesn't exist", async () => {
