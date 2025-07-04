@@ -9,4 +9,4 @@ export type DraftEntry = {
     civs: DraftedCiv[];
 };
 
-export type DraftError = "no-players" | "not-enough-civs";
+export type DraftError = "no-players" | "not-enough-civs" | "not-enough-coastal-civs";

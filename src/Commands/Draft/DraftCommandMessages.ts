@@ -17,10 +17,12 @@ export function generateDraftMessage(
     };
 
     if (draftResult.isError) {
-        if (draftResult.error == "no-players") {
+        if (draftResult.error === "no-players") {
             sendMessage(Messages.NoPlayers);
-        } else if (draftResult.error == "not-enough-civs") {
+        } else if (draftResult.error === "not-enough-civs") {
             sendMessage(Messages.NotEnoughCivs);
+        } else if (draftResult.error === "not-enough-coastal-civs") {
+            sendMessage(Messages.NotEnoughCoastalCivs)
         }
     } else {
         if (renderDraft(draftResult.value, game) === "") {

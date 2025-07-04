@@ -1,5 +1,5 @@
 import {Expansion} from "../../Civs/Expansions";
-import {draft} from "./Draft";
+import {draft, draftWithGuaranteedCoastal} from "./Draft";
 import {selectCivIds} from "../../Civs/SelectCivIds";
 import {UserSettings} from "../../UserData/UserSettings";
 import {generateDraftMessage} from "./DraftCommandMessages";
@@ -14,6 +14,7 @@ export type DraftArguments = {
     numberOfAi: number;
     numberOfCivs: number;
     expansions: Expansion[];
+    guaranteeCoastal: boolean;
 };
 
 export async function draftCommand(interaction: ChatInputCommandInteraction) {
@@ -31,7 +32,10 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
 
     const civsIncludingCustom = civs.concat(userSettings.customCivs.map(x => ({custom: true, name: x})));
 
-    const draftResult = draft(players, draftArgs.numberOfCivs, civsIncludingCustom);
+    const draftResult = draftArgs.guaranteeCoastal ? 
+        draftWithGuaranteedCoastal(players, draftArgs.numberOfCivs, civsIncludingCustom) : 
+        draft(players, draftArgs.numberOfCivs, civsIncludingCustom);
+    
     let draftMessage = generateDraftMessage(
         userData.game,
         draftArgs.expansions,
@@ -114,6 +118,7 @@ function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings
         numberOfAi: partialArgs.numberOfAi ?? defaultArgs.numberOfAi ?? 0,
         numberOfCivs: partialArgs.numberOfCivs ?? defaultArgs.numberOfCivs ?? 3,
         expansions: partialArgs.expansions ?? defaultArgs.expansions ?? ["civ5-vanilla"],
+        guaranteeCoastal: partialArgs.guaranteeCoastal ?? false,
     };
 }
 
