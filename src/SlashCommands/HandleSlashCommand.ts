@@ -8,6 +8,7 @@ import { disableExpansionCommand } from "../Commands/Expansions/DisableExpansion
 import { showConfigCommand } from "../Commands/Config/ShowConfigCommand";
 import { customCivsCommand } from "../Commands/CustomCivs/CustomCivsCommand";
 import { logError, logInfo } from "../Log";
+import {civBotReply} from "../Discord/CivBotReply";
 
 export async function handleSlashCommand(interaction: ChatInputCommandInteraction) {
     logInfo(
@@ -59,5 +60,5 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
     }
 
     logError(`Unrecognised slash command ${interaction.commandName}.`);
-    await interaction.reply("Sorry, I don't recognise that command. This is probably a bug.");
+    await civBotReply(interaction, "Sorry, I don't recognise that command. This is probably a bug.");
 }

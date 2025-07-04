@@ -4,11 +4,12 @@ import {CivId, getCiv, renderCiv} from "../../Civs/Civs";
 import {ChatInputCommandInteraction} from "discord.js";
 import {loadUserData} from "../../UserDataStore";
 import {CivGame} from "../../Civs/CivGames";
+import {civBotReply} from "../../Discord/CivBotReply";
 
 export async function showConfigCommand(interaction: ChatInputCommandInteraction) {
     const serverId = interaction.guildId!;
     let response = renderConfig(await loadUserData(serverId));
-    await interaction.reply(response);
+    await civBotReply(interaction, response);
 }
 
 function renderConfig(userData: UserData): string {

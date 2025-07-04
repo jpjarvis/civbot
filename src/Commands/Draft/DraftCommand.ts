@@ -7,6 +7,7 @@ import {ChatInputCommandInteraction} from "discord.js";
 import {getVoiceChannelMembers} from "../../Discord/VoiceChannels";
 import {loadUserData} from "../../UserDataStore";
 import {DraftedCiv} from "./DraftTypes";
+import {civBotReply} from "../../Discord/CivBotReply";
 
 export type DraftArguments = {
     numberOfAi: number;
@@ -42,7 +43,7 @@ export async function draftCommand(interaction: ChatInputCommandInteraction) {
         draftResult,
     );
 
-    await interaction.reply(draftMessage);
+    await civBotReply(interaction, draftMessage);
 }
 function fillDefaultArguments(partialArgs: Partial<DraftArguments>, userSettings: UserSettings): DraftArguments {
     const defaultArgs = userSettings.defaultDraftSettings;
