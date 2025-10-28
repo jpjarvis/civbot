@@ -24,7 +24,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^24.0.10",
     "@types/node-fetch": "^2.6.12",
-    "@types/pg": "^8.15.4",
+    "@types/pg": "^8.15.6",
     "@types/shuffle-array": "^1.0.5",
     "@typestrong/ts-mockito": "^2.7.12",
     "jest": "^29.7.0",
