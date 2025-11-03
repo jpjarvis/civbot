@@ -21,7 +21,7 @@ export function draftWithGuaranteedCoastal(players: string[], civsPerPlayer: num
     shuffle(coastalCivs);
     const chosenCoastalCivs = coastalCivs.slice(0, players.length);
 
-    const draftResult = draft(players, civsPerPlayer - 1, civs.filter(x => !chosenCoastalCivs.includes(x)));
+    const draftResult = draft(players, civsPerPlayer - 1, civs.filter(x => !coastalCivs.includes(x)));
 
     if (!draftResult.isError) {
         const draftEntriesWithCoastal = draftResult.value.map((draftEntry, i) => ({
