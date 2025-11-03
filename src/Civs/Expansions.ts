@@ -9,7 +9,8 @@ export const Expansions = [
     "civ6-frontier",
     "civ6-leaderpass",
     "civ6-extra",
-    "civ6-personas"
+    "civ6-personas",
+    "civ6-bbg"
 ] as const;
 
 export type Expansion = (typeof Expansions)[number];
@@ -24,7 +25,8 @@ const ExpansionMetadata: { [a in Expansion]: { displayName: string; game: CivGam
     "civ6-frontier": { displayName: "New Frontier Pass", game: "Civ 6" },
     "civ6-leaderpass": { displayName: "Leader Pass", game: "Civ 6" },
     "civ6-extra": { displayName: "Standalone DLC Civs", game: "Civ 6" },
-    "civ6-personas": { displayName: "Persona packs", game: "Civ 6" }
+    "civ6-personas": { displayName: "Persona packs", game: "Civ 6" },
+    "civ6-bbg": { displayName: "BBG Expanded", game: "Civ 6" }
 };
 
 export function expansionsInGame(game: CivGame) {

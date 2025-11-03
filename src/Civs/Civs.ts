@@ -255,6 +255,17 @@ export const Civs = {
         "CatherineDeMediciMagnificence",
         "TeddyRoughRider",
     ],
+
+    "civ6-bbg": [
+        "Ahiram",
+        "AlHasanIbnSulaiman",
+        "Kiviuq",
+        "Olympias",
+        "TeKinichII",
+        "TrisongDetsen",
+        "SpearthrowerOwl",
+        "Vercingetorix",
+    ]
 } as const satisfies { [ex in Expansion]: string[] };
 
 const CivData: { [civ in CivId]: Civ } = {
@@ -448,4 +459,14 @@ const CivData: { [civ in CivId]: Civ } = {
     "Wilhelmina": {leader: "Wilhelmina", civ: "The Netherlands", coastal: true,},
     "WuZetian": {leader: "Wu Zetian", civ: "China", coastal: false,},
     "Yongle": {leader: "Yongle", civ: "China", coastal: false,},
+
+    // Civ 6 BBG
+    "Ahiram": {leader: "Ahiram", civ: "Phoenicia", coastal: true},
+    "AlHasanIbnSulaiman": {leader: "Al-Hasan ibn Sulaiman", civ: "Swahili", coastal: true},
+    "Kiviuq": {leader: "Kiviuq", civ: "Thule", coastal: true},
+    "Olympias": {leader: "Olympias", civ: "Macedon", coastal: false},
+    "TeKinichII": {leader: "Te' K'inich II", civ: "Maya", coastal: false},
+    "TrisongDetsen": {leader: "Trisong Detsen", civ: "Tibet", coastal: false},
+    "SpearthrowerOwl": {leader: "Spearthrower Owl", civ: "Teotihuacan", coastal: false},
+    "Vercingetorix": {leader: "Vercingetorix", civ: "Gaul", coastal: false},
 } 
