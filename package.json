@@ -21,7 +21,7 @@
   "devDependencies": {
     "@tsconfig/node14": "^14.1.8",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.0.3",
     "@types/node-fetch": "^2.6.13",
     "@types/shuffle-array": "^1.0.5",
     "@typestrong/ts-mockito": "^2.7.12",
