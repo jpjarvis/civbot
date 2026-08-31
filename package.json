@@ -27,7 +27,7 @@
     "@typestrong/ts-mockito": "^2.7.12",
     "jest": "^30.3.0",
     "jest-extended": "^7.0.0",
-    "prettier": "3.8.1",
+    "prettier": "3.8.3",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
